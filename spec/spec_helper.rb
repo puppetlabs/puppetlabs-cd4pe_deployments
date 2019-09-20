@@ -74,6 +74,4 @@ RSpec.shared_context 'deployment' do
   end
 end
 
-RSpec.shared_context 'bad_deployment' do
-end
 # 'spec_overrides' from sync.yml will appear below this line
