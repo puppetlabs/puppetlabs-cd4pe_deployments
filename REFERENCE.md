@@ -28,7 +28,17 @@ $node_group = get_node_group_info("3ed5c6c0-be33-4c62-9f41-a863a282b6ae")
 
 The cd4pe_deployments::get_node_group function.
 
-Returns: `NodeGroup` NodeGroup object
+Returns: `NodeGroup` a NodeGroup object:
+* `name [String] name of the node group`
+* `id [String] the node group's id`
+* `description [String] a short description of the node group`
+* `environment [String] the name of the environment`
+* `environmentTrumps [Boolean] is this an environment group?``
+* `parent [String] the name of the parent node group`
+* `rule [Array] puppetDB rule`
+* `classes [Hash] list of classes assigned to this node group`
+* `configData [Hash] node group's configuration`
+* `nodes [Array] list of nodes pinned to this group`
 
 ##### Examples
 

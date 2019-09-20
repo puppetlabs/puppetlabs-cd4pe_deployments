@@ -74,7 +74,7 @@ module PuppetX::Puppetlabs
         'Authorization' => "Bearer token #{@config[:token]}",
       }
 
-      max_attempts = 5
+      max_attempts = 3
       attempts = 0
 
       while attempts < max_attempts
@@ -100,11 +100,10 @@ module PuppetX::Puppetlabs
         case response
         when Net::HTTPSuccess, Net::HTTPRedirection
           return response
-          # PE-15108 Retry on 500 (Internal Server Error) and 400 (Bad request) errors
         when Net::HTTPInternalServerError, Net::HTTPBadRequest
           if attempts < max_attempts # rubocop:disable Style/GuardClause
             Puppet.debug("Received #{response} error from #{service_url}, attempting to retry. (Attempt #{attempts} of #{max_attempts})")
-            Kernel.sleep(10)
+            Kernel.sleep(3)
           else
             raise Puppet::Error, "Received #{attempts} server error responses from the CD4PE service at #{service_url}: #{response.code} #{response.body}"
           end
