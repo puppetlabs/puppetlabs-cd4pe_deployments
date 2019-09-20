@@ -7,7 +7,6 @@ module PuppetX::Puppetlabs
   # Provides a class for interacting with CD4PE's API
   class CD4PEClient < Object
     attr_reader :config, :owner_ajax_path
-  
 
     def initialize
       uri = URI.parse(web_ui_endpoint)
@@ -30,7 +29,7 @@ module PuppetX::Puppetlabs
           deploymentId: @config[:deployment_id],
           nodeGroupId: node_group_id,
           nodes: nodes,
-        }
+        },
       }
       make_request(:post, @owner_ajax_path, payload.to_json)
     end
@@ -45,26 +44,26 @@ module PuppetX::Puppetlabs
 
     def deployment_token
       token = ENV['DEPLOYMENT_TOKEN']
-      raise Puppet::Error, "Could not get token for deployment" unless token
-      return token
+      raise Puppet::Error, 'Could not get token for deployment' unless token
+      token
     end
 
     def deployment_owner
       owner = ENV['DEPLOYMENT_OWNER']
-      raise Puppet::Error, "Could not get owner for deployment" unless owner
-      return owner
+      raise Puppet::Error, 'Could not get owner for deployment' unless owner
+      owner
     end
 
     def deployment_id
       id = ENV['DEPLOYMENT_ID']
-      raise Puppet::Error, "Could not get ID for deployment" unless id
-      return id
+      raise Puppet::Error, 'Could not get ID for deployment' unless id
+      id
     end
 
     def web_ui_endpoint
       endpoint = ENV['WEB_UI_ENDPOINT']
-      raise Puppet::Error, "Could not get CD4PE Web UI Endpoint" unless endpoint
-      return endpoint
+      raise Puppet::Error, 'Could not get CD4PE Web UI Endpoint' unless endpoint
+      endpoint
     end
 
     def make_request(type, api_url, payload = '')
@@ -103,7 +102,7 @@ module PuppetX::Puppetlabs
           return response
           # PE-15108 Retry on 500 (Internal Server Error) and 400 (Bad request) errors
         when Net::HTTPInternalServerError, Net::HTTPBadRequest
-          if attempts < max_attempts
+          if attempts < max_attempts # rubocop:disable Style/GuardClause
             Puppet.debug("Received #{response} error from #{service_url}, attempting to retry. (Attempt #{attempts} of #{max_attempts})")
             Kernel.sleep(10)
           else
@@ -114,7 +113,6 @@ module PuppetX::Puppetlabs
         end
       end
     end
-
 
     def service_url
       "#{@config[:scheme]}://#{@config[:server]}:#{@config[:port]}"

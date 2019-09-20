@@ -16,7 +16,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_node_group') do
     client = PuppetX::Puppetlabs::CD4PEClient.new
 
     response = client.get_node_group(node_group_id)
-    if response.code == '200'
+    if response.code == '200' # rubocop:disable Style/GuardClause
       response_body = JSON.parse(response.body, symbolize_names: true)
       return response_body unless response_body.empty?
     else

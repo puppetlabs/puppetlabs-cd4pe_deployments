@@ -58,13 +58,13 @@ RSpec.shared_context 'deployment' do
   let(:deployment_token) { '1234abcd' }
   let(:node_group_id) { 'aasdf-1234asdf-1234' }
   let(:ajax_url) { "#{test_host}/#{deployment_owner}/ajax" }
-  let(:response) {
+  let(:response) do
     {
       name: 'deployment',
       id: '123',
-      description: 'carls cool deployment'
+      description: 'carls cool deployment',
     }
-  }
+  end
 
   before(:each) do
     ENV['DEPLOYMENT_OWNER'] = deployment_owner
