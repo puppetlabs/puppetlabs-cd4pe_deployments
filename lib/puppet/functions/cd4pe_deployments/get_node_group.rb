@@ -22,7 +22,6 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_node_group') do
   #    }
   dispatch :get_node_group do
     required_param 'String', :node_group_id
-    # return_type 'Object'
   end
 
   def get_node_group(node_group_id)
@@ -33,9 +32,9 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_node_group') do
       response_body = JSON.parse(response.body, symbolize_names: true)
       return response_body unless response_body.empty?
     else
-      Puppet.debug("Problem node group info, response code #{response.code}", response)
+      raise Puppet::Error, "Server returned HTTP #{response.code}"
     end
   rescue => exception
-    Puppet.debug("Unable to contact Continuous Delivery for PE to get node group info, moving on.", exception.backtrace)
+    raise Puppet::Error, "Problem getting node group information for deployment #{ENV['DEPLOYMENT_ID']}", exception.backtrace
   end
 end

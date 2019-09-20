@@ -11,16 +11,25 @@ describe 'cd4pe_deployments::get_node_group' do
     is_expected.to run.with_params.and_raise_error(ArgumentError)
   end
 
-  context 'happy path' do
+  context 'happy' do
     include_context 'deployment'
 
-    it 'returns false if servers response is empty' do
+    it 'succeeds with parameters' do
       stub_request(:get, ajax_url)
-        .with(query: { :op => 'GetNodeGroupInfo', :deploymentId => ENV['DEPLOYMENT_ID'], :nodeGroupId => node_group_id}, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}"})
-        .to_return(body: JSON.generate({ success: true }))
+        .with(query: { :op => 'GetNodeGroupInfo', :deploymentId => deployment_id, :nodeGroupId => node_group_id}, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}"})
+        .to_return(body: JSON.generate(response))
         .times(1)
 
-      is_expected.to run.with_params(node_group_id)
+      is_expected.to run.with_params(node_group_id).and_return(response)
+    end
+
+    it 'fails with non-200 response code' do
+      stub_request(:get, ajax_url)
+        .with(query: { :op => 'GetNodeGroupInfo', :deploymentId => deployment_id, :nodeGroupId => node_group_id}, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}"})
+        .to_return(body: JSON.generate({ success: false }), status: 404)
+        .times(1)
+
+      is_expected.to run.with_params(node_group_id).and_raise_error(Puppet::Error)
     end
   end
 end

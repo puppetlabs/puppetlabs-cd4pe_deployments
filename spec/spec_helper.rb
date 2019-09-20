@@ -58,6 +58,13 @@ RSpec.shared_context 'deployment' do
   let(:deployment_token) { '1234abcd' }
   let(:node_group_id) { 'aasdf-1234asdf-1234' }
   let(:ajax_url) { "#{test_host}/#{deployment_owner}/ajax" }
+  let(:response) {
+    {
+      name: 'deployment',
+      id: '123',
+      description: 'carls cool deployment'
+    }
+  }
 
   before(:each) do
     ENV['DEPLOYMENT_OWNER'] = deployment_owner
@@ -65,5 +72,8 @@ RSpec.shared_context 'deployment' do
     ENV['DEPLOYMENT_TOKEN'] = deployment_token
     ENV['WEB_UI_ENDPOINT'] = test_host
   end
+end
+
+RSpec.shared_context 'bad_deployment' do
 end
 # 'spec_overrides' from sync.yml will appear below this line
