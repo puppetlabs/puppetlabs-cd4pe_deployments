@@ -28,20 +28,7 @@ $node_group = get_node_group_info("3ed5c6c0-be33-4c62-9f41-a863a282b6ae")
 
 The cd4pe_deployments::get_node_group function.
 
-Returns: `Any` NodeGroup
-{
-  name,
-  id,
-  description,
-  environment,
-  environmentTrumps,
-  parent,
-  rule,
-  classes,
-  configData,
-  variables,
-  nodes
- }
+Returns: `NodeGroup` NodeGroup object
 
 ##### Examples
 
