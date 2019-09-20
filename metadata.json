@@ -2,9 +2,9 @@
   "name": "puppetlabs-cd4pe_deployments",
   "version": "0.1.0",
   "author": "puppetlabs",
-  "summary": "",
+  "summary": "Module containing deployment policies for Continuous Delivery for PE",
   "license": "Apache-2.0",
-  "source": "",
+  "source": "https://github.com/puppetlabs/puppetlabs-cd4pe_deployments",
   "dependencies": [
 
   ],
