@@ -51,4 +51,27 @@ def ensure_module_defined(module_name)
   end
 end
 
+RSpec.shared_context 'deployment' do
+  let(:test_host) { 'http://puppet.test' }
+  let(:deployment_owner) { 'ccaum' }
+  let(:deployment_id) { '123' }
+  let(:deployment_token) { '1234abcd' }
+  let(:node_group_id) { 'aasdf-1234asdf-1234' }
+  let(:ajax_url) { "#{test_host}/#{deployment_owner}/ajax" }
+  let(:response) do
+    {
+      name: 'deployment',
+      id: '123',
+      description: 'carls cool deployment',
+    }
+  end
+
+  before(:each) do
+    ENV['DEPLOYMENT_OWNER'] = deployment_owner
+    ENV['DEPLOYMENT_ID'] = deployment_id
+    ENV['DEPLOYMENT_TOKEN'] = deployment_token
+    ENV['WEB_UI_ENDPOINT'] = test_host
+  end
+end
+
 # 'spec_overrides' from sync.yml will appear below this line
