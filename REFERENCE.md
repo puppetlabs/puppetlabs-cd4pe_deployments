@@ -6,7 +6,7 @@
 **Functions**
 
 * [`cd4pe_deployments::get_node_group`](#cd4pe_deploymentsget_node_group): Get information about a Puppet Enterprise node group
-* [`cd4pe_deployments::pin_nodes_to_env`](#cd4pe_deploymentspin_nodes_to_env): Pin a list of nodes to an environment group
+* [`cd4pe_deployments::pin_nodes_to_env`](#cd4pe_deploymentspin_nodes_to_env): Pin a list of nodes to Puppet Enterprise environment group
 
 ## Functions
 
@@ -58,13 +58,32 @@ The ID string of the node group
 
 Type: Ruby 4.x API
 
-Pin a list of nodes to an environment group
+Pin a list of nodes to Puppet Enterprise environment group
+
+#### Examples
+
+##### Pin a list of nodes to an environment group
+
+```puppet
+$my_cool_node_group_id = "3ed5c6c0-be33-4c62-9f41-a863a282b6ae"
+pin_nodes_to_env(["example.node1.net", "example.node2.net", "example.node3.net"], $my_cool_node_group_id)
+```
 
 #### `cd4pe_deployments::pin_nodes_to_env(Array $nodes, String $node_group_id)`
 
 The cd4pe_deployments::pin_nodes_to_env function.
 
-Returns: `Object` * success [Boolean] whether or not the operation was sucessful
+Returns: `Object` success object
+* success [Boolean] whether or not the operation was sucessful
+
+##### Examples
+
+###### Pin a list of nodes to an environment group
+
+```puppet
+$my_cool_node_group_id = "3ed5c6c0-be33-4c62-9f41-a863a282b6ae"
+pin_nodes_to_env(["example.node1.net", "example.node2.net", "example.node3.net"], $my_cool_node_group_id)
+```
 
 ##### `nodes`
 
