@@ -6,7 +6,7 @@
 **Functions**
 
 * [`cd4pe_deployments::get_node_group`](#cd4pe_deploymentsget_node_group): Get information about a Puppet Enterprise node group
-* [`cd4pe_deployments::pin_nodes_to_env`](#cd4pe_deploymentspin_nodes_to_env): Get information about a Puppet Enterprise node group
+* [`cd4pe_deployments::pin_nodes_to_env`](#cd4pe_deploymentspin_nodes_to_env): Pin a list of nodes to an environment group
 
 ## Functions
 
@@ -58,14 +58,13 @@ The ID string of the node group
 
 Type: Ruby 4.x API
 
-Get information about a Puppet Enterprise node group
+Pin a list of nodes to an environment group
 
 #### `cd4pe_deployments::pin_nodes_to_env(Array $nodes, String $node_group_id)`
 
 The cd4pe_deployments::pin_nodes_to_env function.
 
-Returns: `Object` JsonSuccess
-{ success }
+Returns: `Object` * success [Boolean] whether or not the operation was sucessful
 
 ##### `nodes`
 
