@@ -5,10 +5,46 @@
 
 **Functions**
 
+* [`cd4pe_deployments::delete_node_group`](#cd4pe_deploymentsdelete_node_group): Delete a Puppet Enterprise node group
 * [`cd4pe_deployments::get_node_group`](#cd4pe_deploymentsget_node_group): Get information about a Puppet Enterprise node group
 * [`cd4pe_deployments::pin_nodes_to_env`](#cd4pe_deploymentspin_nodes_to_env): Pin a list of nodes to Puppet Enterprise environment group
 
 ## Functions
+
+### cd4pe_deployments::delete_node_group
+
+Type: Ruby 4.x API
+
+Delete a Puppet Enterprise node group
+
+#### Examples
+
+##### Delete node group 3ed5c6c0-be33-4c62-9f41-a863a282b6ae
+
+```puppet
+delete_node_group("3ed5c6c0-be33-4c62-9f41-a863a282b6ae")
+```
+
+#### `cd4pe_deployments::delete_node_group(String $node_group_id)`
+
+The cd4pe_deployments::delete_node_group function.
+
+Returns: `Object` success object
+* success [Boolean] whether or not the operation was successful
+
+##### Examples
+
+###### Delete node group 3ed5c6c0-be33-4c62-9f41-a863a282b6ae
+
+```puppet
+delete_node_group("3ed5c6c0-be33-4c62-9f41-a863a282b6ae")
+```
+
+##### `node_group_id`
+
+Data type: `String`
+
+The ID string of the node group
 
 ### cd4pe_deployments::get_node_group
 
