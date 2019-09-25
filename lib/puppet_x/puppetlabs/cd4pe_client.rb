@@ -40,6 +40,17 @@ module PuppetX::Puppetlabs
       make_request(:get, complete_path)
     end
 
+    def delete_node_group(node_group_id)
+      payload = {
+        op: 'DeleteNodeGroup',
+        content: {
+          deploymentId: @config[:deployment_id],
+          nodeGroupId: node_group_id,
+        },
+      }
+      make_request(:post, @owner_ajax_path, payload.to_json)
+    end
+
     private
 
     def deployment_token
