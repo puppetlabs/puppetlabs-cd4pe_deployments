@@ -29,7 +29,6 @@ group :development do
   gem "puppet-module-win-default-r#{minor_version}", '~> 0.3',   require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "puppet-module-win-dev-r#{minor_version}", '~> 0.3',       require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "webmock",                                                 require: false
-  gem "puppet-strings", '2.3.1'				 
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']
