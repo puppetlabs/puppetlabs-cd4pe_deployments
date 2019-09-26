@@ -51,6 +51,19 @@ module PuppetX::Puppetlabs
       make_request(:post, @owner_ajax_path, payload.to_json)
     end
 
+    def deploy_code(environment_name, default_branch_override)
+      payload = {
+        op: 'DeployCode',
+        content: {
+          deploymentId: @config[:deployment_id],
+          environmentName: environment_name,
+        },
+      }
+
+      payload[:content][:defaultBranchOverride] = default_branch_override if default_branch_override
+      make_request(:post, @owner_ajax_path, payload.to_json)
+    end
+
     private
 
     def deployment_token
