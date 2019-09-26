@@ -6,6 +6,7 @@
 **Functions**
 
 * [`cd4pe_deployments::delete_node_group`](#cd4pe_deploymentsdelete_node_group): Delete a Puppet Enterprise node group
+* [`cd4pe_deployments::deploy_code`](#cd4pe_deploymentsdeploy_code): Performs a Puppet Enterprise Code Manager deployment for the given environment
 * [`cd4pe_deployments::get_node_group`](#cd4pe_deploymentsget_node_group): Get information about a Puppet Enterprise node group
 * [`cd4pe_deployments::pin_nodes_to_env`](#cd4pe_deploymentspin_nodes_to_env): Pin a list of nodes to Puppet Enterprise environment group
 
@@ -45,6 +46,54 @@ delete_node_group("3ed5c6c0-be33-4c62-9f41-a863a282b6ae")
 Data type: `String`
 
 The ID string of the node group
+
+### cd4pe_deployments::deploy_code
+
+Type: Ruby 4.x API
+
+Performs a Puppet Enterprise Code Manager deployment for the given environment
+
+#### Examples
+
+##### Perform a code deploy of the 'development' environment
+
+```puppet
+$my_cool_environment = "development"
+deploy_code($my_cool_environment)
+```
+
+#### `cd4pe_deployments::deploy_code(String $environment_name, Optional[String] $default_branch_override)`
+
+The cd4pe_deployments::deploy_code function.
+
+Returns: `Array[Hash]` a list of deployment status objects
+* [Hash] Contains the code deployment status info
+  * environment [String] The environment associated with the code deployment
+  * id [String] The id used to identify the code deployment
+  * status [String] A String representation of the code deployment status. Can be one of: 'new', 'complete', 'failed', or 'queued'.
+  * deploySignature [String] The commit SHA of the control repo that Code Manager used to deploy code in that environment
+  * fileSync [Hash] Commit SHAs used internally by file sync to identify the code synced to the code staging directory
+
+##### Examples
+
+###### Perform a code deploy of the 'development' environment
+
+```puppet
+$my_cool_environment = "development"
+deploy_code($my_cool_environment)
+```
+
+##### `environment_name`
+
+Data type: `String`
+
+The name of the Puppet environment to deploy
+
+##### `default_branch_override`
+
+Data type: `Optional[String]`
+
+Specifies a default branch to set when performing a code deploy
 
 ### cd4pe_deployments::get_node_group
 
