@@ -1,7 +1,6 @@
 module PuppetX::Puppetlabs
   # A static class to create a standard result format for custom deploy functions
   class CD4PEFunctionResult
-    UNKNOWN_ERROR_CODE = 'UnknownError'.freeze
     ENCOUNTERED_EXCEPTION_CODE = 'EncounteredException'.freeze
 
     def self.create_result_hash(result)
