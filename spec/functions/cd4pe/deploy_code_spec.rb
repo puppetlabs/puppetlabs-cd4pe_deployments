@@ -16,18 +16,22 @@ describe 'cd4pe_deployments::deploy_code' do
 
     let(:environment_name) { 'production' }
     let(:response) do
-      [
-        {
-          environment: 'production',
-          id: '40',
-          status: 'complete',
-          deploySignature: '6130590194c84c9aadc863e4af67ce788f59ab45',
-          fileSync: {
-            environmentCommit: '2e0ba4e305c7b39499bb8c2e62a1a07c5f22e3ee',
-            codeCommit: '350d908578ed214dc2465bdeae4459b6b625bb11',
+      {
+        result:
+        [
+          {
+            environment: 'production',
+            id: '40',
+            status: 'complete',
+            deploySignature: '6130590194c84c9aadc863e4af67ce788f59ab45',
+            fileSync: {
+              environmentCommit: '2e0ba4e305c7b39499bb8c2e62a1a07c5f22e3ee',
+              codeCommit: '350d908578ed214dc2465bdeae4459b6b625bb11',
+            },
           },
-        },
-      ]
+        ],
+        error: nil,
+      }
     end
 
     it 'succeeds with parameters' do
@@ -39,7 +43,7 @@ describe 'cd4pe_deployments::deploy_code' do
             content: { deploymentId: deployment_id, environmentName: environment_name },
           },
         )
-        .to_return(body: JSON.generate(response), status: 200)
+        .to_return(body: JSON.generate(response[:result]), status: 200)
         .times(1)
       is_expected.to run.with_params(environment_name).and_return(response)
     end

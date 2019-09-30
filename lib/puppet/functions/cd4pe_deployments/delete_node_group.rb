@@ -1,4 +1,5 @@
 require 'puppet_x/puppetlabs/cd4pe_client'
+require 'puppet_x/puppetlabs/cd4pe_function_result'
 
 # @summary Delete a Puppet Enterprise node group
 Puppet::Functions.create_function(:'cd4pe_deployments::delete_node_group') do
@@ -17,13 +18,16 @@ Puppet::Functions.create_function(:'cd4pe_deployments::delete_node_group') do
     client = PuppetX::Puppetlabs::CD4PEClient.new
 
     response = client.delete_node_group(node_group_id)
-    if response.code == '200' # rubocop:disable Style/GuardClause
+    if response.code == '200'
       response_body = JSON.parse(response.body, symbolize_names: true)
-      return response_body unless response_body.empty?
+      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body)
+    elsif response.code =~ %r{4[0-9]+}
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
     else
-      raise Puppet::Error, "Server returned HTTP #{response.code}"
+      raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
   rescue => exception
-    raise Puppet::Error, "Problem deleting node group for deployment #{ENV['DEPLOYMENT_ID']}", exception.backtrace
+    PuppetX::Puppetlabs::CD4PEFunctionResult.create_exception_result(exception)
   end
 end

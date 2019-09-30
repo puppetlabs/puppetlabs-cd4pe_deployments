@@ -15,7 +15,9 @@ describe 'cd4pe_deployments::pin_nodes_to_env' do
     include_context 'deployment'
 
     let(:nodes) { ['carlscoolnode.one.net', 'carlscoolnode.two.net', 'carlscoolnode.three.net'] }
-    let(:response) { { success: true } }
+    let(:response) do
+      { result: { success: true }, error: nil }
+    end
 
     it 'succeeds with parameters' do
       stub_request(:post, ajax_url)
@@ -26,7 +28,7 @@ describe 'cd4pe_deployments::pin_nodes_to_env' do
             content: { deploymentId: deployment_id, nodeGroupId: node_group_id, nodes: nodes },
           },
         )
-        .to_return(body: JSON.generate(response), status: 200)
+        .to_return(body: JSON.generate(response[:result]), status: 200)
         .times(1)
 
       is_expected.to run.with_params(nodes, node_group_id).and_return(response)
@@ -41,10 +43,10 @@ describe 'cd4pe_deployments::pin_nodes_to_env' do
             content: { deploymentId: deployment_id, nodeGroupId: node_group_id, nodes: nodes },
           },
         )
-        .to_return(body: JSON.generate(response), status: 404)
+        .to_return(body: JSON.generate(error_response), status: 404)
         .times(1)
 
-      is_expected.to run.with_params(nodes, node_group_id).and_raise_error(Puppet::Error)
+      is_expected.to run.with_params(nodes, node_group_id).and_return(error_response)
     end
   end
 end

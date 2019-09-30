@@ -1,4 +1,5 @@
 require 'puppet_x/puppetlabs/cd4pe_client'
+require 'puppet_x/puppetlabs/cd4pe_function_result'
 
 # @summary Pin a list of nodes to Puppet Enterprise environment group
 Puppet::Functions.create_function(:'cd4pe_deployments::pin_nodes_to_env') do
@@ -21,13 +22,16 @@ Puppet::Functions.create_function(:'cd4pe_deployments::pin_nodes_to_env') do
     client = PuppetX::Puppetlabs::CD4PEClient.new
 
     response = client.pin_nodes_to_env(nodes, node_group_id)
-    if response.code == '200' # rubocop:disable Style/GuardClause
+    if response.code == '200'
       response_body = JSON.parse(response.body, symbolize_names: true)
-      return response_body unless response_body.empty?
+      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body)
+    elsif response.code =~ %r{4[0-9]+}
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
     else
-      raise Puppet::Error, "Server returned HTTP #{response.code}"
+      raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
   rescue => exception
-    raise Puppet::Error, "Problem pinning nodes to group=#{node_group_id}, response code #{response.code}", exception.backtrace
+    PuppetX::Puppetlabs::CD4PEFunctionResult.create_exception_result(exception)
   end
 end
