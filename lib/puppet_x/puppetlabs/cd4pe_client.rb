@@ -124,7 +124,7 @@ module PuppetX::Puppetlabs
         case response
         when Net::HTTPSuccess, Net::HTTPRedirection
           return response
-        when Net::HTTPInternalServerError, Net::HTTPBadRequest
+        when Net::HTTPInternalServerError
           if attempts < max_attempts # rubocop:disable Style/GuardClause
             Puppet.debug("Received #{response} error from #{service_url}, attempting to retry. (Attempt #{attempts} of #{max_attempts})")
             Kernel.sleep(3)
