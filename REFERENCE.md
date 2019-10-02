@@ -9,6 +9,7 @@
 * [`cd4pe_deployments::deploy_code`](#cd4pe_deploymentsdeploy_code): Performs a Puppet Enterprise Code Manager deployment for the given environment
 * [`cd4pe_deployments::get_node_group`](#cd4pe_deploymentsget_node_group): Get information about a Puppet Enterprise node group
 * [`cd4pe_deployments::pin_nodes_to_env`](#cd4pe_deploymentspin_nodes_to_env): Pin a list of nodes to Puppet Enterprise environment group
+* [`cd4pe_deployments::run_puppet`](#cd4pe_deploymentsrun_puppet): Run Puppet using the Puppet Orchestrator for a set of nodes in a given environment
 * [`cd4pe_deployments::wait_for_approval`](#cd4pe_deploymentswait_for_approval): Blocks further plan execution until the deployment is approved in CD4PE
 
 ## Functions
@@ -68,12 +69,8 @@ deploy_code($my_cool_environment)
 The cd4pe_deployments::deploy_code function.
 
 Returns: `Hash` contains the results of the function
-* result [Array[Hash]] a list of deployment status objects
-  * environment [String] The environment associated with the code deployment
-  * id [String] The id used to identify the code deployment
-  * status [String] A String representation of the code deployment status. Can be one of: 'new', 'complete', 'failed', or 'queued'.
-  * deploySignature [String] The commit SHA of the control repo that Code Manager used to deploy code in that environment
-  * fileSync [Hash] Commit SHAs used internally by file sync to identify the code synced to the code staging directory
+* result [Array[Hash]] a list of deployment status objects described by the following documentation:
+  https://puppet.com/docs/pe/2018.1/code_manager_api.html#response-format
 * error [Hash] Contains error info if any was encountered during the function call
 
 ##### Examples
@@ -183,6 +180,65 @@ List of nodes to pin to the group
 Data type: `String`
 
 The ID string of the node group
+
+### cd4pe_deployments::run_puppet
+
+Type: Ruby 4.x API
+
+Run Puppet using the Puppet Orchestrator for a set of nodes in a given environment
+
+#### Examples
+
+##### Run Puppet on nodes in the 'development' environment
+
+```puppet
+$my_cool_environment = "development"
+$nodes = ["test1.example.com", "test2.example.com", "test3.example.com"]
+run_puppet($my_cool_environment, $nodes, false, 2)
+```
+
+#### `cd4pe_deployments::run_puppet(String $environment_name, Array[String] $nodes, Optional[Boolean] $noop, Optional[Integer] $concurrency)`
+
+The cd4pe_deployments::run_puppet function.
+
+Returns: `Hash` contains the results of the function
+* result [Hash] This contains data described by the following documentation:
+  https://puppet.com/docs/pe/2018.1/orchestrator_api_jobs_endpoint.html#get-jobs-job-id
+* error [Hash] Contains error info if any was encountered during the function call
+
+##### Examples
+
+###### Run Puppet on nodes in the 'development' environment
+
+```puppet
+$my_cool_environment = "development"
+$nodes = ["test1.example.com", "test2.example.com", "test3.example.com"]
+run_puppet($my_cool_environment, $nodes, false, 2)
+```
+
+##### `environment_name`
+
+Data type: `String`
+
+The name of the Puppet environment to deploy
+
+##### `nodes`
+
+Data type: `Array[String]`
+
+The list of nodes to Run puppet on
+
+##### `noop`
+
+Data type: `Optional[Boolean]`
+
+A Boolean to run Puppet in Noop mode
+
+##### `concurrency`
+
+Data type: `Optional[Integer]`
+
+The number of nodes to concurrently run Puppet on
 
 ### cd4pe_deployments::wait_for_approval
 
