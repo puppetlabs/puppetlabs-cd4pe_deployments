@@ -71,6 +71,31 @@ module PuppetX::Puppetlabs
       make_request(:get, complete_path)
     end
 
+    def run_puppet(environment_name, nodes, concurrency, noop)
+      run_puppet_payload = {
+        op: 'RunPuppet',
+        content: {
+          deploymentId: @config[:deployment_id],
+          environmentName: environment_name,
+          nodes: nodes,
+          withNoop: noop,
+        },
+      }
+      run_puppet_payload[:content][:concurrency] = concurrency if concurrency
+      make_request(:post, @owner_ajax_path, run_puppet_payload.to_json)
+    end
+
+    def get_puppet_run_status(job)
+      get_job_status_payload = {
+        op: 'GetPuppetRunStatus',
+        content: {
+          deploymentId: @config[:deployment_id],
+          jobId: job,
+        },
+      }
+      make_request(:post, @owner_ajax_path, get_job_status_payload.to_json)
+    end
+
     private
 
     def deployment_token
