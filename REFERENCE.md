@@ -5,6 +5,7 @@
 
 **Functions**
 
+* [`cd4pe_deployments::create_temp_node_group`](#cd4pe_deploymentscreate_temp_node_group): Create a temporary Puppet Enterprise node group
 * [`cd4pe_deployments::delete_node_group`](#cd4pe_deploymentsdelete_node_group): Delete a Puppet Enterprise node group
 * [`cd4pe_deployments::deploy_code`](#cd4pe_deploymentsdeploy_code): Performs a Puppet Enterprise Code Manager deployment for the given environment
 * [`cd4pe_deployments::get_node_group`](#cd4pe_deploymentsget_node_group): Get information about a Puppet Enterprise node group
@@ -13,6 +14,59 @@
 * [`cd4pe_deployments::wait_for_approval`](#cd4pe_deploymentswait_for_approval): Blocks further plan execution until the deployment is approved in CD4PE
 
 ## Functions
+
+### cd4pe_deployments::create_temp_node_group
+
+Type: Ruby 4.x API
+
+Create a temporary Puppet Enterprise node group
+
+#### Examples
+
+##### Create temp node group with parent node group id '3ed5c6c0-be33-4c62-9f41-a863a282b6ae'
+
+```puppet
+$parent_node_group_id = "3ed5c6c0-be33-4c62-9f41-a863a282b6ae"
+$test_environment = "development"
+create_temp_node_group($parent_node_group_id, $test_environment, true)
+```
+
+#### `cd4pe_deployments::create_temp_node_group(String $parent_node_group_id, String $environment_name, Optional[Boolean] $is_environment_node_group)`
+
+The cd4pe_deployments::create_temp_node_group function.
+
+Returns: `Hash` contains the results of the function
+* result [Hash] Contains the new node group described by the following documentation:
+  https://puppet.com/docs/pe/2019.1/groups_endpoint.html#response-format-01
+* error [Hash] Contains error info if any was encountered during the function call
+
+##### Examples
+
+###### Create temp node group with parent node group id '3ed5c6c0-be33-4c62-9f41-a863a282b6ae'
+
+```puppet
+$parent_node_group_id = "3ed5c6c0-be33-4c62-9f41-a863a282b6ae"
+$test_environment = "development"
+create_temp_node_group($parent_node_group_id, $test_environment, true)
+```
+
+##### `parent_node_group_id`
+
+Data type: `String`
+
+The ID string of the parent node group
+
+##### `environment_name`
+
+Data type: `String`
+
+The name of the environment to be associated with the temp node group
+
+##### `is_environment_node_group`
+
+Data type: `Optional[Boolean]`
+
+A Boolean to indicate if the node group should be an environment node group. Defaults to 'true'.
 
 ### cd4pe_deployments::delete_node_group
 
@@ -70,7 +124,7 @@ The cd4pe_deployments::deploy_code function.
 
 Returns: `Hash` contains the results of the function
 * result [Array[Hash]] a list of deployment status objects described by the following documentation:
-  https://puppet.com/docs/pe/2018.1/code_manager_api.html#response-format
+  https://puppet.com/docs/pe/latest/code_manager_api.html#response-format
 * error [Hash] Contains error info if any was encountered during the function call
 
 ##### Examples
@@ -203,7 +257,7 @@ The cd4pe_deployments::run_puppet function.
 
 Returns: `Hash` contains the results of the function
 * result [Hash] This contains data described by the following documentation:
-  https://puppet.com/docs/pe/2018.1/orchestrator_api_jobs_endpoint.html#get-jobs-job-id
+  https://puppet.com/docs/pe/latest/orchestrator_api_jobs_endpoint.html#get-jobs-job-id
 * error [Hash] Contains error info if any was encountered during the function call
 
 ##### Examples
@@ -232,13 +286,13 @@ The list of nodes to Run puppet on
 
 Data type: `Optional[Boolean]`
 
-A Boolean to run Puppet in Noop mode
+A Boolean to run Puppet in Noop mode. Defaults to 'false'.
 
 ##### `concurrency`
 
 Data type: `Optional[Integer]`
 
-The number of nodes to concurrently run Puppet on
+The number of nodes to concurrently run Puppet on. Defaults to the Puppet Orchestrator default.
 
 ### cd4pe_deployments::wait_for_approval
 
