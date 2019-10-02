@@ -9,6 +9,7 @@
 * [`cd4pe_deployments::deploy_code`](#cd4pe_deploymentsdeploy_code): Performs a Puppet Enterprise Code Manager deployment for the given environment
 * [`cd4pe_deployments::get_node_group`](#cd4pe_deploymentsget_node_group): Get information about a Puppet Enterprise node group
 * [`cd4pe_deployments::pin_nodes_to_env`](#cd4pe_deploymentspin_nodes_to_env): Pin a list of nodes to Puppet Enterprise environment group
+* [`cd4pe_deployments::wait_for_approval`](#cd4pe_deploymentswait_for_approval): Blocks further plan execution until the deployment is approved in CD4PE
 
 ## Functions
 
@@ -66,13 +67,14 @@ deploy_code($my_cool_environment)
 
 The cd4pe_deployments::deploy_code function.
 
-Returns: `Array[Hash]` a list of deployment status objects
-* [Hash] Contains the code deployment status info
+Returns: `Hash` contains the results of the function
+* result [Array[Hash]] a list of deployment status objects
   * environment [String] The environment associated with the code deployment
   * id [String] The id used to identify the code deployment
   * status [String] A String representation of the code deployment status. Can be one of: 'new', 'complete', 'failed', or 'queued'.
   * deploySignature [String] The commit SHA of the control repo that Code Manager used to deploy code in that environment
   * fileSync [Hash] Commit SHAs used internally by file sync to identify the code synced to the code staging directory
+* error [Hash] Contains error info if any was encountered during the function call
 
 ##### Examples
 
@@ -181,4 +183,48 @@ List of nodes to pin to the group
 Data type: `String`
 
 The ID string of the node group
+
+### cd4pe_deployments::wait_for_approval
+
+Type: Ruby 4.x API
+
+Blocks further plan execution until the deployment is approved in CD4PE and takes a lambda that is executed once
+at the start of the wait time. The lambda includes the "url" which is a link to the approval page for the deployment. If
+the max approval window is exceeded (24 hours) or approval is declined, a Bolt::PlanFailure is raised, otherwise a result
+is returned to the user.
+
+#### Examples
+
+##### Notify Slack users that approval is needed
+
+```puppet
+wait_for_approval do |String $url|
+  run_task("slack::notify", "#it-ops", "Please review this deployment for approval: ${url}")
+end
+```
+
+#### `cd4pe_deployments::wait_for_approval(Callable &$block)`
+
+Blocks further plan execution until the deployment is approved in CD4PE and takes a lambda that is executed once
+at the start of the wait time. The lambda includes the "url" which is a link to the approval page for the deployment. If
+the max approval window is exceeded (24 hours) or approval is declined, a Bolt::PlanFailure is raised, otherwise a result
+is returned to the user.
+
+Returns: `CD4PEFunctionResult` result
+
+##### Examples
+
+###### Notify Slack users that approval is needed
+
+```puppet
+wait_for_approval do |String $url|
+  run_task("slack::notify", "#it-ops", "Please review this deployment for approval: ${url}")
+end
+```
+
+##### `&block`
+
+Data type: `Callable`
+
+Takes a block that provides the URL to the deployment's approval page
 

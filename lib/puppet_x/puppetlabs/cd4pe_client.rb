@@ -17,6 +17,7 @@ module PuppetX::Puppetlabs
         scheme: uri.scheme || 'http',
         token: deployment_token,
         deployment_id: deployment_id,
+        deployment_owner: deployment_owner,
       }
 
       @owner_ajax_path = "/#{deployment_owner}/ajax"
@@ -62,6 +63,12 @@ module PuppetX::Puppetlabs
 
       payload[:content][:defaultBranchOverride] = default_branch_override if default_branch_override
       make_request(:post, @owner_ajax_path, payload.to_json)
+    end
+
+    def get_approval_state # rubocop:disable Style/AccessorMethodName
+      query = "?op=GetDeploymentApprovalState&deploymentId=#{deployment_id}"
+      complete_path = @owner_ajax_path + query
+      make_request(:get, complete_path)
     end
 
     private
