@@ -96,6 +96,19 @@ module PuppetX::Puppetlabs
       make_request(:post, @owner_ajax_path, get_job_status_payload.to_json)
     end
 
+    def create_temp_node_group(parent_node_group_id, environment_name, is_environment_node_group)
+      payload = {
+        op: 'CreateTempNodeGroup',
+        content: {
+          deploymentId: @config[:deployment_id],
+          parentNodeGroupId: parent_node_group_id,
+          environmentName: environment_name,
+          isEnvironmentNodeGroup: is_environment_node_group,
+        },
+      }
+      make_request(:post, @owner_ajax_path, payload.to_json)
+    end
+
     private
 
     def deployment_token
