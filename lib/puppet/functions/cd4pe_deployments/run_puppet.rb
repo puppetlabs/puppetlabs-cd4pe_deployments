@@ -17,7 +17,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::run_puppet') do
   #   run_puppet($my_cool_environment, $nodes, false, 2)
   # @return [Hash] contains the results of the function
   #   * result [Hash] This contains data described by the following documentation:
-  #     https://puppet.com/docs/pe/2018.1/orchestrator_api_jobs_endpoint.html#get-jobs-job-id
+  #     https://puppet.com/docs/pe/latest/orchestrator_api_jobs_endpoint.html#get-jobs-job-id
   #   * error [Hash] Contains error info if any was encountered during the function call
 
   dispatch :run_puppet do
