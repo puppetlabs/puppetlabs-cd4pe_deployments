@@ -23,8 +23,6 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
 
   def wait_for_approval(&block)
     init_client
-    current_time = Time.now
-    max_time = current_time + 24 * 60 * 60
 
     approval_response = approval_pending?
     return approval_response unless approval_response[:error].nil?
@@ -33,8 +31,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
       url = approval_url
       block.call(url) if block_given? && !url.nil? # rubocop:disable Performance/RedundantBlockCall
 
-      while approval_response[:result].empty? && current_time < max_time
-        current_time = Time.now
+      while approval_response[:result].empty?
         approval_response = approval_pending?
         sleep(5)
       end
