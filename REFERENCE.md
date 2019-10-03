@@ -313,8 +313,11 @@ update_git_branch_ref("production", "c090ea692e67405c5572af6b2a9dc5f11c9080c0")
 
 The cd4pe_deployments::update_git_branch_ref function.
 
-Returns: `Object` success object
-* success [Boolean] whether or not the operation was successful
+Returns: `Hash` result hash
+See [README.md]() for information on result hash format
+* result [Hash]:
+  * success [Boolean] whether or not the operation was successful
+* error [Hash] contains error information if any
 
 ##### Examples
 
