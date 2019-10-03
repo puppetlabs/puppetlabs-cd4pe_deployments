@@ -16,13 +16,13 @@ describe 'cd4pe_deployments::delete_git_branch' do
   context 'happy' do
     include_context 'deployment'
 
-    let(:git_branch) { "development_b" }
+    let(:git_branch) { 'development_b' }
     let(:response) do
       {
         result: {
-          success: true
+          success: true,
         },
-        error: nil
+        error: nil,
       }
     end
 

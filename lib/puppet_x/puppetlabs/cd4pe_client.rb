@@ -138,7 +138,7 @@ module PuppetX::Puppetlabs
         content: {
           deploymentId: @config[:deployment_id],
           branchName: branch_name,
-        }
+        },
       }
       make_request(:post, @owner_ajax_path, payload.to_json)
     end
