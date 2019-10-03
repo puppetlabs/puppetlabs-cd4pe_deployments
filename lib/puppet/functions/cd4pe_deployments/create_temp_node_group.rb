@@ -3,11 +3,11 @@ require 'puppet_x/puppetlabs/cd4pe_function_result'
 
 # @summary Create a temporary Puppet Enterprise node group
 Puppet::Functions.create_function(:'cd4pe_deployments::create_temp_node_group') do
-  # @param [String] parent_node_group_id
+  # @param parent_node_group_id
   #   The ID string of the parent node group
-  # @param [String] environment_name
+  # @param environment_name
   #   The name of the environment to be associated with the temp node group
-  # @param [Optional[Boolean]] is_environment_node_group
+  # @param is_environment_node_group
   #   A Boolean to indicate if the node group should be an environment node group. Defaults to 'true'.
   # @example Create temp node group with parent node group id '3ed5c6c0-be33-4c62-9f41-a863a282b6ae'
   #   $parent_node_group_id = "3ed5c6c0-be33-4c62-9f41-a863a282b6ae"

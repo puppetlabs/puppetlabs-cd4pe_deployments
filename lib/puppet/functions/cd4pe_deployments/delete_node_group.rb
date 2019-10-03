@@ -3,7 +3,7 @@ require 'puppet_x/puppetlabs/cd4pe_function_result'
 
 # @summary Delete a Puppet Enterprise node group
 Puppet::Functions.create_function(:'cd4pe_deployments::delete_node_group') do
-  # @param [String] node_group_id
+  # @param node_group_id
   #   The ID string of the node group
   # @example Delete node group 3ed5c6c0-be33-4c62-9f41-a863a282b6ae
   #   delete_node_group("3ed5c6c0-be33-4c62-9f41-a863a282b6ae")
