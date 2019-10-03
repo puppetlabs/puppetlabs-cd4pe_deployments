@@ -3,19 +3,20 @@ require 'puppet_x/puppetlabs/cd4pe_function_result'
 
 # @summary Run Puppet using the Puppet Orchestrator for a set of nodes in a given environment
 Puppet::Functions.create_function(:'cd4pe_deployments::run_puppet') do
-  # @param [String] environment_name
+  # @param environment_name
   #   The name of the Puppet environment to deploy
-  # @param [Array[String]] nodes
+  # @param nodes
   #   The list of nodes to Run puppet on
-  # @param [Optional[Boolean]] noop
+  # @param noop
   #   A Boolean to run Puppet in Noop mode. Defaults to 'false'.
-  # @param [Integer] concurrency
+  # @param concurrency
   #   The number of nodes to concurrently run Puppet on. Defaults to the Puppet Orchestrator default.
   # @example Run Puppet on nodes in the 'development' environment
   #   $my_cool_environment = "development"
   #   $nodes = ["test1.example.com", "test2.example.com", "test3.example.com"]
   #   run_puppet($my_cool_environment, $nodes, false, 2)
   # @return [Hash] contains the results of the function
+  #   See [README.md]() for information on the CD4PEFunctionResult hash format
   #   * result [Hash] This contains data described by the following documentation:
   #     https://puppet.com/docs/pe/latest/orchestrator_api_jobs_endpoint.html#get-jobs-job-id
   #   * error [Hash] Contains error info if any was encountered during the function call

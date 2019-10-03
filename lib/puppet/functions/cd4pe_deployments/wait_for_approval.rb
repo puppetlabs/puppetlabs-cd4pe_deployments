@@ -15,7 +15,11 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
   #   wait_for_approval do |String $url|
   #     run_task("slack::notify", "#it-ops", "Please review this deployment for approval: ${url}")
   #   end
-  # @return [CD4PEFunctionResult] result
+  # @return [Hash] contains the results of the function
+  #   See [README.md]() for information on the CD4PEFunctionResult hash format
+  #   * result [Hash]:
+  #     * approvalDecision [Enum['APPROVED', 'DECLINED']] whether the deployment was approved or declined
+  #   * error [Hash] contains error information if any
   #
   dispatch :wait_for_approval do
     block_param

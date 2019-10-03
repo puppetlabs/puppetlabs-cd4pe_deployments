@@ -11,6 +11,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::deploy_code') do
   #   $my_cool_environment = "development"
   #   deploy_code($my_cool_environment)
   # @return [Hash] contains the results of the function
+  #   See [README.md]() for information on the CD4PEFunctionResult hash format
   #   * result [Array[Hash]] a list of deployment status objects described by the following documentation:
   #     https://puppet.com/docs/pe/latest/code_manager_api.html#response-format
   #   * error [Hash] Contains error info if any was encountered during the function call

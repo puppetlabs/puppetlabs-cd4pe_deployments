@@ -1,30 +1,29 @@
 require 'puppet_x/puppetlabs/cd4pe_client'
 require 'puppet_x/puppetlabs/cd4pe_function_result'
 
-# @summary Pin a list of nodes to Puppet Enterprise environment group
-Puppet::Functions.create_function(:'cd4pe_deployments::pin_nodes_to_env') do
-  # @param nodes
-  #   List of nodes to pin to the group
-  # @param node_group_id
-  #   The ID string of the node group
-  # @example Pin a list of nodes to an environment group
-  #   $my_cool_node_group_id = "3ed5c6c0-be33-4c62-9f41-a863a282b6ae"
-  #   pin_nodes_to_env(["example.node1.net", "example.node2.net", "example.node3.net"], $my_cool_node_group_id)
+# @summary Update a given git branch's HEAD ref to a new commit SHA
+Puppet::Functions.create_function(:'cd4pe_deployments::update_git_branch_ref') do
+  # @param branch_name
+  #   The name of the branch you want to update
+  # @param commit_sha
+  #   The commit SHA that will become the branch's new HEAD
+  # @example Update git branch "production" to commit c090ea692e67405c5572af6b2a9dc5f11c9080c0
+  #   update_git_branch_ref("production", "c090ea692e67405c5572af6b2a9dc5f11c9080c0")
   # @return [Hash] contains the results of the function
   #   See [README.md]() for information on the CD4PEFunctionResult hash format
   #   * result [Hash]:
-  #     * success [Boolean] whether or not the pinning succeeded
+  #     * success [Boolean] whether or not the operation was successful
   #   * error [Hash] contains error information if any
   #
-  dispatch :pin_nodes_to_env do
-    required_param 'Array', :nodes
-    required_param 'String', :node_group_id
+  dispatch :update_git_branch_ref do
+    required_param 'String', :branch_name
+    required_param 'String', :commit_sha
   end
 
-  def pin_nodes_to_env(nodes, node_group_id)
+  def update_git_branch_ref(branch_name, commit_sha)
     client = PuppetX::Puppetlabs::CD4PEClient.new
 
-    response = client.pin_nodes_to_env(nodes, node_group_id)
+    response = client.update_git_branch_ref(branch_name, commit_sha)
     if response.code == '200'
       response_body = JSON.parse(response.body, symbolize_names: true)
       return PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body)
