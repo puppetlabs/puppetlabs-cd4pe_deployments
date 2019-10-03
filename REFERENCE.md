@@ -37,6 +37,7 @@ create_temp_node_group($parent_node_group_id, $test_environment, true)
 The cd4pe_deployments::create_temp_node_group function.
 
 Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
 * result [Hash] Contains the new node group described by the following documentation:
   https://puppet.com/docs/pe/2019.1/groups_endpoint.html#response-format-01
 * error [Hash] Contains error info if any was encountered during the function call
@@ -87,8 +88,11 @@ delete_node_group("3ed5c6c0-be33-4c62-9f41-a863a282b6ae")
 
 The cd4pe_deployments::delete_node_group function.
 
-Returns: `Object` success object
-* success [Boolean] whether or not the operation was successful
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [Hash]:
+  * success [Boolean] whether or not the operation was successful
+* error [Hash] contains error information if any
 
 ##### Examples
 
@@ -124,6 +128,7 @@ deploy_code($my_cool_environment)
 The cd4pe_deployments::deploy_code function.
 
 Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
 * result [Array[Hash]] a list of deployment status objects described by the following documentation:
   https://puppet.com/docs/pe/latest/code_manager_api.html#response-format
 * error [Hash] Contains error info if any was encountered during the function call
@@ -167,17 +172,20 @@ $node_group = get_node_group_info("3ed5c6c0-be33-4c62-9f41-a863a282b6ae")
 
 The cd4pe_deployments::get_node_group function.
 
-Returns: `NodeGroup` a NodeGroup object:
-* `name [String] name of the node group`
-* `id [String] the node group's id`
-* `description [String] a short description of the node group`
-* `environment [String] the name of the environment`
-* `environmentTrumps [Boolean] is this an environment group?``
-* `parent [String] the name of the parent node group`
-* `rule [Array] puppetDB rule`
-* `classes [Hash] list of classes assigned to this node group`
-* `configData [Hash] node group's configuration`
-* `nodes [Array] list of nodes pinned to this group`
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [Hash]:
+  * `name [String] name of the node group`
+  * `id [String] the node group's id`
+  * `description [String] a short description of the node group`
+  * `environment [String] the name of the environment`
+  * `environmentTrumps [Boolean] is this an environment group?``
+  * `parent [String] the name of the parent node group`
+  * `rule [Array] puppetDB rule`
+  * `classes [Hash] list of classes assigned to this node group`
+  * `configData [Hash] node group's configuration`
+  * `nodes [Array] list of nodes pinned to this group`
+* error [Hash] contains error information if any
 
 ##### Examples
 
@@ -212,8 +220,11 @@ pin_nodes_to_env(["example.node1.net", "example.node2.net", "example.node3.net"]
 
 The cd4pe_deployments::pin_nodes_to_env function.
 
-Returns: `Object` success object
-* success [Boolean] whether or not the operation was sucessful
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [Hash]:
+  * success [Boolean] whether or not the pinning succeeded
+* error [Hash] contains error information if any
 
 ##### Examples
 
@@ -257,6 +268,7 @@ run_puppet($my_cool_environment, $nodes, false, 2)
 The cd4pe_deployments::run_puppet function.
 
 Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
 * result [Hash] This contains data described by the following documentation:
   https://puppet.com/docs/pe/latest/orchestrator_api_jobs_endpoint.html#get-jobs-job-id
 * error [Hash] Contains error info if any was encountered during the function call
@@ -313,8 +325,8 @@ update_git_branch_ref("production", "c090ea692e67405c5572af6b2a9dc5f11c9080c0")
 
 The cd4pe_deployments::update_git_branch_ref function.
 
-Returns: `Hash` result hash
-See [README.md]() for information on result hash format
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
 * result [Hash]:
   * success [Boolean] whether or not the operation was successful
 * error [Hash] contains error information if any
@@ -365,7 +377,11 @@ at the start of the wait time. The lambda includes the "url" which is a link to 
 the max approval window is exceeded (24 hours) or approval is declined, a Bolt::PlanFailure is raised, otherwise a result
 is returned to the user.
 
-Returns: `CD4PEFunctionResult` result
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [Hash]:
+  * approvalDecision [Enum['APPROVED', 'DECLINED']] whether the deployment was approved or declined
+* error [Hash] contains error information if any
 
 ##### Examples
 

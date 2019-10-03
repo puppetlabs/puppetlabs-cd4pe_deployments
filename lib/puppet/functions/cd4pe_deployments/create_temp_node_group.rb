@@ -14,6 +14,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::create_temp_node_group') 
   #   $test_environment = "development"
   #   create_temp_node_group($parent_node_group_id, $test_environment, true)
   # @return [Hash] contains the results of the function
+  #   See [README.md]() for information on the CD4PEFunctionResult hash format
   #   * result [Hash] Contains the new node group described by the following documentation:
   #     https://puppet.com/docs/pe/2019.1/groups_endpoint.html#response-format-01
   #   * error [Hash] Contains error info if any was encountered during the function call

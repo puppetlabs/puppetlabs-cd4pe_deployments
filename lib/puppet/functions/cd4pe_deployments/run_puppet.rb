@@ -16,6 +16,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::run_puppet') do
   #   $nodes = ["test1.example.com", "test2.example.com", "test3.example.com"]
   #   run_puppet($my_cool_environment, $nodes, false, 2)
   # @return [Hash] contains the results of the function
+  #   See [README.md]() for information on the CD4PEFunctionResult hash format
   #   * result [Hash] This contains data described by the following documentation:
   #     https://puppet.com/docs/pe/latest/orchestrator_api_jobs_endpoint.html#get-jobs-job-id
   #   * error [Hash] Contains error info if any was encountered during the function call

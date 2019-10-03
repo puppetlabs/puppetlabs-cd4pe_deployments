@@ -7,8 +7,11 @@ Puppet::Functions.create_function(:'cd4pe_deployments::delete_node_group') do
   #   The ID string of the node group
   # @example Delete node group 3ed5c6c0-be33-4c62-9f41-a863a282b6ae
   #   delete_node_group("3ed5c6c0-be33-4c62-9f41-a863a282b6ae")
-  # @return [Object] success object
-  #   * success [Boolean] whether or not the operation was successful
+  # @return [Hash] contains the results of the function
+  #   See [README.md]() for information on the CD4PEFunctionResult hash format
+  #   * result [Hash]:
+  #     * success [Boolean] whether or not the operation was successful
+  #   * error [Hash] contains error information if any
   #
   dispatch :delete_node_group do
     required_param 'String', :node_group_id
