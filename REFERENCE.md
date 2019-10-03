@@ -11,6 +11,7 @@
 * [`cd4pe_deployments::get_node_group`](#cd4pe_deploymentsget_node_group): Get information about a Puppet Enterprise node group
 * [`cd4pe_deployments::pin_nodes_to_env`](#cd4pe_deploymentspin_nodes_to_env): Pin a list of nodes to Puppet Enterprise environment group
 * [`cd4pe_deployments::run_puppet`](#cd4pe_deploymentsrun_puppet): Run Puppet using the Puppet Orchestrator for a set of nodes in a given environment
+* [`cd4pe_deployments::update_git_branch_ref`](#cd4pe_deploymentsupdate_git_branch_ref): Update a given git branch's HEAD ref to a new commit SHA
 * [`cd4pe_deployments::wait_for_approval`](#cd4pe_deploymentswait_for_approval): Blocks further plan execution until the deployment is approved in CD4PE
 
 ## Functions
@@ -293,6 +294,47 @@ A Boolean to run Puppet in Noop mode. Defaults to 'false'.
 Data type: `Optional[Integer]`
 
 The number of nodes to concurrently run Puppet on. Defaults to the Puppet Orchestrator default.
+
+### cd4pe_deployments::update_git_branch_ref
+
+Type: Ruby 4.x API
+
+Update a given git branch's HEAD ref to a new commit SHA
+
+#### Examples
+
+##### Update git branch "production" to commit c090ea692e67405c5572af6b2a9dc5f11c9080c0
+
+```puppet
+update_git_branch_ref("production", "c090ea692e67405c5572af6b2a9dc5f11c9080c0")
+```
+
+#### `cd4pe_deployments::update_git_branch_ref(String $branch_name, String $commit_sha)`
+
+The cd4pe_deployments::update_git_branch_ref function.
+
+Returns: `Object` success object
+* success [Boolean] whether or not the operation was successful
+
+##### Examples
+
+###### Update git branch "production" to commit c090ea692e67405c5572af6b2a9dc5f11c9080c0
+
+```puppet
+update_git_branch_ref("production", "c090ea692e67405c5572af6b2a9dc5f11c9080c0")
+```
+
+##### `branch_name`
+
+Data type: `String`
+
+The name of the branch you want to update
+
+##### `commit_sha`
+
+Data type: `String`
+
+The commit SHA that will become the branch's new HEAD
 
 ### cd4pe_deployments::wait_for_approval
 

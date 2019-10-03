@@ -1,0 +1,52 @@
+require 'spec_helper'
+require_relative '../../../lib/puppet/functions/cd4pe_deployments/update_git_branch_ref'
+require 'webmock/rspec'
+
+describe 'cd4pe_deployments::update_git_branch_ref' do
+  let(:ajax_op) { 'UpdateGitRef' }
+
+  context 'table steaks' do
+    include_context 'deployment'
+
+    it 'exists' do
+      is_expected.not_to eq(nil)
+    end
+
+    it 'requires 2 parameters' do
+      is_expected.to run.with_params('branch').and_raise_error(ArgumentError)
+    end
+  end
+
+  context 'happy' do
+    include_context 'deployment'
+
+    let(:git_branch) { 'development_b' }
+    let(:commit_sha) { 'c090ea692e67405c5572af6b2a9dc5f11c9080c0' }
+    let(:response) do
+      {
+        result: {
+          success: true,
+        },
+        error: nil,
+      }
+    end
+
+    it 'succeeds with parameters' do
+      stub_request(:post, ajax_url)
+        .with(body: { op: ajax_op, content: { deploymentId: deployment_id, branchName: git_branch, commitSha: commit_sha } }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
+        .to_return(body: JSON.generate(response[:result]))
+        .times(1)
+
+      is_expected.to run.with_params(git_branch, commit_sha).and_return(response)
+    end
+
+    it 'fails with non-200 response code' do
+      stub_request(:post, ajax_url)
+        .with(body: { op: ajax_op, content: { deploymentId: deployment_id, branchName: git_branch, commitSha: commit_sha } }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
+        .to_return(body: JSON.generate(error_response), status: 404)
+        .times(1)
+
+      is_expected.to run.with_params(git_branch, commit_sha).and_return(error_response)
+    end
+  end
+end
