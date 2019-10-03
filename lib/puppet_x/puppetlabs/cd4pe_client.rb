@@ -132,6 +132,17 @@ module PuppetX::Puppetlabs
       make_request(:post, @owner_ajax_path, payload.to_json)
     end
 
+    def delete_git_branch(branch_name)
+      payload = {
+        op: 'DeleteGitBranch',
+        content: {
+          deploymentId: @config[:deployment_id],
+          branchName: branch_name,
+        }
+      }
+      make_request(:post, @owner_ajax_path, payload.to_json)
+    end
+
     private
 
     def deployment_token
