@@ -9,8 +9,11 @@ Puppet::Functions.create_function(:'cd4pe_deployments::update_git_branch_ref') d
   #   The commit SHA that will become the branch's new HEAD
   # @example Update git branch "production" to commit c090ea692e67405c5572af6b2a9dc5f11c9080c0
   #   update_git_branch_ref("production", "c090ea692e67405c5572af6b2a9dc5f11c9080c0")
-  # @return [Object] success object
-  #   * success [Boolean] whether or not the operation was successful
+  # @return [Hash] result hash
+  #   See [README.md]() for information on result hash format
+  #   * result:
+  #     * success [Boolean] whether or not the operation was successful
+  #   * error [Hash] contains error information if any
   #
   dispatch :update_git_branch_ref do
     required_param 'String', :branch_name
