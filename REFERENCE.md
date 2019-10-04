@@ -6,6 +6,7 @@
 **Functions**
 
 * [`cd4pe_deployments::create_temp_node_group`](#cd4pe_deploymentscreate_temp_node_group): Create a temporary Puppet Enterprise node group
+* [`cd4pe_deployments::delete_git_branch`](#cd4pe_deploymentsdelete_git_branch): Delete a git branch on your VCS
 * [`cd4pe_deployments::delete_node_group`](#cd4pe_deploymentsdelete_node_group): Delete a Puppet Enterprise node group
 * [`cd4pe_deployments::deploy_code`](#cd4pe_deploymentsdeploy_code): Performs a Puppet Enterprise Code Manager deployment for the given environment
 * [`cd4pe_deployments::get_node_group`](#cd4pe_deploymentsget_node_group): Get information about a Puppet Enterprise node group
@@ -69,6 +70,41 @@ The name of the environment to be associated with the temp node group
 Data type: `Optional[Boolean]`
 
 A Boolean to indicate if the node group should be an environment node group. Defaults to 'true'.
+
+### cd4pe_deployments::delete_git_branch
+
+Type: Ruby 4.x API
+
+Delete a git branch on your VCS
+
+#### Examples
+
+##### Delete git branch "development_b"
+
+```puppet
+delete_git_branch("development_b")
+```
+
+#### `cd4pe_deployments::delete_git_branch(String $branch_name)`
+
+The cd4pe_deployments::delete_git_branch function.
+
+Returns: `Object` success object
+* success [Boolean] whether or not the operation was successful
+
+##### Examples
+
+###### Delete git branch "development_b"
+
+```puppet
+delete_git_branch("development_b")
+```
+
+##### `branch_name`
+
+Data type: `String`
+
+The name of the branch you want to delete
 
 ### cd4pe_deployments::delete_node_group
 
