@@ -160,6 +160,9 @@ module PuppetX::Puppetlabs
 
     def make_request(type, api_url, payload = '')
       connection = Net::HTTP.new(@config[:server], @config[:port])
+      if @config[:scheme] == 'https'
+        connection.use_ssl = true
+      end
 
       headers = {
         'Content-Type' => 'application/json',
@@ -172,7 +175,7 @@ module PuppetX::Puppetlabs
       while attempts < max_attempts
         attempts += 1
         begin
-          Puppet.debug("cd4pe_client: requesting #{type} #{api_url}")
+          Puppet.debug("cd4pe_client: requesting #{type} #{service_url}#{api_url}")
           case type
           when :delete
             response = connection.delete(api_url, headers)
