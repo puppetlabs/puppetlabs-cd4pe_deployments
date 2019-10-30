@@ -109,22 +109,37 @@ module PuppetX::Puppetlabs
       make_request(:post, @owner_ajax_path, payload.to_json)
     end
 
-    def delete_git_branch(branch_name)
+    def delete_git_branch(repo_type, branch_name)
       payload = {
         op: 'DeleteGitBranch',
         content: {
           deploymentId: @config[:deployment_id],
+          repoType: repo_type,
           branchName: branch_name,
         },
       }
       make_request(:post, @owner_ajax_path, payload.to_json)
     end
 
-    def update_git_branch_ref(branch_name, commit_sha)
+    def update_git_branch_ref(repo_type, branch_name, commit_sha)
       payload = {
         op: 'UpdateGitRef',
         content: {
           deploymentId: @config[:deployment_id],
+          repoType: repo_type,
+          branchName: branch_name,
+          commitSha: commit_sha,
+        },
+      }
+      make_request(:post, @owner_ajax_path, payload.to_json)
+    end
+
+    def create_git_branch(repo_type, branch_name, commit_sha)
+      payload = {
+        op: 'CreateGitBranch',
+        content: {
+          deploymentId: @config[:deployment_id],
+          repoType: repo_type,
           branchName: branch_name,
           commitSha: commit_sha,
         },
