@@ -20,7 +20,7 @@ describe 'cd4pe_deployments::update_git_branch_ref' do
   context 'happy' do
     include_context 'deployment'
 
-    let(:repo_type) { 'CONTROL_REPO'}
+    let(:repo_type) { 'CONTROL_REPO' }
     let(:git_branch) { 'development_b' }
     let(:commit_sha) { 'c090ea692e67405c5572af6b2a9dc5f11c9080c0' }
     let(:response) do
@@ -34,7 +34,20 @@ describe 'cd4pe_deployments::update_git_branch_ref' do
 
     it 'succeeds with parameters' do
       stub_request(:post, ajax_url)
-        .with(body: { op: ajax_op, content: { repoType: repo_type, deploymentId: deployment_id, branchName: git_branch, commitSha: commit_sha } }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
+        .with(
+          body: {
+            op: ajax_op,
+            content: {
+              repoType: repo_type,
+              deploymentId: deployment_id,
+              branchName: git_branch,
+              commitSha: commit_sha,
+            },
+          },
+          headers: {
+            'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}",
+          },
+        )
         .to_return(body: JSON.generate(response[:result]))
         .times(1)
 
@@ -43,7 +56,20 @@ describe 'cd4pe_deployments::update_git_branch_ref' do
 
     it 'fails with non-200 response code' do
       stub_request(:post, ajax_url)
-        .with(body: { op: ajax_op, content: { repoType: repo_type, deploymentId: deployment_id, branchName: git_branch, commitSha: commit_sha } }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
+        .with(
+          body: {
+            op: ajax_op,
+            content: {
+              repoType: repo_type,
+              deploymentId: deployment_id,
+              branchName: git_branch,
+              commitSha: commit_sha,
+            },
+          },
+          headers: {
+            'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}",
+          },
+        )
         .to_return(body: JSON.generate(error_response), status: 404)
         .times(1)
 
