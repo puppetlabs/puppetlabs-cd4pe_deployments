@@ -20,7 +20,7 @@ describe 'cd4pe_deployments::update_git_branch_ref' do
   context 'happy' do
     include_context 'deployment'
 
-    let(:repo_type) { 'CONTROL'}
+    let(:repo_type) { 'CONTROL_REPO'}
     let(:git_branch) { 'development_b' }
     let(:commit_sha) { 'c090ea692e67405c5572af6b2a9dc5f11c9080c0' }
     let(:response) do
