@@ -9,13 +9,14 @@ describe 'cd4pe_deployments::delete_git_branch' do
     is_expected.not_to eq(nil)
   end
 
-  it 'requires 1 parameters' do
+  it 'requires 2 parameters' do
     is_expected.to run.with_params.and_raise_error(ArgumentError)
   end
 
   context 'happy' do
     include_context 'deployment'
 
+    let(:repo_type) { 'MODULE' }
     let(:git_branch) { 'development_b' }
     let(:response) do
       {
@@ -28,20 +29,20 @@ describe 'cd4pe_deployments::delete_git_branch' do
 
     it 'succeeds with parameters' do
       stub_request(:post, ajax_url)
-        .with(body: { op: ajax_op, content: { deploymentId: deployment_id, branchName: git_branch } }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
+        .with(body: { op: ajax_op, content: { repoType: repo_type, deploymentId: deployment_id, branchName: git_branch } }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
         .to_return(body: JSON.generate(response[:result]))
         .times(1)
 
-      is_expected.to run.with_params(git_branch).and_return(response)
+      is_expected.to run.with_params(repo_type, git_branch).and_return(response)
     end
 
     it 'fails with non-200 response code' do
       stub_request(:post, ajax_url)
-        .with(body: { op: ajax_op, content: { deploymentId: deployment_id, branchName: git_branch } }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
+        .with(body: { op: ajax_op, content: { repoType: repo_type, deploymentId: deployment_id, branchName: git_branch } }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
         .to_return(body: JSON.generate(error_response), status: 404)
         .times(1)
 
-      is_expected.to run.with_params(git_branch).and_return(error_response)
+      is_expected.to run.with_params(repo_type, git_branch).and_return(error_response)
     end
   end
 end
