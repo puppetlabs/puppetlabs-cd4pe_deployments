@@ -57,6 +57,7 @@ RSpec.shared_context 'deployment' do
   let(:deployment_id) { '123' }
   let(:deployment_token) { '1234abcd' }
   let(:node_group_id) { 'aasdf-1234asdf-1234' }
+  let(:environment_name) { 'development' }
   let(:ajax_url) { "#{test_host}/#{deployment_owner}/ajax" }
   let(:response) do
     {

@@ -9,10 +9,12 @@ require 'bolt/error'
 # the max approval window is exceeded (24 hours) or approval is declined, a Bolt::PlanFailure is raised, otherwise a result
 # is returned to the user.
 Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
+  # @param environment_name
+  # The name of the environment to wait for approval on. Does nothing if the specified environment is not protected.
   # @param block
   #   Takes a block that provides the URL to the deployment's approval page
   # @example Notify Slack users that approval is needed
-  #   wait_for_approval do |String $url|
+  #   wait_for_approval("development") do |String $url|
   #     run_task("slack::notify", "#it-ops", "Please review this deployment for approval: ${url}")
   #   end
   # @return [Hash] contains the results of the function
@@ -22,11 +24,18 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
   #   * error [Hash] contains error information if any
   #
   dispatch :wait_for_approval do
-    block_param
+    required_param 'String', :environment_name
+    block_param :block
   end
 
-  def wait_for_approval(&block)
+  def wait_for_approval(environment_name, &block)
     init_client
+
+    response = attempt_set_deployment_pending(environment_name)
+
+    unless response[:result][:isPending]
+      return # What should we return if anything?
+    end
 
     approval_response = approval_pending?
     return approval_response unless approval_response[:error].nil?
@@ -48,22 +57,34 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
 
   def approval_pending?
     response = @client.get_approval_state
-
-    if response.code == '200'
+    case response
+    when Net::HTTPSuccess
       response_body = JSON.parse(response.body, symbolize_names: true)
       return PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body)
-    elsif response.code =~ %r{4[0-9]+}
+    when Net::HTTPClientError
       response_body = JSON.parse(response.body, symbolize_names: true)
       return PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
-    else
+    when Net::HTTPServerError
       raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
-  rescue => exception
-    PuppetX::Puppetlabs::CD4PEFunctionResult.create_exception_result(exception)
   end
 
   def approval_url
     "#{@client.config[:scheme]}://#{@client.config[:server]}:#{@client.config[:port]}/#{@client.config[:deployment_owner]}/deployments/#{@client.config[:deployment_id]}"
+  end
+
+  def attempt_set_deployment_pending(environment_name)
+    response = @client.deployment_pending_approval(environment_name)
+    case response
+    when Net::HTTPSuccess
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body)
+    when Net::HTTPClientError
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
+    when Net::HTTPServerError
+      raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
+    end
   end
 
   def approval_decision(response)
