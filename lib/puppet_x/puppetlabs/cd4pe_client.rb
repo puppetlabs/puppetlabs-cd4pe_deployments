@@ -71,6 +71,18 @@ module PuppetX::Puppetlabs
       make_request(:get, complete_path)
     end
 
+    def deployment_pending_approval(environment_name)
+      payload = {
+        op: 'SetDeploymentPendingApproval',
+        content: {
+          deploymentId: @config[:deployment_id],
+          environment: environment_name,
+        },
+      }
+
+      make_request(:post, @owner_ajax_path, payload.to_json)
+    end
+
     def run_puppet(environment_name, nodes, concurrency, noop)
       run_puppet_payload = {
         op: 'RunPuppet',
