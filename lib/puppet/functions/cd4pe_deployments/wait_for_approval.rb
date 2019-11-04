@@ -34,7 +34,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
     response = attempt_set_deployment_pending(environment_name)
 
     unless response[:result][:isPending]
-      return # What should we return if anything?
+      return response
     end
 
     approval_response = approval_pending?
@@ -67,6 +67,8 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
     when Net::HTTPServerError
       raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
+  rescue => exception
+    PuppetX::Puppetlabs::CD4PEFunctionResult.create_exception_result(exception)
   end
 
   def approval_url
@@ -85,6 +87,8 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
     when Net::HTTPServerError
       raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
+  rescue => exception
+    PuppetX::Puppetlabs::CD4PEFunctionResult.create_exception_result(exception)
   end
 
   def approval_decision(response)
