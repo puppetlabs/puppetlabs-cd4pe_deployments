@@ -52,12 +52,7 @@ describe 'cd4pe_deployments::partition_nodes' do
     end
 
     it 'succeeds with parameters' do
-      stub_request(:get, ajax_url)
-        .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
-        .to_return(body: JSON.generate(node_list))
-        .times(1)
-
-      is_expected.to run.with_params(node_group_id, batch_size).and_return(result)
+      is_expected.to run.with_params(node_list, batch_size).and_return(result)
     end
 
     it 'succeeds with an empty node list' do
@@ -65,16 +60,17 @@ describe 'cd4pe_deployments::partition_nodes' do
         .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
         .to_return(body: JSON.generate(nodes: []))
         .times(1)
-      is_expected.to run.with_params(node_group_id, batch_size).and_return(result: [], error: nil)
+      is_expected.to run.with_params({ nodes: [] }, batch_size).and_return(result: [], error: nil)
     end
 
-    it 'fails with non-200 response code' do
-      stub_request(:get, ajax_url)
-        .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
-        .to_return(body: JSON.generate(error_response), status: 404)
-        .times(1)
-
-      is_expected.to run.with_params(node_group_id, batch_size).and_return(error_response)
+    it 'fails with an exception' do
+      is_expected.to run.with_params({ nope: [] }, batch_size).and_return(
+        result: nil,
+        error: {
+          message: "Encountered exception: node_group must contain a 'nodes' key of type Array",
+          code: 'EncounteredException',
+        },
+      )
     end
   end
 end
