@@ -38,15 +38,15 @@ describe 'cd4pe_deployments::wait_for_approval' do
 
     let(:response) do
       {
-        approvalDecision: 'APPROVED',
+        'approvalDecision' => 'APPROVED',
       }
     end
 
     let(:response404) do
       {
-        error: {
-          message: 'Something went wrong, make sure your seatbelt is securely fastened',
-          code: 'FunctionFailure',
+        'error' => {
+          'message' => 'Something went wrong, make sure your seatbelt is securely fastened',
+          'code' => 'FunctionFailure',
         },
       }
     end
@@ -96,10 +96,10 @@ describe 'cd4pe_deployments::wait_for_approval' do
       is_expected
         .to(run.with_params(environment_name).with_lambda { |url| puts url }
         .and_return(
-          result: nil,
-          error: {
-            message: 'Something went wrong, make sure your seatbelt is securely fastened',
-            code: 'FunctionFailure',
+          'result' => nil,
+          'error' => {
+            'message' => 'Something went wrong, make sure your seatbelt is securely fastened',
+            'code' => 'FunctionFailure',
           },
         ))
     end
@@ -125,10 +125,10 @@ describe 'cd4pe_deployments::wait_for_approval' do
       is_expected
         .to(run.with_params(environment_name).with_lambda { |url| puts url }
         .and_return(
-          result: nil,
-          error: {
-            message: 'Encountered exception: Received 3 server error responses from the CD4PE service at http://puppet.test:80: 500 nobody',
-            code: 'EncounteredException',
+          'result' => nil,
+          'error' => {
+            'message' => 'Encountered exception: Received 3 server error responses from the CD4PE service at http://puppet.test:80: 500 nobody',
+            'code' => 'EncounteredException',
           },
         ))
     end
@@ -155,8 +155,8 @@ describe 'cd4pe_deployments::wait_for_approval' do
       is_expected
         .to(run.with_params(environment_name).with_lambda { |url| puts url }
         .and_return(
-          result: { approvalDecision: 'APPROVED' },
-          error: nil,
+          'result' => { 'approvalDecision' => 'APPROVED' },
+          'error' => nil,
         ))
     end
   end

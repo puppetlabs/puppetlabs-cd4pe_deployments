@@ -1,9 +1,9 @@
 require 'spec_helper'
-require_relative '../../../lib/puppet/functions/cd4pe_deployments/update_git_branch_ref'
+require_relative '../../../lib/puppet/functions/cd4pe_deployments/create_git_branch'
 require 'webmock/rspec'
 
-describe 'cd4pe_deployments::update_git_branch_ref' do
-  let(:ajax_op) { 'UpdateGitRef' }
+describe 'cd4pe_deployments::create_git_branch' do
+  let(:ajax_op) { 'CreateGitBranch' }
 
   context 'table steaks' do
     include_context 'deployment'
@@ -25,10 +25,10 @@ describe 'cd4pe_deployments::update_git_branch_ref' do
     let(:commit_sha) { 'c090ea692e67405c5572af6b2a9dc5f11c9080c0' }
     let(:response) do
       {
-        result: {
-          success: true,
+        'result' => {
+          'success' => true,
         },
-        error: nil,
+        'error' => nil,
       }
     end
 
@@ -48,7 +48,7 @@ describe 'cd4pe_deployments::update_git_branch_ref' do
             'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}",
           },
         )
-        .to_return(body: JSON.generate(response[:result]))
+        .to_return(body: JSON.generate(response['result']))
         .times(1)
 
       is_expected.to run.with_params(repo_type, git_branch, commit_sha).and_return(response)

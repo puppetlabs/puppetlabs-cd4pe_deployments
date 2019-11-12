@@ -23,8 +23,8 @@ Puppet::Functions.create_function(:'cd4pe_deployments::partition_nodes') do
   end
 
   def partition_nodes(node_group, batch_size)
-    if node_group.key?(:nodes) && node_group[:nodes].is_a?(Array)
-      batches = node_group[:nodes].each_slice(batch_size).to_a
+    if node_group.key?('nodes') && node_group['nodes'].is_a?(Array)
+      batches = node_group['nodes'].each_slice(batch_size).to_a
       return PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(batches)
     end
     raise Puppet::Error, "node_group must contain a 'nodes' key of type Array"

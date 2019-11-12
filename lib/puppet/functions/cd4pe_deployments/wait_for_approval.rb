@@ -33,23 +33,23 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
 
     response = attempt_set_deployment_pending(environment_name)
 
-    unless response[:result][:isPending]
+    unless response['result']['isPending']
       return response
     end
 
     approval_response = approval_pending?
-    return approval_response unless approval_response[:error].nil?
+    return approval_response unless approval_response['error'].nil?
 
-    if approval_response[:result].empty? # rubocop:disable Style/GuardClause
+    if approval_response['result'].empty? # rubocop:disable Style/GuardClause
       url = approval_url
       block.call(url) if block_given? && !url.nil? # rubocop:disable Performance/RedundantBlockCall
 
-      while approval_response[:result].empty?
+      while approval_response['result'].empty?
         approval_response = approval_pending?
         sleep(5)
       end
 
-      raise Bolt::PlanFailure.new("Approval timed out for deployment #{ENV['DEPLOYMENT_ID']}", 'bolt/plan-failure') if approval_response[:result].empty?
+      raise Bolt::PlanFailure.new("Approval timed out for deployment #{ENV['DEPLOYMENT_ID']}", 'bolt/plan-failure') if approval_response['result'].empty?
       raise Bolt::PlanFailure.new("Deployment #{ENV['DEPLOYMENT_ID']} declined", 'bolt/plan-failure') if approval_decision(approval_response) == 'DECLINED'
       approval_response
     end
@@ -92,7 +92,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
   end
 
   def approval_decision(response)
-    response[:result][:approvalDecision]
+    response['result']['approvalDecision']
   end
 
   def init_client

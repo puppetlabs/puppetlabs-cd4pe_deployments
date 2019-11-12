@@ -10,8 +10,8 @@ module PuppetX::Puppetlabs
     def self.create_error_hash(message, code)
       if message && code
         error_body = {
-          message: message,
-          code: code,
+          'message' => message,
+          'code' => code,
         }
       end
 
@@ -25,8 +25,8 @@ module PuppetX::Puppetlabs
     def self.create_error_result(response)
       create_result(
         nil,
-        response[:error][:message],
-        response[:error][:code],
+        response['error']['message'],
+        response['error']['code'],
       )
     end
 

@@ -20,17 +20,17 @@ describe 'cd4pe_deployments::delete_git_branch' do
     let(:git_branch) { 'development_b' }
     let(:response) do
       {
-        result: {
-          success: true,
+        'result' => {
+          'success' => true,
         },
-        error: nil,
+        'error' => nil,
       }
     end
 
     it 'succeeds with parameters' do
       stub_request(:post, ajax_url)
         .with(body: { op: ajax_op, content: { repoType: repo_type, deploymentId: deployment_id, branchName: git_branch } }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
-        .to_return(body: JSON.generate(response[:result]))
+        .to_return(body: JSON.generate(response['result']))
         .times(1)
 
       is_expected.to run.with_params(repo_type, git_branch).and_return(response)

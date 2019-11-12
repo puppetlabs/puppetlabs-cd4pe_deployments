@@ -17,7 +17,7 @@ describe 'cd4pe_deployments::partition_nodes' do
     let(:batch_size) { 3 }
     let(:node_list) do
       {
-        nodes: [
+        'nodes' => [
           'carlscoolnode1.net',
           'carlscoolnode2.net',
           'carlscoolnode3.net',
@@ -31,7 +31,7 @@ describe 'cd4pe_deployments::partition_nodes' do
 
     let(:result) do
       {
-        result:
+        'result' =>
           [
             [
               'carlscoolnode1.net',
@@ -47,7 +47,7 @@ describe 'cd4pe_deployments::partition_nodes' do
               'carlscoolnode7.net',
             ],
           ],
-        error: nil,
+        'error' => nil,
       }
     end
 
@@ -58,17 +58,17 @@ describe 'cd4pe_deployments::partition_nodes' do
     it 'succeeds with an empty node list' do
       stub_request(:get, ajax_url)
         .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
-        .to_return(body: JSON.generate(nodes: []))
+        .to_return(body: JSON.generate('nodes' => []))
         .times(1)
-      is_expected.to run.with_params({ nodes: [] }, batch_size).and_return(result: [], error: nil)
+      is_expected.to run.with_params({ 'nodes' => [] }, batch_size).and_return('result' => [], 'error' => nil)
     end
 
     it 'fails with an exception' do
-      is_expected.to run.with_params({ nope: [] }, batch_size).and_return(
-        result: nil,
-        error: {
-          message: "Encountered exception: node_group must contain a 'nodes' key of type Array",
-          code: 'EncounteredException',
+      is_expected.to run.with_params({ 'nope' => [] }, batch_size).and_return(
+        'result' => nil,
+        'error' => {
+          'message' => "Encountered exception: node_group must contain a 'nodes' key of type Array",
+          'code' => 'EncounteredException',
         },
       )
     end
