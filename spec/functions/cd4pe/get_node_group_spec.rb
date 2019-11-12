@@ -17,7 +17,7 @@ describe 'cd4pe_deployments::get_node_group' do
     it 'succeeds with parameters' do
       stub_request(:get, ajax_url)
         .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
-        .to_return(body: JSON.generate(response[:result]))
+        .to_return(body: JSON.generate(response['result']))
         .times(1)
 
       is_expected.to run.with_params(node_group_id).and_return(response)

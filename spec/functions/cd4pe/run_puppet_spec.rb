@@ -29,9 +29,9 @@ describe 'cd4pe_deployments::run_puppet' do
     end
     let(:run_puppet_response) do
       {
-        job: {
-          id: 'https://test-pe:8143/orchestrator/v1/jobs/1',
-          name: '1',
+        'job' => {
+          'id' => 'https://test-pe:8143/orchestrator/v1/jobs/1',
+          'name' => '1',
         },
       }
     end
@@ -55,13 +55,13 @@ describe 'cd4pe_deployments::run_puppet' do
           headers: { 'content-type' => 'application/json', 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" },
           body: {
             op: 'GetPuppetRunStatus',
-            content: { deploymentId: deployment_id, jobId: run_puppet_response[:job] },
+            content: { deploymentId: deployment_id, jobId: run_puppet_response['job'] },
           },
         )
         .to_return({ body: JSON.generate(state: 'running'), status: 200 }, body: JSON.generate(state: 'finished'), status: 200)
         .times(2)
 
-      is_expected.to run.with_params(environment_name, puppet_run_request[:nodes], puppet_run_request[:withNoop]).and_return(result: { state: 'finished' }, error: nil)
+      is_expected.to run.with_params(environment_name, puppet_run_request[:nodes], puppet_run_request[:withNoop]).and_return('result' => { 'state' => 'finished' }, 'error' => nil)
     end
   end
 end

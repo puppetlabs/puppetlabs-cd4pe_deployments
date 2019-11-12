@@ -61,21 +61,21 @@ RSpec.shared_context 'deployment' do
   let(:ajax_url) { "#{test_host}/#{deployment_owner}/ajax" }
   let(:response) do
     {
-      result: {
-        name: 'deployment',
-        id: '123',
-        description: 'carls cool deployment',
+      'result' => {
+        'name' => 'deployment',
+        'id' => '123',
+        'description' => 'carls cool deployment',
       },
-      error: nil,
+      'error' => nil,
     }
   end
 
   let(:error_response) do
     {
-      result: nil,
-      error: {
-        message: 'Some error message',
-        code: 'ErrorCode',
+      'result' => nil,
+      'error' => {
+        'message' => 'Some error message',
+        'code' => 'ErrorCode',
       },
     }
   end

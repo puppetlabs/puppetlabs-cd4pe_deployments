@@ -32,10 +32,10 @@ Puppet::Functions.create_function(:'cd4pe_deployments::run_puppet') do
     @client = PuppetX::Puppetlabs::CD4PEClient.new
     response = @client.run_puppet(environment_name, nodes, concurrency, noop)
     if response.code == '200'
-      create_job_res = JSON.parse(response.body, symbolize_names: true)
-      return wait_for_puppet_run(create_job_res[:job])
+      create_job_res = JSON.parse(response.body, symbolize_names: false)
+      return wait_for_puppet_run(create_job_res['job'])
     elsif response.code =~ %r{4[0-9]+}
-      response_body = JSON.parse(response.body, symbolize_names: true)
+      response_body = JSON.parse(response.body, symbolize_names: false)
       return PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
     else
       raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
@@ -50,10 +50,10 @@ Puppet::Functions.create_function(:'cd4pe_deployments::run_puppet') do
     until terminal_states.include? current_state
       run_status_res = @client.get_puppet_run_status(job)
       if run_status_res.code == '200'
-        run_status = JSON.parse(run_status_res.body, symbolize_names: true)
-        current_state = run_status[:state]
+        run_status = JSON.parse(run_status_res.body, symbolize_names: false)
+        current_state = run_status['state']
       elsif run_status_res.code =~ %r{4[0-9]+}
-        error_body = JSON.parse(run_status_res.body, symbolize_names: true)
+        error_body = JSON.parse(run_status_res.body, symbolize_names: false)
         return PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(error_body)
       else
         raise Puppet::Error "Unknown HTTP Error with code: #{run_status_res.code} and body #{run_status_res.body} while polling Puppet run status"

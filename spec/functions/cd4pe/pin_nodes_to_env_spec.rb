@@ -16,7 +16,7 @@ describe 'cd4pe_deployments::pin_nodes_to_env' do
 
     let(:nodes) { ['carlscoolnode.one.net', 'carlscoolnode.two.net', 'carlscoolnode.three.net'] }
     let(:response) do
-      { result: { success: true }, error: nil }
+      { 'result' => { 'success' => true }, 'error' => nil }
     end
 
     it 'succeeds with parameters' do
@@ -28,7 +28,7 @@ describe 'cd4pe_deployments::pin_nodes_to_env' do
             content: { deploymentId: deployment_id, nodeGroupId: node_group_id, nodes: nodes },
           },
         )
-        .to_return(body: JSON.generate(response[:result]), status: 200)
+        .to_return(body: JSON.generate(response['result']), status: 200)
         .times(1)
 
       is_expected.to run.with_params(nodes, node_group_id).and_return(response)

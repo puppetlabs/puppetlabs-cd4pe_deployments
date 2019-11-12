@@ -31,11 +31,11 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_node_group') do
 
     response = client.get_node_group(node_group_id)
     if response.code == '200'
-      response_body = JSON.parse(response.body, symbolize_names: true)
+      response_body = JSON.parse(response.body, symbolize_names: false)
       return PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body)
 
     elsif response.code =~ %r{4[0-9]+}
-      response_body = JSON.parse(response.body, symbolize_names: true)
+      response_body = JSON.parse(response.body, symbolize_names: false)
       return PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
     else
       raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
