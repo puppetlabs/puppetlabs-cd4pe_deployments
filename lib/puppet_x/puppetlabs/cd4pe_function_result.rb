@@ -4,7 +4,7 @@ module PuppetX::Puppetlabs
     ENCOUNTERED_EXCEPTION_CODE = 'EncounteredException'.freeze
 
     def self.create_result_hash(result)
-      { result: result }
+      { 'result' => result }
     end
 
     def self.create_error_hash(message, code)
@@ -15,7 +15,7 @@ module PuppetX::Puppetlabs
         }
       end
 
-      { error: error_body }
+      { 'error' => error_body }
     end
 
     def self.create_result(result, error_message = nil, error_code = nil)
