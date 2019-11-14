@@ -16,5 +16,8 @@ plan cd4pe_deployments::eventual_consistency (
     fail_plan($update_git_ref_result['error']['message'], $update_git_ref_result['error']['code'])
   }
   $deploy_code_result = cd4pe_deployments::deploy_code($repo_target_branch)
-  cd4pe_deployments::validate_code_deploy_status($deploy_code_result)
+  $validate_code_deploy_result = cd4pe_deployments::validate_code_deploy_status($deploy_code_result)
+  if ($validate_code_deploy_result['error'] != undef) {
+    fail_plan($validate_code_deploy_result['error']['message'], $validate_code_deploy_result['error']['code'] )
+  }
 }
