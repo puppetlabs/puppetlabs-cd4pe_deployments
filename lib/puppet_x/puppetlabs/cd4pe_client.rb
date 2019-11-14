@@ -146,7 +146,7 @@ module PuppetX::Puppetlabs
       make_request(:post, @owner_ajax_path, payload.to_json)
     end
 
-    def create_git_branch(repo_type, branch_name, commit_sha)
+    def create_git_branch(repo_type, branch_name, commit_sha, cleanup)
       payload = {
         op: 'CreateGitBranch',
         content: {
@@ -154,6 +154,7 @@ module PuppetX::Puppetlabs
           repoType: repo_type,
           branchName: branch_name,
           commitSha: commit_sha,
+          cleanup: cleanup
         },
       }
       make_request(:post, @owner_ajax_path, payload.to_json)
