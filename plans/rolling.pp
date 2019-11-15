@@ -17,7 +17,7 @@ plan cd4pe_deployments::rolling (
 
   $sha = system::env('COMMIT')
   $target_node_group_id = system::env('NODE_GROUP_ID')
-  $target_branch = system::env('BRANCH')
+  $target_branch = system::env('REPO_TARGET_BRANCH')
 
   # Get information about the target node group
   $node_group_hash = cd4pe_deployments::get_node_group($target_node_group_id)
