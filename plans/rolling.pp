@@ -53,7 +53,6 @@ plan deployments::rolling (
   $tmp_git_branch_result = cd4pe_deployments::create_git_branch('CONTROL_REPO', $branch,  $sha, true)
   if ($tmp_git_branch_result[error]) {
     if ($tmp_git_branch_result[error][message] == "Branch already exists") {
-      notice("Branch ${branch} already exists. Continuing with deployment")
       $update_ref_results = cd4pe_deployments::update_git_branch_ref('CONTROL_REPO', $branch, $sha)
       if ($update_ref_results[error]) {
         fail_plan("Updating existing branch ${branch} to sha ${sha} failed. Error: ${update_ref_results[error]}")
