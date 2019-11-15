@@ -6,7 +6,7 @@
 # @param noop
 #     Indicates if the Puppet run should be a noop.
 plan cd4pe_deployments::direct (
-  Optional[Integer] $max_node_failure,
+  Integer $max_node_failure = 0,
   Boolean $noop = false,
 ) {
   $repo_target_branch = system::env('REPO_TARGET_BRANCH')
@@ -49,10 +49,7 @@ plan cd4pe_deployments::direct (
   $node_failure_count = $puppet_run_result['result']['nodeStates']['failedNodes']
   # Fail the deployment if the number of failures exceeds the threshold
 
-  if ($max_node_failure =~ Undef and $node_failure_count > 0) {
-    fail_plan('Puppet run failed on 1 more more nodes.')
-  }
-  if ($node_failure_count >= $max_node_failure) {
+  if ($node_failure_count > $max_node_failure) {
     fail_plan("Max node failure reached. ${node_failure_count} nodes failed.")
   }
 }
