@@ -40,6 +40,9 @@ plan cd4pe_deployments::rolling (
 
   $target_environment = $node_group_hash[result][environment]
 
+  # If the target environment requires approval, wait for that to take place
+  cd4pe_deployments::wait_for_approval($target_environment) |String $url| { }
+
   # Warn or fail if there are no nodes in the target environmnent
   if ($node_group_hash[result][nodes] =~ Undef) {
     $msg = "No nodes found in target node group ${node_group_hash[result][name]}"
@@ -55,9 +58,6 @@ plan cd4pe_deployments::rolling (
       return "${msg}. Deploying directly to target environment and ending deployment."
     }
   }
-
-  # If the target environment requires approval, wait for that to take place
-  cd4pe_deployments::wait_for_approval($target_environment) |String $url| { }
 
   $branch = "ROLLING_DEPLOYMENT_${system::env('DEPLOYMENT_ID')}"
   $tmp_git_branch_result = cd4pe_deployments::create_git_branch('CONTROL_REPO', $branch,  $sha, true)
