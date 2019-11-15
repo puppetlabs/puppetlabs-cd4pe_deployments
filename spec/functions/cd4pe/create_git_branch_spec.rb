@@ -42,6 +42,7 @@ describe 'cd4pe_deployments::create_git_branch' do
               deploymentId: deployment_id,
               branchName: git_branch,
               commitSha: commit_sha,
+              cleanup: true,
             },
           },
           headers: {
@@ -64,6 +65,7 @@ describe 'cd4pe_deployments::create_git_branch' do
               deploymentId: deployment_id,
               branchName: git_branch,
               commitSha: commit_sha,
+              cleanup: true,
             },
           },
           headers: {
