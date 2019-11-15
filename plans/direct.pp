@@ -10,11 +10,11 @@ plan cd4pe_deployments::direct (
   Boolean $noop = false,
 ) {
   $repo_target_branch = system::env('REPO_TARGET_BRANCH')
-  $src_commit = system::env('COMMIT')
+  $source_commit = system::env('COMMIT')
   $target_node_group_id = system::env('NODE_GROUP_ID')
   # Update the branch associated with the target environment to the source commit.
   $update_git_ref_result = cd4pe_deployments::update_git_branch_ref(
-    $repo_type,
+    'CONTROL_REPO',
     $repo_target_branch,
     $source_commit
   )
@@ -27,7 +27,9 @@ plan cd4pe_deployments::direct (
     fail_plan($get_node_group_result['error']['message'], $get_node_group_result['error']['code'])
   }
   $target_environment = $get_node_group_result['result']['environment']
-  # Deploy the code associated with the Node Group's environment
+  # Wait for approval if the environment is protected
+  cd4pe_deployments::wait_for_approval($target_environment) |String $url| { }
+  # Deploy the code associated with the Node Group's environment if the Deployment is approved
   $deploy_code_result = cd4pe_deployments::deploy_code($target_environment)
   $validate_code_deploy_result = cd4pe_deployments::validate_code_deploy_status($deploy_code_result)
   if ($validate_code_deploy_result['error'] =~ NotUndef) {
@@ -35,6 +37,9 @@ plan cd4pe_deployments::direct (
   }
 
   $nodes = $get_node_group_result['result']['nodes']
+  if $nodes =~ Undef {
+    fail_plan("No nodes found in target node group ${get_node_group_result['result']['name']}")
+  }
   # Perform a Puppet run on all nodes in the environment
   $puppet_run_result = cd4pe_deployments::run_puppet($target_environment, $nodes, $noop)
   if $puppet_run_result['error'] =~ NotUndef {
@@ -43,6 +48,10 @@ plan cd4pe_deployments::direct (
 
   $node_failure_count = $puppet_run_result['result']['nodeStates']['failedNodes']
   # Fail the deployment if the number of failures exceeds the threshold
+
+  if ($max_node_failure =~ Undef and $node_failure_count > 0) {
+    fail_plan('Puppet run failed on 1 more more nodes.')
+  }
   if ($node_failure_count >= $max_node_failure) {
     fail_plan("Max node failure reached. ${node_failure_count} nodes failed.")
   }
