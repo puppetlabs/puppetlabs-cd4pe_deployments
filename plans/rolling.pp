@@ -50,33 +50,30 @@ plan deployments::rolling (
   cd4pe_deployments::wait_for_approval($target_environment) |String $url| { }
 
   $branch = "ROLLING_DEPLOYMENT_${system::env('DEPLOYMENT_ID')}"
-  $tmp_git_branch_result = cd4pe_deployments::create_git_branch('CONTROL_REPO', $branch,  $sha)
+  $tmp_git_branch_result = cd4pe_deployments::create_git_branch('CONTROL_REPO', $branch,  $sha, true)
   if ($tmp_git_branch_result[error]) {
     if ($tmp_git_branch_result[error][message] == "Branch already exists") {
       notice("Branch ${branch} already exists. Continuing with deployment")
+      $update_ref_results = cd4pe_deployments::update_git_branch_ref('CONTROL_REPO', $branch, $sha)
+      if ($update_ref_results[error]) {
+        fail_plan("Updating existing branch ${branch} to sha ${sha} failed. Error: ${update_ref_results[error]}")
+      }
     } else {
       fail_plan("Could not create temporary git branch ${branch}: ${tmp_git_branch_result[error]}")
     }
   }
 
   $code_result = cd4pe_deployments::deploy_code($target_environment, $branch)
-  #$validate_code_deploy_result = cd4pe_deployments::validate_code_deploy_status($code_result)
-  #unless ($validate_code_deploy_result[error] =~ Undef) {
-  #  fail_plan("Code deployment failed to target environment ${target_environment}: ${validate_code_deploy_result[error][message]}")
-  #}
+  $validate_code_deploy_result = cd4pe_deployments::validate_code_deploy_status($code_result)
+  unless ($validate_code_deploy_result[error] =~ Undef) {
+    fail_plan("Code deployment failed to target environment ${target_environment}: ${validate_code_deploy_result[error][message]}")
+  }
 
   # Create a temporary environment node group to pin nodes to in order to run the puppet agent on 
   # nodes in the target environment in batches
   $child_group = cd4pe_deployments::create_temp_node_group($target_node_group_id, $branch, true)
   if $child_group[error] {
-
-    #Clean up thee temporary git branch created earlier
-    $delete_tmp_branch_result = cd4pe_deployments::delete_git_branch('CONTROL_REPO', $branch)
-    if ($delete_tmp_branch_result[error]) {
-      fail_plan("Could not create temporary node group: ${child_group[error]}. Also could not delete temporary git branch: ${branch}")
-    } else {
-      fail_plan("Could not create temporary node group: ${child_group[error]}")
-    }
+    fail_plan("Could not create temporary node group: ${child_group[error]}")
   }
 
   # Break the nodes into groups and deploy the change to each group one at a time
@@ -123,13 +120,7 @@ plan deployments::rolling (
   # Clean up the temporary temporary node group
   $delete_tmp_node_group_result = cd4pe_deployments::delete_node_group($child_group[result][id])
   if ($delete_tmp_node_group_result[error]) {
-    #Before we fail, we should try to clean up the git branch
-    $delete_tmp_git_branch = cd4pe_deployments::delete_git_branch('CONTROL_REPO', $child_group[result][environment])
-    if ($delete_tmp_git_branch[error]) {
-      fail_plan("Unable to delete the tmporary git branch ${child_group[result][environment]} and also failed to delete the temporary git branch ${child_group[result][environment]}.")
-    } else {
-      fail_plan("Unable to delete the temporary node group ${child_group[result][name]}.")
-    }
+    fail_plan("Unable to delete the temporary node group ${child_group[result][name]}.")
   }
 
   # Clean up the temporary temporary git branch
