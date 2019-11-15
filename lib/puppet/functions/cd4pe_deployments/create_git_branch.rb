@@ -24,7 +24,6 @@ Puppet::Functions.create_function(:'cd4pe_deployments::create_git_branch') do
     required_param 'String', :branch_name
     required_param 'String', :commit_sha
     optional_param 'Boolean', :cleanup
-
   end
 
   def create_git_branch(repo_type, branch_name, commit_sha, cleanup = true)

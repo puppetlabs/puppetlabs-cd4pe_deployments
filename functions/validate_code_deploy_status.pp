@@ -6,12 +6,13 @@
 #   See the `deploy_code` docs for more info on the value of this object
 function cd4pe_deployments::validate_code_deploy_status(Hash $deploy_code_result) {
 
+  # If the deploy_code_result contains an error Hash then just return it as the error
   if $deploy_code_result['error'] != undef {
     return $deploy_code_result
   }
   $deploy_code_result['result'].each |Hash $status| {
     if $status['status'] == 'failed' {
-      $error_string = $status['error']
+      $error_string = $status['deploymentError']
       $error_msg = "Failed to deploy environment: ${status['environment']} with error: ${error_string}"
       $code = 'FailedCodeDeployment'
       $error_result = {

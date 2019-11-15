@@ -154,7 +154,7 @@ module PuppetX::Puppetlabs
           repoType: repo_type,
           branchName: branch_name,
           commitSha: commit_sha,
-          cleanup: cleanup
+          cleanup: cleanup,
         },
       }
       make_request(:post, @owner_ajax_path, payload.to_json)

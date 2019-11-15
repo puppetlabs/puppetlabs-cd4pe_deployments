@@ -25,7 +25,7 @@ describe 'cd4pe_deployments::validate_code_deploy_status' do
         'result' =>
         [
           {
-            'error' => { 'details' => 'stuff failed', 'kind' => 'bad-error' },
+            'deploymentError' => { 'details' => 'stuff failed', 'kind' => 'bad-error' },
             'environment' => 'production',
             'id' => '40',
             'status' => 'failed',
