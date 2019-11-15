@@ -94,6 +94,8 @@ plan cd4pe_deployments::rolling (
     # If there were failed nodes, add them to the to previous failed count
     unless ($puppet_run_result[result][nodeStates][failedNodes] =~ Undef ) {
       $node_failure_total = $failed_count + $puppet_run_result[result][nodeStates][failedNodes]
+    } else {
+      $node_failure_total = $failed_count
     }
 
     if ($node_failure_total >= $max_node_failure) {
