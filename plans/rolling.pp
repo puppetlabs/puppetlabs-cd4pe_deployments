@@ -8,6 +8,7 @@ plan deployments::rolling (
 
   $sha = system::env('COMMIT')
   $target_node_group_id = system::env('NODE_GROUP_ID')
+  $target_branch = system::env('BRANCH')
 
   # Get information about the target node group
   $node_group_hash = cd4pe_deployments::get_node_group($target_node_group_id)
@@ -37,9 +38,9 @@ plan deployments::rolling (
       fail_plan("${msg}. Set fail_if_no_nodes parameter to false to prevent this deployment failure in the future")
     } else {
 
-      $update_target_branch_result = cd4pe_deployments::update_git_branch_ref('CONTROL_REPO', $node_group_hash[result][environment], $sha)
+      $update_target_branch_result = cd4pe_deployments::update_git_branch_ref('CONTROL_REPO', $target_branch, $sha)
       if ($update_target_branch_result[error]) {
-        fail_plan("Unable to update the target branch ${node_group_hash[result][environment]} to sha ${sha}")
+        fail_plan("Unable to update the target branch ${target_branch} to sha ${sha}")
       }
 
       return "${msg}. Deploying directly to target environment and ending deployment."
@@ -111,9 +112,9 @@ plan deployments::rolling (
     $node_failure_total
   }
 
-  $update_target_branch_result = cd4pe_deployments::update_git_branch_ref('CONTROL_REPO', $node_group_hash[result][environment], $sha)
+  $update_target_branch_result = cd4pe_deployments::update_git_branch_ref('CONTROL_REPO', $target_branch, $sha)
   if ($update_target_branch_result[error]) {
-    fail_plan("Unable to update the target branch ${node_group_hash[result][environment]} to sha ${sha}")
+    fail_plan("Unable to update the target branch ${target_branch} to sha ${sha}")
   }
 
   # Clean up the temporary temporary node group
