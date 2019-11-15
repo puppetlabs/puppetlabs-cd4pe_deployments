@@ -62,14 +62,7 @@ plan cd4pe_deployments::rolling (
   $branch = "ROLLING_DEPLOYMENT_${system::env('DEPLOYMENT_ID')}"
   $tmp_git_branch_result = cd4pe_deployments::create_git_branch('CONTROL_REPO', $branch,  $sha, true)
   if ($tmp_git_branch_result[error]) {
-    if ($tmp_git_branch_result[error][message] == "Branch already exists") {
-      $update_ref_results = cd4pe_deployments::update_git_branch_ref('CONTROL_REPO', $branch, $sha)
-      if ($update_ref_results[error]) {
-        fail_plan("Updating existing branch ${branch} to sha ${sha} failed. Error: ${update_ref_results[error]}")
-      }
-    } else {
-      fail_plan("Could not create temporary git branch ${branch}: ${tmp_git_branch_result[error]}")
-    }
+    fail_plan("Could not create temporary git branch ${branch}: ${tmp_git_branch_result[error]}")
   }
 
   $code_result = cd4pe_deployments::deploy_code($target_environment, $branch)
