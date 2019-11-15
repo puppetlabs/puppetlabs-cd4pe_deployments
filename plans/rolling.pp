@@ -55,6 +55,12 @@ plan cd4pe_deployments::rolling (
         fail_plan("Unable to update the target branch ${target_branch} to sha ${sha}")
       }
 
+      $code_result = cd4pe_deployments::deploy_code($target_environment, $branch)
+      $validate_code_deploy_result = cd4pe_deployments::validate_code_deploy_status($code_result)
+      unless ($validate_code_deploy_result[error] =~ Undef) {
+        fail_plan("Code deployment failed to target environment ${target_environment}: ${validate_code_deploy_result[error][message]}")
+      }
+
       return "${msg}. Deploying directly to target environment and ending deployment."
     }
   }
