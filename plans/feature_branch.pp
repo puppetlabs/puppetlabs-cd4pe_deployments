@@ -18,8 +18,8 @@ plan cd4pe_deployments::feature_branch (
       $feature_branch_name = system::env('BRANCH')
       $base_branch_sha = system::env('CONTROL_REPO_BASE_FEATURE_BRANCH')
       # Create a feature branch on the control repo based on the branch that was selected when the Deployment was added
-      # to the pipeline.
-      $create_branch_result = cd4pe_deployments::create_git_branch('CONTROL_REPO', $feature_branch_name, $base_branch_sha)
+      # to the pipeline. Make the branch long lived.
+      $create_branch_result = cd4pe_deployments::create_git_branch('CONTROL_REPO', $feature_branch_name, $base_branch_sha, false)
       if $create_branch_result['error'] != undef {
         fail_plan($create_branch_result['error']['message'], $create_branch_result['error']['code'])
       }
