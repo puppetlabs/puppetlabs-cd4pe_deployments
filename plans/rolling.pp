@@ -104,7 +104,7 @@ plan cd4pe_deployments::rolling (
       $node_failure_total = $failed_count
     }
 
-    if ($node_failure_total >= $max_node_failure) {
+    if ($max_node_failure =~ Integer and $node_failure_total >= $max_node_failure) {
       #Before we fail, we should try to clean up the git branch
       $delete_tmp_git_branch_failed_deploy = cd4pe_deployments::delete_git_branch('CONTROL_REPO', $child_group[result][environment])
 
