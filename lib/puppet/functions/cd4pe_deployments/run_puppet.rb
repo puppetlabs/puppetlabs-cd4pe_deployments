@@ -22,8 +22,8 @@ Puppet::Functions.create_function(:'cd4pe_deployments::run_puppet') do
   #   * error [Hash] Contains error info if any was encountered during the function call
 
   dispatch :run_puppet do
-    required_param 'String', :environment_name
     required_param 'Array[String]', :nodes
+    optional_param 'String', :environment_name
     optional_param 'Boolean', :noop
     optional_param 'Integer', :concurrency
   end
