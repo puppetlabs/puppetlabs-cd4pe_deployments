@@ -1,6 +1,6 @@
-# @summary This deployment policy will deploy the target control repository commit to 
+# @summary This deployment policy will deploy the target control repository commit to
 #          target nodes in batches. It will craete a temporary Puppet environment and
-#          temporary node group to pull nodes out of the target environment and into 
+#          temporary node group to pull nodes out of the target environment and into
 #          the temporary environment while the deployment is taking place.
 #          When the change has been deployed to all of the target nodes, the target
 #          Puppet environment is updated with the change and all the nodes are moved
@@ -77,7 +77,7 @@ plan cd4pe_deployments::rolling (
     fail_plan("Code deployment failed to target environment ${target_environment}: ${validate_code_deploy_result[error][message]}")
   }
 
-  # Create a temporary environment node group to pin nodes to in order to run the puppet agent on 
+  # Create a temporary environment node group to pin nodes to in order to run the puppet agent on
   # nodes in the target environment in batches
   $child_group = cd4pe_deployments::create_temp_node_group($target_node_group_id, $branch, true)
   if $child_group[error] {
@@ -92,7 +92,7 @@ plan cd4pe_deployments::rolling (
 
   $batches[result].reduce(0) |$failed_count, $batch| {
     cd4pe_deployments::pin_nodes_to_env($batch, $child_group[result][id])
-    $puppet_run_result = cd4pe_deployments::run_puppet($branch, $batch, $noop)
+    $puppet_run_result = cd4pe_deployments::run_puppet($batch, $noop)
     if $puppet_run_result[error] {
       fail_plan("Could not orchestrate puppet agent runs: ${puppet_run_result[error]}")
     }

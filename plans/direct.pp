@@ -41,7 +41,7 @@ plan cd4pe_deployments::direct (
     fail_plan("No nodes found in target node group ${get_node_group_result['result']['name']}")
   }
   # Perform a Puppet run on all nodes in the environment
-  $puppet_run_result = cd4pe_deployments::run_puppet($target_environment, $nodes, $noop)
+  $puppet_run_result = cd4pe_deployments::run_puppet($nodes, $noop)
   if $puppet_run_result['error'] =~ NotUndef {
     fail_plan($puppet_run_result['error']['message'], $puppet_run_result['error']['code'])
   }
