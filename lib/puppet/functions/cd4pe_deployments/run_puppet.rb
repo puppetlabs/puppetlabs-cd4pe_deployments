@@ -14,7 +14,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::run_puppet') do
   # @example Run Puppet on nodes in the 'development' environment
   #   $my_cool_environment = "development"
   #   $nodes = ["test1.example.com", "test2.example.com", "test3.example.com"]
-  #   run_puppet($my_cool_environment, $nodes, false, 2)
+  #   run_puppet($nodes, false, $my_cool_environment, 2)
   # @return [Hash] contains the results of the function
   #   See [README.md]() for information on the CD4PEFunctionResult hash format
   #   * result [Hash] This contains data described by the following documentation:
@@ -23,12 +23,12 @@ Puppet::Functions.create_function(:'cd4pe_deployments::run_puppet') do
 
   dispatch :run_puppet do
     required_param 'Array[String]', :nodes
-    optional_param 'String', :environment_name
     optional_param 'Boolean', :noop
+    optional_param 'String', :environment_name
     optional_param 'Integer', :concurrency
   end
 
-  def run_puppet(environment_name, nodes, concurrency = nil, noop = false)
+  def run_puppet(nodes, noop = false, environment_name = nil, concurrency = nil)
     @client = PuppetX::Puppetlabs::CD4PEClient.new
     response = @client.run_puppet(environment_name, nodes, concurrency, noop)
     if response.code == '200'

@@ -61,7 +61,7 @@ describe 'cd4pe_deployments::run_puppet' do
         .to_return({ body: JSON.generate(state: 'running'), status: 200 }, body: JSON.generate(state: 'finished'), status: 200)
         .times(2)
 
-      is_expected.to run.with_params(environment_name, puppet_run_request[:nodes], puppet_run_request[:withNoop]).and_return('result' => { 'state' => 'finished' }, 'error' => nil)
+      is_expected.to run.with_params(puppet_run_request[:nodes], puppet_run_request[:withNoop], environment_name).and_return('result' => { 'state' => 'finished' }, 'error' => nil)
     end
   end
 end
