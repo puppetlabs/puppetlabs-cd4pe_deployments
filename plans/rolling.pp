@@ -11,7 +11,7 @@ plan cd4pe_deployments::rolling (
   Optional[Integer] $max_node_failure,
   Integer $batch_size = 10,
   Boolean $noop = false,
-  Integer $wait_seconds = 60,
+  Integer $batch_delay = 60,
   Boolean $fail_if_no_nodes = true,
 ) {
 
