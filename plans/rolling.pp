@@ -55,7 +55,7 @@ plan cd4pe_deployments::rolling (
         fail_plan("Unable to update the target branch ${target_branch} to sha ${sha}")
       }
 
-      $code_result = cd4pe_deployments::deploy_code($target_environment, $branch)
+      $code_result = cd4pe_deployments::deploy_code($target_environment)
       $validate_code_deploy_result = cd4pe_deployments::validate_code_deploy_status($code_result)
       unless ($validate_code_deploy_result[error] =~ Undef) {
         fail_plan("Code deployment failed to target environment ${target_environment}: ${validate_code_deploy_result[error][message]}")
@@ -71,7 +71,7 @@ plan cd4pe_deployments::rolling (
     fail_plan("Could not create temporary git branch ${branch}: ${tmp_git_branch_result[error]}")
   }
 
-  $code_result = cd4pe_deployments::deploy_code($target_environment, $branch)
+  $code_result = cd4pe_deployments::deploy_code($branch, $target_environment)
   $validate_code_deploy_result = cd4pe_deployments::validate_code_deploy_status($code_result)
   unless ($validate_code_deploy_result[error] =~ Undef) {
     fail_plan("Code deployment failed to target environment ${target_environment}: ${validate_code_deploy_result[error][message]}")
@@ -117,7 +117,7 @@ plan cd4pe_deployments::rolling (
     }
 
     # Sleep for the specified wait time between batches
-    ctrl::sleep($wait_seconds)
+    ctrl::sleep($batch_delay)
 
     $node_failure_total
   }
