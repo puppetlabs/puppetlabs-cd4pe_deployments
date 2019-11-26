@@ -12,6 +12,15 @@ plan cd4pe_deployments::direct (
   $repo_target_branch = system::env('REPO_TARGET_BRANCH')
   $source_commit = system::env('COMMIT')
   $target_node_group_id = system::env('NODE_GROUP_ID')
+
+  $get_node_group_result = cd4pe_deployments::get_node_group($target_node_group_id)
+  if $get_node_group_result['error'] =~ NotUndef {
+    fail_plan($get_node_group_result['error']['message'], $get_node_group_result['error']['code'])
+  }
+  $target_environment = $get_node_group_result['result']['environment']
+  # Wait for approval if the environment is protected
+  cd4pe_deployments::wait_for_approval($target_environment) |String $url| { }
+
   # Update the branch associated with the target environment to the source commit.
   $update_git_ref_result = cd4pe_deployments::update_git_branch_ref(
     'CONTROL_REPO',
@@ -21,14 +30,6 @@ plan cd4pe_deployments::direct (
   if $update_git_ref_result['error'] =~ NotUndef {
     fail_plan($update_git_ref_result['error']['message'], $update_git_ref_result['error']['code'])
   }
-
-  $get_node_group_result = cd4pe_deployments::get_node_group($target_node_group_id)
-  if $get_node_group_result['error'] =~ NotUndef {
-    fail_plan($get_node_group_result['error']['message'], $get_node_group_result['error']['code'])
-  }
-  $target_environment = $get_node_group_result['result']['environment']
-  # Wait for approval if the environment is protected
-  cd4pe_deployments::wait_for_approval($target_environment) |String $url| { }
   # Deploy the code associated with the Node Group's environment if the Deployment is approved
   $deploy_code_result = cd4pe_deployments::deploy_code($target_environment)
   $validate_code_deploy_result = cd4pe_deployments::validate_code_deploy_status($deploy_code_result)
