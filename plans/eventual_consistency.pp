@@ -23,6 +23,19 @@ plan cd4pe_deployments::eventual_consistency (
     $source_commit
   )
   if $update_git_ref_result['error'] =~ NotUndef {
+    if($repo_type == 'MODULE'){
+      $git_branch_cleanup = false
+      $create_git_branch_result = cd4pe_deployments::create_git_branch(
+        $repo_type,
+        $repo_target_branch,
+        $source_commit,
+        $git_branch_cleanup
+      )
+
+      if $create_git_branch_result['error'] =~ NotUndef {
+        fail_plan($create_git_branch_result['error']['message'], $create_git_branch_result['error']['code'])
+      }
+    }
     fail_plan($update_git_ref_result['error']['message'], $update_git_ref_result['error']['code'])
   }
   # Perform the code deploy to the target environment
