@@ -47,10 +47,14 @@ plan cd4pe_deployments::direct (
     fail_plan($puppet_run_result['error']['message'], $puppet_run_result['error']['code'])
   }
 
-  $node_failure_count = $puppet_run_result['result']['nodeStates']['failedNodes']
-  # Fail the deployment if the number of failures exceeds the threshold
+  if $puppet_run_result['result']['nodeStates'] =~ NotUndef {
+    if $puppet_run_result['result']['nodeStates']['failedNodes'] =~ NotUndef {
+      $node_failure_count = $puppet_run_result['result']['nodeStates']['failedNodes']
+      # Fail the deployment if the number of failures exceeds the threshold
 
-  if ($node_failure_count > $max_node_failure) {
-    fail_plan("Max node failure reached. ${node_failure_count} nodes failed.")
+      if ($node_failure_count > $max_node_failure) {
+        fail_plan("Max node failure reached. ${node_failure_count} nodes failed.")
+      }
+    }
   }
 }
