@@ -192,6 +192,11 @@ module PuppetX::Puppetlabs
         connection.use_ssl = true
       end
 
+      # Increase timeout to 10min or customer override for our code deployment
+      # api as it is a long lived connection instead of polling for updates
+      timeout = ENV["CD4PE_MODULE_DEPLOY_READ_TIMEOUT"] || 600
+      connection.read_timeout = timeout
+
       headers = {
         'Content-Type' => 'application/json',
         'Authorization' => "Bearer token #{@config[:token]}",
