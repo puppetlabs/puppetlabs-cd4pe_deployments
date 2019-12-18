@@ -18,7 +18,7 @@ This module provides a set of tools, via CD4PE, for creating your own custom CD4
 ## Usage
 
 1. Get started with a custom deployment policy by creating a [Puppet Plan] in the `plans/` directory.
-2. You'll have access to all of the functions listed in our [REFERENCE.md]() to perform deployment operations (e.g. pinning nodes to an environment group or getting information about an environment group)
+2. You'll have access to all of the functions listed in our [REFERENCE.md](REFERENCE.md) to perform deployment operations (e.g. pinning nodes to an environment group or getting information about an environment group)
 3. Deployment policies will run inside a CD4PE context with certain environment variables available.
 
 ```
