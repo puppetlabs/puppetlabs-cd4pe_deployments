@@ -1,7 +1,11 @@
+# This deployment policy will perform a Puppet code deploy of the commit
+# associated with a Pipeline run. Puppet nodes that are scheduled to run regularly will then pick up the
+# change until all nodes in the target environment are running against the new
+# code.
+#
 # @summary This deployment policy will perform a Puppet code deploy of the commit
-#          associated with a Pipeline run. Puppet nodes that are scheduled to run regularly will then pick up the
-#          change until all nodes in the target environment are running against the new
-#          code.
+#          associated with a Pipeline run. 
+#
 plan cd4pe_deployments::eventual_consistency (
 ) {
   $repo_type = system::env('REPO_TYPE')
