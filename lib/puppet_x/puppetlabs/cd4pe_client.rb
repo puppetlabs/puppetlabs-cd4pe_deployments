@@ -194,7 +194,7 @@ module PuppetX::Puppetlabs
 
       # Increase timeout to 10min or customer override for our code deployment
       # api as it is a long lived connection instead of polling for updates
-      timeout = ENV["CD4PE_MODULE_DEPLOY_READ_TIMEOUT"] || 600
+      timeout = ENV['CD4PE_MODULE_DEPLOY_READ_TIMEOUT'] || 600
       connection.read_timeout = timeout
 
       headers = {
