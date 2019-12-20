@@ -1,12 +1,16 @@
+# This deployment policy will deploy the target control repository commit to
+# target nodes in batches. It will create a temporary Puppet environment and
+# temporary node group to pull nodes out of the target environment and into
+# the temporary environment while the deployment is taking place.
+# When the change has been deployed to all of the target nodes, the target
+# Puppet environment is updated with the change and all the nodes are moved
+# back to the original node group.
+# When the deployment is complete, the temporary node group and temporary
+# Puppet environment are deleted, even if the deployment fails.
+#
 # @summary This deployment policy will deploy the target control repository commit to
-#          target nodes in batches. It will craete a temporary Puppet environment and
-#          temporary node group to pull nodes out of the target environment and into
-#          the temporary environment while the deployment is taking place.
-#          When the change has been deployed to all of the target nodes, the target
-#          Puppet environment is updated with the change and all the nodes are moved
-#          back to the original node group.
-#          When the deployment is complete, the temporary node group and temporary
-#          Puppet environment is deleted, even if the deployment fails.
+#          target nodes in batches.
+#
 plan cd4pe_deployments::rolling (
   Optional[Integer] $max_node_failure,
   Integer $batch_size = 10,
@@ -52,7 +56,7 @@ plan cd4pe_deployments::rolling (
 
       $update_target_branch_result = cd4pe_deployments::update_git_branch_ref('CONTROL_REPO', $target_branch, $sha)
       if ($update_target_branch_result[error]) {
-        fail_plan("Unable to update the target branch ${target_branch} to sha ${sha}")
+        fail_plan("Unable to update the target branch ${target_branch} to SHA ${sha}")
       }
 
       $code_result = cd4pe_deployments::deploy_code($target_environment)
@@ -124,7 +128,7 @@ plan cd4pe_deployments::rolling (
 
   $update_target_branch_result = cd4pe_deployments::update_git_branch_ref('CONTROL_REPO', $target_branch, $sha)
   if ($update_target_branch_result[error]) {
-    fail_plan("Unable to update the target branch ${target_branch} to sha ${sha}")
+    fail_plan("Unable to update the target branch ${target_branch} to SHA ${sha}")
   }
 
   # Clean up the temporary temporary node group

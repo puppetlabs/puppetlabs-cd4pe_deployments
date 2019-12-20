@@ -1,7 +1,11 @@
+# This deployment policy plan will perform a code deployment of an environment that
+# matches the source branch for a commit. For Module deployments the plan will create
+# a feature branch on the control repo that matches the source branch on the Module.
+# The plan will then deploy the target environment that matches the source branch.
+#
 # @summary This deployment policy plan will perform a code deployment of an environment that
-#          matches the source branch for a commit. For Module deployments the plan will create
-#          a feature branch on the control repo that matches the source branch on the Module.
-#          The plan will then deploy the target environment that matches the source branch
+#          matches the source branch for a commit.
+#
 plan cd4pe_deployments::feature_branch (
 ) {
   $repo_type = system::env('REPO_TYPE')

@@ -1,7 +1,7 @@
 require 'puppet_x/puppetlabs/cd4pe_client'
 require 'puppet_x/puppetlabs/cd4pe_function_result'
 
-# @summary Creates a git branch with the given branch name and commit sha
+# @summary Creates a git branch with the given branch name and commit SHA
 Puppet::Functions.create_function(:'cd4pe_deployments::create_git_branch') do
   # @param repo_type
   #   The type of repo to perform the operation on. Must be one of "CONTROL_REPO" or "MODULE".

@@ -5,7 +5,7 @@
 
 **Functions**
 
-* [`cd4pe_deployments::create_git_branch`](#cd4pe_deploymentscreate_git_branch): Creates a git branch with the given branch name and commit sha
+* [`cd4pe_deployments::create_git_branch`](#cd4pe_deploymentscreate_git_branch): Creates a git branch with the given branch name and commit SHA
 * [`cd4pe_deployments::create_temp_node_group`](#cd4pe_deploymentscreate_temp_node_group): Create a temporary Puppet Enterprise node group
 * [`cd4pe_deployments::delete_git_branch`](#cd4pe_deploymentsdelete_git_branch): Delete a git branch on your VCS
 * [`cd4pe_deployments::delete_node_group`](#cd4pe_deploymentsdelete_node_group): Delete a Puppet Enterprise node group
@@ -23,25 +23,13 @@ any of the code deployments failed.
 **Plans**
 
 * [`cd4pe_deployments::direct`](#cd4pe_deploymentsdirect): This deployment policy will deploy a source commit to the Puppet environment
-associated with the Deployment's configured Node Group. It will then run Puppet
-on all nodes in the environemnt.
+associated with the Deployment's configured node group and then run Puppet.
 * [`cd4pe_deployments::eventual_consistency`](#cd4pe_deploymentseventual_consistency): This deployment policy will perform a Puppet code deploy of the commit
-associated with a Pipeline run. Puppet nodes that are scheduled to run regularly will then pick up the
-change until all nodes in the target environment are running against the new
-code.
+associated with a Pipeline run.
 * [`cd4pe_deployments::feature_branch`](#cd4pe_deploymentsfeature_branch): This deployment policy plan will perform a code deployment of an environment that
-matches the source branch for a commit. For Module deployments the plan will create
-a feature branch on the control repo that matches the source branch on the Module.
-The plan will then deploy the target environment that matches the source branch
+matches the source branch for a commit.
 * [`cd4pe_deployments::rolling`](#cd4pe_deploymentsrolling): This deployment policy will deploy the target control repository commit to
-target nodes in batches. It will craete a temporary Puppet environment and
-temporary node group to pull nodes out of the target environment and into
-the temporary environment while the deployment is taking place.
-When the change has been deployed to all of the target nodes, the target
-Puppet environment is updated with the change and all the nodes are moved
-back to the original node group.
-When the deployment is complete, the temporary node group and temporary
-Puppet environment is deleted, even if the deployment fails.
+target nodes in batches.
 
 ## Functions
 
@@ -49,7 +37,7 @@ Puppet environment is deleted, even if the deployment fails.
 
 Type: Ruby 4.x API
 
-Creates a git branch with the given branch name and commit sha
+Creates a git branch with the given branch name and commit SHA
 
 #### Examples
 
@@ -653,19 +641,19 @@ code.
 This deployment policy plan will perform a code deployment of an environment that
 matches the source branch for a commit. For Module deployments the plan will create
 a feature branch on the control repo that matches the source branch on the Module.
-The plan will then deploy the target environment that matches the source branch
+The plan will then deploy the target environment that matches the source branch.
 
 ### cd4pe_deployments::rolling
 
 This deployment policy will deploy the target control repository commit to
-target nodes in batches. It will craete a temporary Puppet environment and
+target nodes in batches. It will create a temporary Puppet environment and
 temporary node group to pull nodes out of the target environment and into
 the temporary environment while the deployment is taking place.
 When the change has been deployed to all of the target nodes, the target
 Puppet environment is updated with the change and all the nodes are moved
 back to the original node group.
 When the deployment is complete, the temporary node group and temporary
-Puppet environment is deleted, even if the deployment fails.
+Puppet environment are deleted, even if the deployment fails.
 
 #### Parameters
 
