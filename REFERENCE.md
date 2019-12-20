@@ -5,17 +5,101 @@
 
 **Functions**
 
+* [`cd4pe_deployments::create_git_branch`](#cd4pe_deploymentscreate_git_branch): Creates a git branch with the given branch name and commit sha
 * [`cd4pe_deployments::create_temp_node_group`](#cd4pe_deploymentscreate_temp_node_group): Create a temporary Puppet Enterprise node group
 * [`cd4pe_deployments::delete_git_branch`](#cd4pe_deploymentsdelete_git_branch): Delete a git branch on your VCS
 * [`cd4pe_deployments::delete_node_group`](#cd4pe_deploymentsdelete_node_group): Delete a Puppet Enterprise node group
 * [`cd4pe_deployments::deploy_code`](#cd4pe_deploymentsdeploy_code): Performs a Puppet Enterprise Code Manager deployment for the given environment
 * [`cd4pe_deployments::get_node_group`](#cd4pe_deploymentsget_node_group): Get information about a Puppet Enterprise node group
+* [`cd4pe_deployments::partition_nodes`](#cd4pe_deploymentspartition_nodes): Partition nodes in a node group
 * [`cd4pe_deployments::pin_nodes_to_env`](#cd4pe_deploymentspin_nodes_to_env): Pin a list of nodes to Puppet Enterprise environment group
 * [`cd4pe_deployments::run_puppet`](#cd4pe_deploymentsrun_puppet): Run Puppet using the Puppet Orchestrator for a set of nodes in a given environment
 * [`cd4pe_deployments::update_git_branch_ref`](#cd4pe_deploymentsupdate_git_branch_ref): Update a given git branch's HEAD ref to a new commit SHA
+* [`cd4pe_deployments::validate_code_deploy_status`](#cd4pe_deploymentsvalidate_code_deploy_status): This is a helper function to be used with the result from the `deploy_code` function.
+It will take the result from a code deploy and return an error hash if an error occurred or if
+any of the code deployments failed.
 * [`cd4pe_deployments::wait_for_approval`](#cd4pe_deploymentswait_for_approval): Blocks further plan execution until the deployment is approved in CD4PE
 
+**Plans**
+
+* [`cd4pe_deployments::direct`](#cd4pe_deploymentsdirect): This deployment policy will deploy a source commit to the Puppet environment
+associated with the Deployment's configured Node Group. It will then run Puppet
+on all nodes in the environemnt.
+* [`cd4pe_deployments::eventual_consistency`](#cd4pe_deploymentseventual_consistency): This deployment policy will perform a Puppet code deploy of the commit
+associated with a Pipeline run. Puppet nodes that are scheduled to run regularly will then pick up the
+change until all nodes in the target environment are running against the new
+code.
+* [`cd4pe_deployments::feature_branch`](#cd4pe_deploymentsfeature_branch): This deployment policy plan will perform a code deployment of an environment that
+matches the source branch for a commit. For Module deployments the plan will create
+a feature branch on the control repo that matches the source branch on the Module.
+The plan will then deploy the target environment that matches the source branch
+* [`cd4pe_deployments::rolling`](#cd4pe_deploymentsrolling): This deployment policy will deploy the target control repository commit to
+target nodes in batches. It will craete a temporary Puppet environment and
+temporary node group to pull nodes out of the target environment and into
+the temporary environment while the deployment is taking place.
+When the change has been deployed to all of the target nodes, the target
+Puppet environment is updated with the change and all the nodes are moved
+back to the original node group.
+When the deployment is complete, the temporary node group and temporary
+Puppet environment is deleted, even if the deployment fails.
+
 ## Functions
+
+### cd4pe_deployments::create_git_branch
+
+Type: Ruby 4.x API
+
+Creates a git branch with the given branch name and commit sha
+
+#### Examples
+
+##### Create git branch "feature_carlscoolfeature" to commit c090ea692e67405c5572af6b2a9dc5f11c9080c0
+
+```puppet
+create_git_branch("CONTROL_REPO", "feature_carlscoolfeature", "c090ea692e67405c5572af6b2a9dc5f11c9080c0")
+```
+
+#### `cd4pe_deployments::create_git_branch(Enum["CONTROL_REPO", "MODULE"] $repo_type, String $branch_name, String $commit_sha, Optional[Boolean] $cleanup)`
+
+The cd4pe_deployments::create_git_branch function.
+
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [Hash]:
+  * success [Boolean] whether or not the operation was successful
+* error [Hash] contains error information if any
+
+##### Examples
+
+###### Create git branch "feature_carlscoolfeature" to commit c090ea692e67405c5572af6b2a9dc5f11c9080c0
+
+```puppet
+create_git_branch("CONTROL_REPO", "feature_carlscoolfeature", "c090ea692e67405c5572af6b2a9dc5f11c9080c0")
+```
+
+##### `repo_type`
+
+Data type: `Enum["CONTROL_REPO", "MODULE"]`
+
+The type of repo to perform the operation on. Must be one of "CONTROL_REPO" or "MODULE".
+
+##### `branch_name`
+
+Data type: `String`
+
+The name of the branch you want to create
+
+##### `commit_sha`
+
+Data type: `String`
+
+The source commit SHA of the new branch
+
+##### `cleanup`
+
+Data type: `Optional[Boolean]`
+
+Whether or not CD4PE should clean up the branch at the end of the deployment. Defaults to true
 
 ### cd4pe_deployments::create_temp_node_group
 
@@ -82,10 +166,10 @@ Delete a git branch on your VCS
 ##### Delete git branch "development_b"
 
 ```puppet
-delete_git_branch("development_b")
+delete_git_branch("CONTROL_REPO", "development_b")
 ```
 
-#### `cd4pe_deployments::delete_git_branch(String $branch_name)`
+#### `cd4pe_deployments::delete_git_branch(Enum["CONTROL_REPO", "MODULE"] $repo_type, String $branch_name)`
 
 The cd4pe_deployments::delete_git_branch function.
 
@@ -97,8 +181,14 @@ Returns: `Object` success object
 ###### Delete git branch "development_b"
 
 ```puppet
-delete_git_branch("development_b")
+delete_git_branch("CONTROL_REPO", "development_b")
 ```
+
+##### `repo_type`
+
+Data type: `Enum["CONTROL_REPO", "MODULE"]`
+
+The type of repo to perform the operation on. Must be one of "CONTROL_REPO" or "MODULE".
 
 ##### `branch_name`
 
@@ -237,6 +327,55 @@ Data type: `String`
 
 The ID string of the node group
 
+### cd4pe_deployments::partition_nodes
+
+Type: Ruby 4.x API
+
+Partition nodes in a node group
+
+#### Examples
+
+##### Create a node group then partition
+
+```puppet
+$parent_node_group_id = "3ed5c6c0-be33-4c62-9f41-a863a282b6ae"
+$test_environment = "development"
+$my_node_group = create_temp_node_group($parent_node_group_id, $test_environment, true)
+$node_partitions = partition_nodes($my_node_group, 5)
+```
+
+#### `cd4pe_deployments::partition_nodes(Hash $node_group, Integer $batch_size)`
+
+The cd4pe_deployments::partition_nodes function.
+
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [Array[Array[String]]] contains partitions of nodes
+* error [Hash] contains error information if any
+
+##### Examples
+
+###### Create a node group then partition
+
+```puppet
+$parent_node_group_id = "3ed5c6c0-be33-4c62-9f41-a863a282b6ae"
+$test_environment = "development"
+$my_node_group = create_temp_node_group($parent_node_group_id, $test_environment, true)
+$node_partitions = partition_nodes($my_node_group, 5)
+```
+
+##### `node_group`
+
+Data type: `Hash`
+
+The node group object.
+
+##### `batch_size`
+
+Data type: `Integer`
+
+Determines the size of each partition
+
 ### cd4pe_deployments::pin_nodes_to_env
 
 Type: Ruby 4.x API
@@ -296,10 +435,10 @@ Run Puppet using the Puppet Orchestrator for a set of nodes in a given environme
 ```puppet
 $my_cool_environment = "development"
 $nodes = ["test1.example.com", "test2.example.com", "test3.example.com"]
-run_puppet($my_cool_environment, $nodes, false, 2)
+run_puppet($nodes, false, $my_cool_environment, 2)
 ```
 
-#### `cd4pe_deployments::run_puppet(String $environment_name, Array[String] $nodes, Optional[Boolean] $noop, Optional[Integer] $concurrency)`
+#### `cd4pe_deployments::run_puppet(Array[String] $nodes, Optional[Boolean] $noop, Optional[String] $environment_name, Optional[Integer] $concurrency)`
 
 The cd4pe_deployments::run_puppet function.
 
@@ -316,12 +455,12 @@ See [README.md]() for information on the CD4PEFunctionResult hash format
 ```puppet
 $my_cool_environment = "development"
 $nodes = ["test1.example.com", "test2.example.com", "test3.example.com"]
-run_puppet($my_cool_environment, $nodes, false, 2)
+run_puppet($nodes, false, $my_cool_environment, 2)
 ```
 
 ##### `environment_name`
 
-Data type: `String`
+Data type: `Optional[String]`
 
 The name of the Puppet environment to deploy
 
@@ -354,10 +493,10 @@ Update a given git branch's HEAD ref to a new commit SHA
 ##### Update git branch "production" to commit c090ea692e67405c5572af6b2a9dc5f11c9080c0
 
 ```puppet
-update_git_branch_ref("production", "c090ea692e67405c5572af6b2a9dc5f11c9080c0")
+update_git_branch_ref("CONTROL_REPO", "production", "c090ea692e67405c5572af6b2a9dc5f11c9080c0")
 ```
 
-#### `cd4pe_deployments::update_git_branch_ref(String $branch_name, String $commit_sha)`
+#### `cd4pe_deployments::update_git_branch_ref(Enum["CONTROL_REPO", "MODULE"] $repo_type, String $branch_name, String $commit_sha)`
 
 The cd4pe_deployments::update_git_branch_ref function.
 
@@ -372,8 +511,14 @@ See [README.md]() for information on the CD4PEFunctionResult hash format
 ###### Update git branch "production" to commit c090ea692e67405c5572af6b2a9dc5f11c9080c0
 
 ```puppet
-update_git_branch_ref("production", "c090ea692e67405c5572af6b2a9dc5f11c9080c0")
+update_git_branch_ref("CONTROL_REPO", "production", "c090ea692e67405c5572af6b2a9dc5f11c9080c0")
 ```
+
+##### `repo_type`
+
+Data type: `Enum["CONTROL_REPO", "MODULE"]`
+
+The type of repo to perform the operation on. Must be one of "CONTROL_REPO" or "MODULE".
 
 ##### `branch_name`
 
@@ -386,6 +531,33 @@ The name of the branch you want to update
 Data type: `String`
 
 The commit SHA that will become the branch's new HEAD
+
+### cd4pe_deployments::validate_code_deploy_status
+
+Type: Puppet Language
+
+This is a helper function to be used with the result from the `deploy_code` function.
+It will take the result from a code deploy and return an error hash if an error occurred or if
+any of the code deployments failed.
+
+#### `cd4pe_deployments::validate_code_deploy_status(Hash $deploy_code_result)`
+
+The cd4pe_deployments::validate_code_deploy_status function.
+
+Returns: `Any`
+
+##### `$deploy_code_result`
+
+Data type: `Hash`
+
+The results of the code deployment from calling the `deploy_code` function.
+See the `deploy_code` docs for more info on the value of this object
+
+##### `deploy_code_result`
+
+Data type: `Hash`
+
+
 
 ### cd4pe_deployments::wait_for_approval
 
@@ -401,12 +573,12 @@ is returned to the user.
 ##### Notify Slack users that approval is needed
 
 ```puppet
-wait_for_approval do |String $url|
+wait_for_approval("development") do |String $url|
   run_task("slack::notify", "#it-ops", "Please review this deployment for approval: ${url}")
 end
 ```
 
-#### `cd4pe_deployments::wait_for_approval(Callable &$block)`
+#### `cd4pe_deployments::wait_for_approval(String $environment_name, Callable &$block)`
 
 Blocks further plan execution until the deployment is approved in CD4PE and takes a lambda that is executed once
 at the start of the wait time. The lambda includes the "url" which is a link to the approval page for the deployment. If
@@ -424,14 +596,116 @@ See [README.md]() for information on the CD4PEFunctionResult hash format
 ###### Notify Slack users that approval is needed
 
 ```puppet
-wait_for_approval do |String $url|
+wait_for_approval("development") do |String $url|
   run_task("slack::notify", "#it-ops", "Please review this deployment for approval: ${url}")
 end
 ```
+
+##### `environment_name`
+
+Data type: `String`
+
+
 
 ##### `&block`
 
 Data type: `Callable`
 
 Takes a block that provides the URL to the deployment's approval page
+
+## Plans
+
+### cd4pe_deployments::direct
+
+This deployment policy will deploy a source commit to the Puppet environment
+associated with the Deployment's configured Node Group. It will then run Puppet
+on all nodes in the environemnt.
+
+#### Parameters
+
+The following parameters are available in the `cd4pe_deployments::direct` plan.
+
+##### `max_node_failure`
+
+Data type: `Integer`
+
+The number of allowed failed Puppet runs that can occur before the Deployment will fail
+
+Default value: 0
+
+##### `noop`
+
+Data type: `Boolean`
+
+Indicates if the Puppet run should be a noop.
+
+Default value: `false`
+
+### cd4pe_deployments::eventual_consistency
+
+This deployment policy will perform a Puppet code deploy of the commit
+associated with a Pipeline run. Puppet nodes that are scheduled to run regularly will then pick up the
+change until all nodes in the target environment are running against the new
+code.
+
+### cd4pe_deployments::feature_branch
+
+This deployment policy plan will perform a code deployment of an environment that
+matches the source branch for a commit. For Module deployments the plan will create
+a feature branch on the control repo that matches the source branch on the Module.
+The plan will then deploy the target environment that matches the source branch
+
+### cd4pe_deployments::rolling
+
+This deployment policy will deploy the target control repository commit to
+target nodes in batches. It will craete a temporary Puppet environment and
+temporary node group to pull nodes out of the target environment and into
+the temporary environment while the deployment is taking place.
+When the change has been deployed to all of the target nodes, the target
+Puppet environment is updated with the change and all the nodes are moved
+back to the original node group.
+When the deployment is complete, the temporary node group and temporary
+Puppet environment is deleted, even if the deployment fails.
+
+#### Parameters
+
+The following parameters are available in the `cd4pe_deployments::rolling` plan.
+
+##### `max_node_failure`
+
+Data type: `Optional[Integer]`
+
+
+
+##### `batch_size`
+
+Data type: `Integer`
+
+
+
+Default value: 10
+
+##### `noop`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
+
+##### `batch_delay`
+
+Data type: `Integer`
+
+
+
+Default value: 60
+
+##### `fail_if_no_nodes`
+
+Data type: `Boolean`
+
+
+
+Default value: `true`
 
