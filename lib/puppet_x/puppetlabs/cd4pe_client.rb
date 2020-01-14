@@ -1,3 +1,4 @@
+require 'puppet'
 require 'puppet_x'
 require 'net/http'
 require 'uri'
@@ -15,19 +16,20 @@ module PuppetX::Puppetlabs
         server: uri.host,
         port: uri.port || '8080',
         scheme: uri.scheme || 'http',
-        token: deployment_token,
-        deployment_id: deployment_id,
-        deployment_owner: deployment_owner,
+        token: task_token,
+        task_id: task_id,
+        task_owner: task_owner,
       }
 
-      @owner_ajax_path = "/#{deployment_owner}/ajax"
+      @owner_ajax_path = "/#{task_owner}/ajax"
+      @owner_route = "/#{task_owner}"
     end
 
     def pin_nodes_to_env(nodes, node_group_id)
       payload = {
         op: 'PinNodesToGroup',
         content: {
-          deploymentId: @config[:deployment_id],
+          deploymentId: @config[:task_id],
           nodeGroupId: node_group_id,
           nodes: nodes,
         },
@@ -36,7 +38,7 @@ module PuppetX::Puppetlabs
     end
 
     def get_node_group(node_group_id)
-      query = "?op=GetNodeGroupInfo&deploymentId=#{deployment_id}&nodeGroupId=#{node_group_id}"
+      query = "?op=GetNodeGroupInfo&deploymentId=#{task_id}&nodeGroupId=#{node_group_id}"
       complete_path = @owner_ajax_path + query
       make_request(:get, complete_path)
     end
@@ -45,7 +47,7 @@ module PuppetX::Puppetlabs
       payload = {
         op: 'DeleteNodeGroup',
         content: {
-          deploymentId: @config[:deployment_id],
+          deploymentId: @config[:task_id],
           nodeGroupId: node_group_id,
         },
       }
@@ -56,7 +58,7 @@ module PuppetX::Puppetlabs
       payload = {
         op: 'DeployCode',
         content: {
-          deploymentId: @config[:deployment_id],
+          deploymentId: @config[:task_id],
           environmentName: environment_name,
         },
       }
@@ -66,7 +68,7 @@ module PuppetX::Puppetlabs
     end
 
     def get_approval_state # rubocop:disable Style/AccessorMethodName
-      query = "?op=GetDeploymentApprovalState&deploymentId=#{deployment_id}"
+      query = "?op=GetDeploymentApprovalState&deploymentId=#{task_id}"
       complete_path = @owner_ajax_path + query
       make_request(:get, complete_path)
     end
@@ -75,7 +77,7 @@ module PuppetX::Puppetlabs
       payload = {
         op: 'SetDeploymentPendingApproval',
         content: {
-          deploymentId: @config[:deployment_id],
+          deploymentId: @config[:task_id],
           environment: environment_name,
         },
       }
@@ -87,7 +89,7 @@ module PuppetX::Puppetlabs
       run_puppet_payload = {
         op: 'RunPuppet',
         content: {
-          deploymentId: @config[:deployment_id],
+          deploymentId: @config[:task_id],
           environmentName: environment_name,
           nodes: nodes,
           withNoop: noop,
@@ -101,7 +103,7 @@ module PuppetX::Puppetlabs
       get_job_status_payload = {
         op: 'GetPuppetRunStatus',
         content: {
-          deploymentId: @config[:deployment_id],
+          deploymentId: @config[:task_id],
           jobId: job,
         },
       }
@@ -112,7 +114,7 @@ module PuppetX::Puppetlabs
       payload = {
         op: 'CreateTempNodeGroup',
         content: {
-          deploymentId: @config[:deployment_id],
+          deploymentId: @config[:task_id],
           parentNodeGroupId: parent_node_group_id,
           environmentName: environment_name,
           isEnvironmentNodeGroup: is_environment_node_group,
@@ -125,7 +127,7 @@ module PuppetX::Puppetlabs
       payload = {
         op: 'DeleteGitBranch',
         content: {
-          deploymentId: @config[:deployment_id],
+          deploymentId: @config[:task_id],
           repoType: repo_type,
           branchName: branch_name,
         },
@@ -137,7 +139,7 @@ module PuppetX::Puppetlabs
       payload = {
         op: 'UpdateGitRef',
         content: {
-          deploymentId: @config[:deployment_id],
+          deploymentId: @config[:task_id],
           repoType: repo_type,
           branchName: branch_name,
           commitSha: commit_sha,
@@ -150,7 +152,7 @@ module PuppetX::Puppetlabs
       payload = {
         op: 'CreateGitBranch',
         content: {
-          deploymentId: @config[:deployment_id],
+          deploymentId: @config[:task_id],
           repoType: repo_type,
           branchName: branch_name,
           commitSha: commit_sha,
@@ -160,24 +162,32 @@ module PuppetX::Puppetlabs
       make_request(:post, @owner_ajax_path, payload.to_json)
     end
 
+    def get_job_script_and_control_repo(target_dir)
+      endpoint = "#{@owner_route}/getJobScriptAndControlRepo?jobInstanceId=#{task_id}"
+      make_request(:get, endpoint, '', target_dir)
+    end
+
     private
 
-    def deployment_token
-      token = ENV['DEPLOYMENT_TOKEN']
-      raise Puppet::Error, 'Could not get token for deployment' unless token
-      token
+    def task_token
+      deployment_token = ENV['DEPLOYMENT_TOKEN']
+      job_token = ENV['JOB_TOKEN']
+      raise Puppet::Error, 'Could not get token for deployment or job instance' unless deployment_token || job_token
+      deployment_token || job_token
     end
 
-    def deployment_owner
-      owner = ENV['DEPLOYMENT_OWNER']
-      raise Puppet::Error, 'Could not get owner for deployment' unless owner
-      owner
+    def task_owner
+      deployment_owner = ENV['DEPLOYMENT_OWNER']
+      job_owner = ENV['JOB_OWNER']
+      raise Puppet::Error, 'Could not get owner for deployment or job instance' unless deployment_owner || job_owner
+      deployment_owner || job_owner
     end
 
-    def deployment_id
-      id = ENV['DEPLOYMENT_ID']
-      raise Puppet::Error, 'Could not get ID for deployment' unless id
-      id
+    def task_id
+      deployment_id = ENV['DEPLOYMENT_ID']
+      job_instance_id = ENV['JOB_INSTANCE_ID']
+      raise Puppet::Error, 'Could not get ID for deployment or job instance' unless deployment_id || job_instance_id
+      deployment_id || job_instance_id
     end
 
     def web_ui_endpoint
@@ -186,7 +196,7 @@ module PuppetX::Puppetlabs
       endpoint
     end
 
-    def make_request(type, api_url, payload = '')
+    def make_request(type, api_url, payload = '', target_file = nil)
       connection = Net::HTTP.new(@config[:server], @config[:port])
       if @config[:scheme] == 'https'
         connection.use_ssl = true
@@ -226,7 +236,12 @@ module PuppetX::Puppetlabs
         end
 
         case response
-        when Net::HTTPSuccess, Net::HTTPRedirection
+        when Net::HTTPSuccess
+          if (!target_file.nil?)
+            create_and_write_temp_file(target_file, response.body)
+          end
+          return response
+        when Net::HTTPRedirection
           return response
         when Net::HTTPInternalServerError
           if attempts < max_attempts # rubocop:disable Style/GuardClause
@@ -243,6 +258,12 @@ module PuppetX::Puppetlabs
 
     def service_url
       "#{@config[:scheme]}://#{@config[:server]}:#{@config[:port]}"
+    end
+
+    def create_and_write_temp_file(file_path, data)
+      open(file_path, "wb") do |file|
+        file.write(data)
+      end
     end
   end
 end
