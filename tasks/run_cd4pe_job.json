@@ -18,22 +18,23 @@
       "description": "Account (workspace) owner of the job to be run."
     },
     "env_vars": {
-      "type": "Optional[Array[String]]",
+      "type": "Optional[Array[String[1]]]",
       "description": "Environment variables to be set on the agent running the job."
     },
     "docker_image": {
-      "type": "Optional[String]",
+      "type": "Optional[String[1]]",
       "description": "If specified, te job will attempt to run inside the docker container."
     },
     "docker_run_args": {
-      "type": "Optional[Array[String]]",
+      "type": "Optional[Array[String[1]]]",
       "description": "If specified, the arguements will be passed to docker if docker image is specified."
     }
   },
   "files": [
     "cd4pe_deployments/lib/puppet_x/puppetlabs/cd4pe_client.rb",
     "cd4pe_deployments/lib/puppet_x/puppetlabs/gzip_helper.rb",
-    "cd4pe_deployments/lib/puppet_x/puppetlabs/cd4pe_job_helper.rb"
+    "cd4pe_deployments/lib/puppet_x/puppetlabs/cd4pe_job_helper.rb",
+    "cd4pe_deployments/lib/puppet_x/puppetlabs/logger.rb"
   ],
 
   "input_method": "stdin"

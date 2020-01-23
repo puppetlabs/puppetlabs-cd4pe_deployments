@@ -11,7 +11,7 @@ module PuppetX::Puppetlabs
       :AFTER_JOB_SUCCESS => "AFTER_JOB_SUCCESS", 
       :AFTER_JOB_FAILURE => "AFTER_JOB_FAILURE" }
 
-    def initialize(working_dir:, docker_image: nil, docker_run_args: nil)
+    def initialize(working_dir:, docker_image: nil, docker_run_args: nil, logger: nil)
       @docker_image = docker_image
       @docker_run_args = docker_run_args
       @docker_based_job = !docker_image.nil?
@@ -21,6 +21,14 @@ module PuppetX::Puppetlabs
       @local_repo_dir = File.join(@working_dir, "cd4pe_job", "repo")
       
       @docker_run_args = docker_run_args.nil? ? '' : docker_run_args.join(' ')
+
+      @logger = logger
+    end
+
+    def log(log)
+      if (!@logger.nil?)
+        @logger.log(log)
+      end
     end
 
     def set_job_env_vars(task_params)
@@ -61,66 +69,48 @@ module PuppetX::Puppetlabs
       result = execute_manifest(MANIFEST_TYPE[:JOB])
       
       if (result[:exit_code] == 0)
-        on_job_success(result)
+        on_job_complete(result, MANIFEST_TYPE[:AFTER_JOB_SUCCESS])
       else
-        on_job_failure(result)
+        on_job_complete(result, MANIFEST_TYPE[:AFTER_JOB_FAILURE])
       end
     end
 
-    def on_job_success(result)
-      exit_code = 0
-    
+    def on_job_complete(result, next_manifest_type)
       output = {}
       output[:job] = {
         exit_code: result[:exit_code], 
         message: result[:message]
       }
     
-      # if a AFTER_JOB_SUCCESS script exists, run it now!
-      run_after_success = File.exists?(File.join(@local_jobs_dir, MANIFEST_TYPE[:AFTER_JOB_SUCCESS]))
-      if (run_after_success)
-        success_script_result = execute_manifest(MANIFEST_TYPE[:AFTER_JOB_SUCCESS])
-        exit_code = success_script_result[:exit_code]
-        output[:after_job_success] = {
-          exit_code: exit_code, 
-          message: success_script_result[:message]
-        }
-      end
-    
-      on_script_complete(output, exit_code)
-    end
-
-    def on_job_failure(result)
-      output = {}
-      output[:job] = {
-        exit_code: result[:exit_code], 
-        message: result[:message]
-      }
-    
-      # if a AFTER_JOB_FAILURE script exists, run it now!
-      run_after_failure = File.exists?(File.join(@local_jobs_dir, MANIFEST_TYPE[:AFTER_JOB_FAILURE]))
-      if (run_after_failure)
-        failure_script_result = execute_manifest(MANIFEST_TYPE[:AFTER_JOB_FAILURE])
-        output[:after_job_failure] = {
-          exit_code: failure_script_result[:exit_code], 
-          message: failure_script_result[:message]
+      # if a AFTER_JOB_SUCCESS or AFTER_JOB_FAILURE script exists, run it now!
+      run_followup_script = File.exists?(File.join(@local_jobs_dir, next_manifest_type))
+      if (run_followup_script)
+        log("#{next_manifest_type} script specified.")
+        followup_script_result = execute_manifest(next_manifest_type)
+        output[next_manifest_type.downcase.to_sym] = {
+          exit_code: followup_script_result[:exit_code], 
+          message: followup_script_result[:message]
         }
       end
 
-      on_script_complete(output, 1)
-    end
-
-    def on_script_complete(output, exit_code)
-      puts(output.to_json)
-      exit_code
+      output
     end
 
     def execute_manifest(manifest_type)
+      log("Executing #{manifest_type} manifest.")
       result = {}
       if (@docker_based_job)
+        log("Docker image specified. Running #{manifest_type} manifest on docker image: #{@docker_image}.")
         result = run_with_docker(manifest_type)
       else
+        log("No docker image specified. Running #{manifest_type} manifest directly on machine.")
         result = run_with_system(manifest_type)
+      end
+      
+      if (result[:exit_code] == 0)
+        log("#{manifest_type} succeeded!")
+      else 
+        log("#{manifest_type} failed with exit code: #{result[:exit_code]}: #{result[:message]}")
       end
       result
     end
