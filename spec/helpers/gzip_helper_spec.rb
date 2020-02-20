@@ -4,7 +4,7 @@ require 'rubygems/package'
 require_relative '../../lib/puppet_x/puppetlabs/gzip_helper.rb'
 
 #
-# All tests in this file require the usage of static gzip test files
+# All tests in require the usage of static gzip test files
 # located in: cd4pe_deployments/spec/fixtures/test_tar_files
 #
 
