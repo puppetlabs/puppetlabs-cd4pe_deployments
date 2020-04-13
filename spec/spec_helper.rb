@@ -32,6 +32,7 @@ end
 
 RSpec.configure do |c|
   c.default_facts = default_facts
+  c.mock_with :rspec
   c.before :each do
     # set to strictest setting for testing
     # by default Puppet runs at warning level
@@ -58,6 +59,9 @@ RSpec.shared_context 'deployment' do
   let(:deployment_token) { '1234abcd' }
   let(:node_group_id) { 'aasdf-1234asdf-1234' }
   let(:environment_name) { 'development' }
+  let(:control_repo) { 'test_control_repo' }
+  let(:commit) { 'ef424ec352d4bc93317be901877e32f3c6a0289c' }
+  let(:git_branch) { 'src_development' }
   let(:ajax_url) { "#{test_host}/#{deployment_owner}/ajax" }
   let(:response) do
     {
@@ -85,6 +89,10 @@ RSpec.shared_context 'deployment' do
     ENV['DEPLOYMENT_ID'] = deployment_id
     ENV['DEPLOYMENT_TOKEN'] = deployment_token
     ENV['WEB_UI_ENDPOINT'] = test_host
+    ENV['REPO_TARGET_BRANCH'] = environment_name
+    ENV['COMMIT'] = commit
+    ENV['CONTROL_REPO'] = control_repo
+    ENV['NODE_GROUP_ID'] = node_group_id
   end
 end
 
