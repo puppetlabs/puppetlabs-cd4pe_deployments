@@ -12,6 +12,7 @@
 plan cd4pe_deployments::direct (
   Integer $max_node_failure = 0,
   Boolean $noop = false,
+  Boolean $fail_if_no_nodes = true,
 ) {
   $repo_target_branch = system::env('REPO_TARGET_BRANCH')
   $source_commit = system::env('COMMIT')
@@ -21,6 +22,7 @@ plan cd4pe_deployments::direct (
   if $get_node_group_result['error'] =~ NotUndef {
     fail_plan($get_node_group_result['error']['message'], $get_node_group_result['error']['code'])
   }
+
   $target_environment = $get_node_group_result['result']['environment']
   # Wait for approval if the environment is protected
   cd4pe_deployments::wait_for_approval($target_environment) |String $url| { }
@@ -42,8 +44,13 @@ plan cd4pe_deployments::direct (
   }
 
   $nodes = $get_node_group_result['result']['nodes']
-  if $nodes =~ Undef {
-    fail_plan("No nodes found in target node group ${get_node_group_result['result']['name']}")
+  if ($nodes =~ Undef) {
+    $msg = "No nodes found in target node group ${get_node_group_result['result']['name']}"
+    if ($fail_if_no_nodes) {
+      fail_plan("${msg}. Set fail_if_no_nodes parameter to false to prevent this deployment failure in the future")
+    } else {
+      return "${msg}. Deployed directly to target environment and ending deployment."
+    }
   }
   # Perform a Puppet run on all nodes in the environment
   $puppet_run_result = cd4pe_deployments::run_puppet($nodes, $noop)
