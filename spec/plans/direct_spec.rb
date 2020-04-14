@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'rspec/mocks'
 require 'webmock/rspec'
 
-describe 'cd4pe_deployments::direct' do
+describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Gem::Version.new('6.0.0') do
   context 'happy' do
     include_context 'deployment'
     let(:repo_type) { 'CONTROL_REPO' }
