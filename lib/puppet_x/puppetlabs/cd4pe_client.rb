@@ -160,6 +160,12 @@ module PuppetX::Puppetlabs
       make_request(:post, @owner_ajax_path, payload.to_json)
     end
 
+    def get_git_branches(repo_type)
+      query = "?op=GetGitBranches&deploymentId=#{@config[:deployment_id]}&repoType=#{repo_type}"
+      complete_path = @owner_ajax_path + query
+      make_request(:get, complete_path)
+    end
+
     private
 
     def deployment_token
