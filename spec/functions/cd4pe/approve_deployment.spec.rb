@@ -1,8 +1,8 @@
 require 'spec_helper'
-require_relative '../../../lib/puppet/functions/cd4pe_deployments/set_deployment_approval_state'
+require_relative '../../../lib/puppet/functions/cd4pe_deployments/approve_deployment'
 require 'webmock/rspec'
 
-describe 'cd4pe_deployments::set_deployment_approval_state' do
+describe 'cd4pe_deployments::approve_deployment' do
   context 'table steaks' do
     include_context 'deployment'
 
@@ -10,7 +10,7 @@ describe 'cd4pe_deployments::set_deployment_approval_state' do
       is_expected.not_to eq(nil)
     end
 
-    it 'requires 3 parameters' do
+    it 'requires 2 parameters' do
       is_expected.to run.with_params.and_raise_error(ArgumentError)
     end
 
@@ -19,7 +19,7 @@ describe 'cd4pe_deployments::set_deployment_approval_state' do
 
       let(:ajax_op) { 'SetDeploymentApprovalState' }
       let(:state) { 'APPROVED' }
-      let(:username) { 'I am a user' }
+      let(:username) { 'I am a user approving' }
       let(:response) do
         {
             'result' => {
@@ -49,7 +49,7 @@ describe 'cd4pe_deployments::set_deployment_approval_state' do
             .to_return(body: JSON.generate(response['result']))
             .times(1)
 
-        is_expected.to run.with_params(environment_name, state, username).and_return(response)
+        is_expected.to run.with_params(environment_name, username).and_return(response)
       end
 
       it 'fails with non-200 response code' do
@@ -71,9 +71,8 @@ describe 'cd4pe_deployments::set_deployment_approval_state' do
             .to_return(body: JSON.generate(error_response), status: 404)
             .times(1)
 
-        is_expected.to run.with_params(environment_name, state, username).and_return(error_response)
+        is_expected.to run.with_params(environment_name, username).and_return(error_response)
       end
-
     end
   end
 end
