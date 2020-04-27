@@ -5,11 +5,14 @@
 
 **Functions**
 
+* [`cd4pe_deployments::approve_deployment`](#cd4pe_deploymentsapprove_deployment): Approve a "pending approval" active deployment to a protected environment.
 * [`cd4pe_deployments::create_git_branch`](#cd4pe_deploymentscreate_git_branch): Creates a git branch with the given branch name and commit SHA
 * [`cd4pe_deployments::create_temp_node_group`](#cd4pe_deploymentscreate_temp_node_group): Create a temporary Puppet Enterprise node group
+* [`cd4pe_deployments::decline_deployment`](#cd4pe_deploymentsdecline_deployment): Decline a "pending approval" active deployment to a protected environment.
 * [`cd4pe_deployments::delete_git_branch`](#cd4pe_deploymentsdelete_git_branch): Delete a git branch on your VCS
 * [`cd4pe_deployments::delete_node_group`](#cd4pe_deploymentsdelete_node_group): Delete a Puppet Enterprise node group
 * [`cd4pe_deployments::deploy_code`](#cd4pe_deploymentsdeploy_code): Performs a Puppet Enterprise Code Manager deployment for the given environment
+* [`cd4pe_deployments::get_git_branches`](#cd4pe_deploymentsget_git_branches): Lists git branches for a repository associated with the current deployment
 * [`cd4pe_deployments::get_node_group`](#cd4pe_deploymentsget_node_group): Get information about a Puppet Enterprise node group
 * [`cd4pe_deployments::partition_nodes`](#cd4pe_deploymentspartition_nodes): Partition nodes in a node group
 * [`cd4pe_deployments::pin_nodes_to_env`](#cd4pe_deploymentspin_nodes_to_env): Pin a list of nodes to Puppet Enterprise environment group
@@ -22,6 +25,7 @@ any of the code deployments failed.
 
 **Plans**
 
+* [`cd4pe_deployments::cd4pe_job`](#cd4pe_deploymentscd4pe_job): 
 * [`cd4pe_deployments::direct`](#cd4pe_deploymentsdirect): This deployment policy will deploy a source commit to the Puppet environment
 associated with the Deployment's configured node group and then run Puppet.
 * [`cd4pe_deployments::eventual_consistency`](#cd4pe_deploymentseventual_consistency): This deployment policy will perform a Puppet code deploy of the commit
@@ -32,6 +36,53 @@ matches the source branch for a commit.
 target nodes in batches.
 
 ## Functions
+
+### cd4pe_deployments::approve_deployment
+
+Type: Ruby 4.x API
+
+Typically consumed inside the block passed into `wait_for_approval`.
+Related: `decline_deployment`
+
+#### Examples
+
+##### Approve deployment
+
+```puppet
+approve_deployment("development", "coolUser123")
+```
+
+#### `cd4pe_deployments::approve_deployment(String $environment_name, String $username)`
+
+Typically consumed inside the block passed into `wait_for_approval`.
+Related: `decline_deployment`
+
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [Hash]:
+  * success [Boolean] whether or not the operation was successful
+* error [Hash] contains error information if any
+
+##### Examples
+
+###### Approve deployment
+
+```puppet
+approve_deployment("development", "coolUser123")
+```
+
+##### `environment_name`
+
+Data type: `String`
+
+The name of the Puppet environment to deploy. Does nothing if the specified environment is not protected.
+
+##### `username`
+
+Data type: `String`
+
+The name of the user approving the deployment. The username does not have to be a CD4PE user.
+Care should taken as the username is *not* validated as having special approval permissions.
 
 ### cd4pe_deployments::create_git_branch
 
@@ -142,6 +193,53 @@ The name of the environment to be associated with the temp node group
 Data type: `Optional[Boolean]`
 
 A Boolean to indicate if the node group should be an environment node group. Defaults to 'true'.
+
+### cd4pe_deployments::decline_deployment
+
+Type: Ruby 4.x API
+
+Typically consumed inside the block passed into `wait_for_approval`.
+Related: `approve_deployment`
+
+#### Examples
+
+##### Decline approval
+
+```puppet
+decline_deployment("development", "coolUser123")
+```
+
+#### `cd4pe_deployments::decline_deployment(String $environment_name, String $username)`
+
+Typically consumed inside the block passed into `wait_for_approval`.
+Related: `approve_deployment`
+
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [Hash]:
+  * success [Boolean] whether or not the operation was successful
+* error [Hash] contains error information if any
+
+##### Examples
+
+###### Decline approval
+
+```puppet
+decline_deployment("development", "coolUser123")
+```
+
+##### `environment_name`
+
+Data type: `String`
+
+The name of the Puppet environment to deploy. Does nothing if the specified environment is not protected.
+
+##### `username`
+
+Data type: `String`
+
+The name of the user declining the deployment. The username does not have to be a CD4PE user.
+Care should taken as the username is *not* validated as having special approval permissions.
 
 ### cd4pe_deployments::delete_git_branch
 
@@ -267,6 +365,48 @@ The name of the Puppet environment to deploy
 Data type: `Optional[String]`
 
 Specifies a default branch to set when performing a code deploy
+
+### cd4pe_deployments::get_git_branches
+
+Type: Ruby 4.x API
+
+Lists git branches for a repository associated with the current deployment
+
+#### Examples
+
+##### List all branches for the control repo associated with the current deployment
+
+```puppet
+$branches = cd4pe_deployments::get_git_branches('CONTROL_REPO')
+$branches.each |$branch| { out::message("Branch name: ${branch['name']} Head SHA: ${branch['sha']}") }
+```
+
+#### `cd4pe_deployments::get_git_branches(Enum["CONTROL_REPO", "MODULE"] $repo_type)`
+
+The cd4pe_deployments::get_git_branches function.
+
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [Array] a list of git branches:
+  * [Hash] a hash containing branch information
+    * name [String] the name of the branch
+    * sha  [String] the head SHA of the branch
+* error [Hash] contains error information if any
+
+##### Examples
+
+###### List all branches for the control repo associated with the current deployment
+
+```puppet
+$branches = cd4pe_deployments::get_git_branches('CONTROL_REPO')
+$branches.each |$branch| { out::message("Branch name: ${branch['name']} Head SHA: ${branch['sha']}") }
+```
+
+##### `repo_type`
+
+Data type: `Enum["CONTROL_REPO", "MODULE"]`
+
+The type of repo to perform the operation on. Must be one of "CONTROL_REPO" or "MODULE".
 
 ### cd4pe_deployments::get_node_group
 
@@ -561,9 +701,9 @@ is returned to the user.
 ##### Notify Slack users that approval is needed
 
 ```puppet
-wait_for_approval("development") do |String $url|
+wait_for_approval("development") |String $url| {
   run_task("slack::notify", "#it-ops", "Please review this deployment for approval: ${url}")
-end
+}
 ```
 
 #### `cd4pe_deployments::wait_for_approval(String $environment_name, Callable &$block)`
@@ -584,9 +724,9 @@ See [README.md]() for information on the CD4PEFunctionResult hash format
 ###### Notify Slack users that approval is needed
 
 ```puppet
-wait_for_approval("development") do |String $url|
+wait_for_approval("development") |String $url| {
   run_task("slack::notify", "#it-ops", "Please review this deployment for approval: ${url}")
-end
+}
 ```
 
 ##### `environment_name`
@@ -602,6 +742,70 @@ Data type: `Callable`
 Takes a block that provides the URL to the deployment's approval page
 
 ## Plans
+
+### cd4pe_deployments::cd4pe_job
+
+The cd4pe_deployments::cd4pe_job class.
+
+#### Parameters
+
+The following parameters are available in the `cd4pe_deployments::cd4pe_job` plan.
+
+##### `targets`
+
+Data type: `TargetSpec`
+
+
+
+##### `job_instance_id`
+
+Data type: `String[1]`
+
+
+
+##### `cd4pe_web_ui_endpoint`
+
+Data type: `String[1]`
+
+
+
+##### `cd4pe_job_owner`
+
+Data type: `String[1]`
+
+
+
+##### `env_vars`
+
+Data type: `Optional[Array[String[1]]]`
+
+
+
+Default value: `undef`
+
+##### `docker_image`
+
+Data type: `Optional[String[1]]`
+
+
+
+Default value: `undef`
+
+##### `docker_run_args`
+
+Data type: `Optional[Array[String[1]]]`
+
+
+
+Default value: `undef`
+
+##### `base_64_ca_cert`
+
+Data type: `Optional[String[1]]`
+
+
+
+Default value: `undef`
 
 ### cd4pe_deployments::direct
 
@@ -628,6 +832,14 @@ Data type: `Boolean`
 Indicates if the Puppet run should be a noop.
 
 Default value: `false`
+
+##### `fail_if_no_nodes`
+
+Data type: `Boolean`
+
+
+
+Default value: `true`
 
 ### cd4pe_deployments::eventual_consistency
 

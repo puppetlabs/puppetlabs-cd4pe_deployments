@@ -3,7 +3,7 @@ require 'puppet_x/puppetlabs/cd4pe_function_result'
 
 # @summary Decline a "pending approval" active deployment to a protected environment.
 # Typically consumed inside the block passed into `wait_for_approval`.
-# Related, `approve_deployment`
+# Related: `approve_deployment`
 Puppet::Functions.create_function(:'cd4pe_deployments::decline_deployment') do
   # @param environment_name
   #   The name of the Puppet environment to deploy. Does nothing if the specified environment is not protected.
