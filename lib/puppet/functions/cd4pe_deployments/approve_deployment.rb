@@ -2,6 +2,7 @@ require 'puppet_x/puppetlabs/cd4pe_client'
 require 'puppet_x/puppetlabs/cd4pe_function_result'
 
 # @summary Approve a "pending approval" active deployment to a protected environment.
+# Typically consumed inside the block passed into `wait_for_approval`.
 # Related, `decline_deployment`
 Puppet::Functions.create_function(:'cd4pe_deployments::approve_deployment') do
   # @param environment_name
@@ -9,8 +10,8 @@ Puppet::Functions.create_function(:'cd4pe_deployments::approve_deployment') do
   # @param username
   #   The name of the user approving the deployment. The username does not have to be a CD4PE user.
   #   Care should taken as the username is *not* validated as having special approval permissions.
-  # @example Set deployment approval state
-  #   set_deployment_approval_state("development", "coolUser123")
+  # @example Approve deployment
+  #   approve_deployment("development", "coolUser123")
   # @return [Hash] contains the results of the function
   #   See [README.md]() for information on the CD4PEFunctionResult hash format
   #   * result [Hash]:

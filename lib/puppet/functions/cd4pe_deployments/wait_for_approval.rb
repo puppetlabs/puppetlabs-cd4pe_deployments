@@ -14,9 +14,9 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
   # @param block
   #   Takes a block that provides the URL to the deployment's approval page
   # @example Notify Slack users that approval is needed
-  #   wait_for_approval("development") do |String $url|
+  #   wait_for_approval("development") |String $url| {
   #     run_task("slack::notify", "#it-ops", "Please review this deployment for approval: ${url}")
-  #   end
+  #   }
   # @return [Hash] contains the results of the function
   #   See [README.md]() for information on the CD4PEFunctionResult hash format
   #   * result [Hash]:
