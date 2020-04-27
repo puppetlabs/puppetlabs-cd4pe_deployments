@@ -83,6 +83,20 @@ module PuppetX::Puppetlabs
       make_request(:post, @owner_ajax_path, payload.to_json)
     end
 
+    def set_deployment_approval_state(environment_name, state, username)
+      payload = {
+        op: 'SetDeploymentApprovalState',
+        content: {
+          deploymentId: @config[:deployment_id],
+          environment: environment_name,
+          state: state,
+          username: username,
+        },
+      }
+
+      make_request(:post, @owner_ajax_path, payload.to_json)
+    end
+
     def run_puppet(environment_name, nodes, concurrency, noop)
       run_puppet_payload = {
         op: 'RunPuppet',
