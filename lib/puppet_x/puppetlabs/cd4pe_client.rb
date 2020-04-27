@@ -65,7 +65,7 @@ module PuppetX::Puppetlabs
       make_request(:post, @owner_ajax_path, payload.to_json)
     end
 
-    def get_approval_state # rubocop:disable Naming/AccessorMethodName
+    def get_approval_state # rubocop:disable Style/AccessorMethodName
       query = "?op=GetDeploymentApprovalState&deploymentId=#{deployment_id}"
       complete_path = @owner_ajax_path + query
       make_request(:get, complete_path)
