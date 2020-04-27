@@ -65,7 +65,7 @@ module PuppetX::Puppetlabs
       make_request(:post, @owner_ajax_path, payload.to_json)
     end
 
-    def get_approval_state # rubocop:disable Style/AccessorMethodName
+    def get_approval_state # rubocop:disable Naming/AccessorMethodName
       query = "?op=GetDeploymentApprovalState&deploymentId=#{deployment_id}"
       complete_path = @owner_ajax_path + query
       make_request(:get, complete_path)
@@ -180,33 +180,77 @@ module PuppetX::Puppetlabs
       make_request(:get, complete_path)
     end
 
+    def list_trigger_events(repo_name, pipeline_id = nil, commit_sha = nil)
+      query = if pipeline_id && commit_sha
+                "?op=ListTriggerEvents&repoName=#{repo_name}&pipelineId=#{pipeline_id}&commitId=#{commit_sha}"
+              else
+                "?op=ListTriggerEvents&repoName=#{repo_name}"
+              end
+      complete_path = @owner_ajax_path + query
+      make_request(:get, complete_path)
+    end
+
+    def get_pipeline(repo_type, repo_name, pipeline_id)
+      param = param_for_repo_type(repo_type)
+      query = "?op=GetPipeline&#{param}=#{repo_name}&pipelineId=#{pipeline_id}"
+      complete_path = @owner_ajax_path + query
+      make_request(:get, complete_path)
+    end
+
+    def get_impact_analysis(id)
+      query = "?op=GetImpactAnalysis&id=#{id}"
+      complete_path = @owner_ajax_path + query
+      make_request(:get, complete_path)
+    end
+
+    def search_impacted_nodes(environment_result_id)
+      query = "?op=SearchImpactedNodes&environmentResultId=#{environment_result_id}"
+      complete_path = @owner_ajax_path + query
+      make_request(:get, complete_path)
+    end
+
+    def get_cookie(login_user, login_pwd)
+      payload = {
+        op: 'PfiLogin',
+        content: {
+          email: login_user,
+          passwd: login_pwd,
+        },
+      }
+      make_request(:post, '/login', payload.to_json, 'anonymous')
+    end
+
     private
 
     def deployment_token
       token = ENV['DEPLOYMENT_TOKEN']
       raise Puppet::Error, 'Could not get token for deployment' unless token
+
       token
     end
 
     def deployment_owner
       owner = ENV['DEPLOYMENT_OWNER']
       raise Puppet::Error, 'Could not get owner for deployment' unless owner
+
       owner
     end
 
     def deployment_id
       id = ENV['DEPLOYMENT_ID']
       raise Puppet::Error, 'Could not get ID for deployment' unless id
+
       id
     end
 
     def web_ui_endpoint
       endpoint = ENV['WEB_UI_ENDPOINT']
       raise Puppet::Error, 'Could not get CD4PE Web UI Endpoint' unless endpoint
+
       endpoint
     end
 
-    def make_request(type, api_url, payload = '')
+    def make_request(type, api_url, payload = '', auth_type = '', cookie = nil)
       connection = Net::HTTP.new(@config[:server], @config[:port])
       if @config[:scheme] == 'https'
         connection.use_ssl = true
@@ -217,10 +261,23 @@ module PuppetX::Puppetlabs
       timeout = ENV['CD4PE_MODULE_DEPLOY_READ_TIMEOUT'] || 600
       connection.read_timeout = timeout
 
-      headers = {
-        'Content-Type' => 'application/json',
-        'Authorization' => "Bearer token #{@config[:token]}",
-      }
+      if auth_type == 'cookie'
+        raise Puppet::Error, 'Invalid credentials provided' unless cookie
+
+        headers = {
+          'Content-Type' => 'application/json',
+          'Cookie' => cookie,
+        }
+      elsif auth_type == 'anonymous'
+        headers = {
+          'Content-Type' => 'application/json',
+        }
+      else
+        headers = {
+          'Content-Type' => 'application/json',
+          'Authorization' => "Bearer token #{@config[:token]}",
+        }
+      end
 
       max_attempts = 3
       attempts = 0
@@ -263,6 +320,18 @@ module PuppetX::Puppetlabs
 
     def service_url
       "#{@config[:scheme]}://#{@config[:server]}:#{@config[:port]}"
+    end
+
+    def param_for_repo_type(repo_type)
+      case repo_type
+      when 'CONTROL_REPO'
+        param = 'controlRepoName'
+      when 'MODULE'
+        param = 'moduleName'
+      else
+        raise Puppet::Error, "Invalid repo_type specified: #{repo_type}"
+      end
+      param
     end
   end
 end
