@@ -25,8 +25,8 @@ Puppet::Functions.create_function(:'cd4pe_deployments::approve_deployment') do
   def approve_deployment(environment_name, username)
     client = PuppetX::Puppetlabs::CD4PEClient.new
 
-    state = "APPROVED"
-    response = client.set_deployment_approval_state(environment_name, state, username);
+    state = 'APPROVED'
+    response = client.set_deployment_approval_state(environment_name, state, username)
     case response
     when Net::HTTPSuccess
       response_body = JSON.parse(response.body, symbolize_names: false)

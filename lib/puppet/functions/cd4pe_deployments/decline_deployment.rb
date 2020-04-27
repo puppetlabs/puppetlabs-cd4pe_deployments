@@ -25,8 +25,8 @@ Puppet::Functions.create_function(:'cd4pe_deployments::decline_deployment') do
   def decline_deployment(environment_name, username)
     client = PuppetX::Puppetlabs::CD4PEClient.new
 
-    state = "DECLINED"
-    response = client.set_deployment_approval_state(environment_name, state, username);
+    state = 'DECLINED'
+    response = client.set_deployment_approval_state(environment_name, state, username)
     case response
     when Net::HTTPSuccess
       raise Bolt::PlanFailure.new("Deployment #{ENV['DEPLOYMENT_ID']} declined", 'bolt/plan-failure')
