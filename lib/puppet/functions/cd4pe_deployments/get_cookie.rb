@@ -23,16 +23,14 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_cookie') do
     client = PuppetX::Puppetlabs::CD4PEClient.new
 
     response = client.get_cookie(login_user, login_pwd)
-    if response.code == '200'
-      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response['Set-Cookie'])
-
-    elsif response.code =~ %r{4[0-9]+}
+    case response
+    when Net::HTTPSuccess
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response['Set-Cookie'])
+    when Net::HTTPClientError
       response_body = JSON.parse(response.body, symbolize_names: false)
-      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
-    else
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
+    when Net::HTTPServerError
       raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
-  rescue => exception
-    PuppetX::Puppetlabs::CD4PEFunctionResult.create_exception_result(exception)
   end
 end

@@ -27,16 +27,15 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_pipeline_trigger_even
     client = PuppetX::Puppetlabs::CD4PEClient.new
 
     response = client.list_trigger_events(repo_name, pipeline_id, commit_sha)
-    if response.code == '200'
+    case response
+    when Net::HTTPSuccess
       response_body = JSON.parse(response.body, symbolize_names: false)
       PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body['rows'].first)
-    elsif response.code =~ %r{4[0-9]+}
+    when Net::HTTPClientError
       response_body = JSON.parse(response.body, symbolize_names: false)
       PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
-    else
+    when Net::HTTPServerError
       raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
-  rescue => exception
-    PuppetX::Puppetlabs::CD4PEFunctionResult.create_exception_result(exception)
   end
 end

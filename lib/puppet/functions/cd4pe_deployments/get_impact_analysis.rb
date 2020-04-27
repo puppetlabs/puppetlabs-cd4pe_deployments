@@ -20,16 +20,15 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_impact_analysis') do
     client = PuppetX::Puppetlabs::CD4PEClient.new
 
     response = client.get_impact_analysis(id)
-    if response.code == '200'
+    case response
+    when Net::HTTPSuccess
       response_body = JSON.parse(response.body, symbolize_names: false)
       PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body)
-    elsif response.code =~ %r{4[0-9]+}
+    when Net::HTTPClientError
       response_body = JSON.parse(response.body, symbolize_names: false)
       PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
-    else
+    when Net::HTTPServerError
       raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
-  rescue => exception
-    PuppetX::Puppetlabs::CD4PEFunctionResult.create_exception_result(exception)
   end
 end
