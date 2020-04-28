@@ -12,11 +12,20 @@
 * [`cd4pe_deployments::delete_git_branch`](#cd4pe_deploymentsdelete_git_branch): Delete a git branch on your VCS
 * [`cd4pe_deployments::delete_node_group`](#cd4pe_deploymentsdelete_node_group): Delete a Puppet Enterprise node group
 * [`cd4pe_deployments::deploy_code`](#cd4pe_deploymentsdeploy_code): Performs a Puppet Enterprise Code Manager deployment for the given environment
+* [`cd4pe_deployments::evaluate_result`](#cd4pe_deploymentsevaluate_result): This is a generic helper function to be used with the result from cd4pe_deployments function calls.
+It will take the result from the function call and return an error hash if an error occurred. If no
+error occurred, the result is returned, saving the user from having to process the hash.
+* [`cd4pe_deployments::get_cookie`](#cd4pe_deploymentsget_cookie): Get a CD4PE cookie to use APIs that don't support token auth
 * [`cd4pe_deployments::get_git_branches`](#cd4pe_deploymentsget_git_branches): Lists git branches for a repository associated with the current deployment
+* [`cd4pe_deployments::get_impact_analysis`](#cd4pe_deploymentsget_impact_analysis): Get information about a CD4PE Impact Analysis
 * [`cd4pe_deployments::get_node_group`](#cd4pe_deploymentsget_node_group): Get information about a Puppet Enterprise node group
+* [`cd4pe_deployments::get_pipeline`](#cd4pe_deploymentsget_pipeline): Get information about a CD4PE pipeline
+* [`cd4pe_deployments::get_pipeline_trigger_event`](#cd4pe_deploymentsget_pipeline_trigger_event): Search which recent pipeline(s) match for a given commit SHA for a repository
 * [`cd4pe_deployments::partition_nodes`](#cd4pe_deploymentspartition_nodes): Partition nodes in a node group
 * [`cd4pe_deployments::pin_nodes_to_env`](#cd4pe_deploymentspin_nodes_to_env): Pin a list of nodes to Puppet Enterprise environment group
 * [`cd4pe_deployments::run_puppet`](#cd4pe_deploymentsrun_puppet): Run Puppet using the Puppet Orchestrator for a set of nodes in a given environment
+* [`cd4pe_deployments::search_impacted_nodes`](#cd4pe_deploymentssearch_impacted_nodes): Get information about the impacted nodes of a CD4PE Impact Analysis
+* [`cd4pe_deployments::search_pipeline`](#cd4pe_deploymentssearch_pipeline): Search which recent pipeline(s) match for a given commit SHA for a repository
 * [`cd4pe_deployments::update_git_branch_ref`](#cd4pe_deploymentsupdate_git_branch_ref): Update a given git branch's HEAD ref to a new commit SHA
 * [`cd4pe_deployments::validate_code_deploy_status`](#cd4pe_deploymentsvalidate_code_deploy_status): This is a helper function to be used with the result from the `deploy_code` function.
 It will take the result from a code deploy and return an error hash if an error occurred or if
@@ -366,6 +375,69 @@ Data type: `Optional[String]`
 
 Specifies a default branch to set when performing a code deploy
 
+### cd4pe_deployments::evaluate_result
+
+Type: Puppet Language
+
+This is a generic helper function to be used with the result from cd4pe_deployments function calls.
+It will take the result from the function call and return an error hash if an error occurred. If no
+error occurred, the result is returned, saving the user from having to process the hash.
+
+#### `cd4pe_deployments::evaluate_result(Hash $result_hash)`
+
+The cd4pe_deployments::evaluate_result function.
+
+Returns: `Variant` contains the results of the function
+
+##### `result_hash`
+
+Data type: `Hash`
+
+The result hash of any cd4pe_deployments function call.
+
+### cd4pe_deployments::get_cookie
+
+Type: Ruby 4.x API
+
+Get a CD4PE cookie to use APIs that don't support token auth
+
+#### Examples
+
+##### Get a cookie
+
+```puppet
+$cookie = get_cookie('user@domain.com', 'P@ssw0rd')
+```
+
+#### `cd4pe_deployments::get_cookie(String $login_user, String $login_pwd)`
+
+The cd4pe_deployments::get_cookie function.
+
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [String] the cookie value
+* error [Hash] contains error information if any
+
+##### Examples
+
+###### Get a cookie
+
+```puppet
+$cookie = get_cookie('user@domain.com', 'P@ssw0rd')
+```
+
+##### `login_user`
+
+Data type: `String`
+
+The CD4PE user login (email address)
+
+##### `login_pwd`
+
+Data type: `String`
+
+The CD4PE user password
+
 ### cd4pe_deployments::get_git_branches
 
 Type: Ruby 4.x API
@@ -407,6 +479,43 @@ $branches.each |$branch| { out::message("Branch name: ${branch['name']} Head SHA
 Data type: `Enum["CONTROL_REPO", "MODULE"]`
 
 The type of repo to perform the operation on. Must be one of "CONTROL_REPO" or "MODULE".
+
+### cd4pe_deployments::get_impact_analysis
+
+Type: Ruby 4.x API
+
+Get information about a CD4PE Impact Analysis
+
+#### Examples
+
+##### Get information about an Impact Analysis
+
+```puppet
+$ia = get_impact_analysis(2452)
+```
+
+#### `cd4pe_deployments::get_impact_analysis(Integer $id)`
+
+The cd4pe_deployments::get_impact_analysis function.
+
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [Hash] of GetImpactAnalysis operation
+* error [Hash] contains error information if any
+
+##### Examples
+
+###### Get information about an Impact Analysis
+
+```puppet
+$ia = get_impact_analysis(2452)
+```
+
+##### `id`
+
+Data type: `Integer`
+
+The internal ID of the Impact Analysis
 
 ### cd4pe_deployments::get_node_group
 
@@ -454,6 +563,111 @@ $node_group = get_node_group_info("3ed5c6c0-be33-4c62-9f41-a863a282b6ae")
 Data type: `String`
 
 The ID string of the node group
+
+### cd4pe_deployments::get_pipeline
+
+Type: Ruby 4.x API
+
+Get information about a CD4PE pipeline
+
+#### Examples
+
+##### Get information about a specific pipeline for 'control-repo'
+
+```puppet
+$pipeline = get_pipeline('CONTROL_REPO', 'control-repo', '14hf24zme79k00mcrknrbt23sb')
+```
+
+#### `cd4pe_deployments::get_pipeline(String $repo_type, String $repo_name, String $pipeline_id)`
+
+The cd4pe_deployments::get_pipeline function.
+
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [Hash]:
+  * `buildStage [String] info on the git change`
+  * `id [String] the pipeline's id`
+  * `name [String] the name of the pipeline`
+  * `projectId [Hash] internal naming of the CD4PE repo`
+  * `sources [Array] information about the source triggering the pipeline`
+  * `stages [Array] information about all the stages in the pipeline, and their items`
+* error [Hash] contains error information if any
+
+##### Examples
+
+###### Get information about a specific pipeline for 'control-repo'
+
+```puppet
+$pipeline = get_pipeline('CONTROL_REPO', 'control-repo', '14hf24zme79k00mcrknrbt23sb')
+```
+
+##### `repo_type`
+
+Data type: `String`
+
+The type of the repository (CONTROL_REPO or MODULE)
+
+##### `repo_name`
+
+Data type: `String`
+
+The name of the repository
+
+##### `pipeline_id`
+
+Data type: `String`
+
+The internal ID of the pipeline for this repository
+
+### cd4pe_deployments::get_pipeline_trigger_event
+
+Type: Ruby 4.x API
+
+Search which recent pipeline(s) match for a given commit SHA for a repository
+
+#### Examples
+
+##### Get pipeline trigger event for a repository named 'control-repo'
+
+```puppet
+$pipeline = get_pipeline_trigger_event('control-repo', '1mfxk3kc4ic1w0nny0zcq5l7cw', '47b552dc15448b4e306fcf8df320e5124b2cbd63')
+```
+
+#### `cd4pe_deployments::get_pipeline_trigger_event(String $repo_name, String $pipeline_id, String $commit_sha)`
+
+The cd4pe_deployments::get_pipeline_trigger_event function.
+
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [Hash]:
+  * `rows [Array] array of hashes with pipeline results. Contains 1 hash for the result of the matching commit SHA`
+* error [Hash] contains error information if any
+
+##### Examples
+
+###### Get pipeline trigger event for a repository named 'control-repo'
+
+```puppet
+$pipeline = get_pipeline_trigger_event('control-repo', '1mfxk3kc4ic1w0nny0zcq5l7cw', '47b552dc15448b4e306fcf8df320e5124b2cbd63')
+```
+
+##### `repo_name`
+
+Data type: `String`
+
+The name of the repository
+
+##### `pipeline_id`
+
+Data type: `String`
+
+The pipelineId of the pipeline
+
+##### `commit_sha`
+
+Data type: `String`
+
+The commit SHA to get the pipeline result for
 
 ### cd4pe_deployments::partition_nodes
 
@@ -610,6 +824,87 @@ Data type: `Optional[Integer]`
 
 The number of nodes to concurrently run Puppet on. Defaults to the Puppet Orchestrator default.
 
+### cd4pe_deployments::search_impacted_nodes
+
+Type: Ruby 4.x API
+
+Get information about the impacted nodes of a CD4PE Impact Analysis
+
+#### Examples
+
+##### Get information about a specific environment in a specific IA
+
+```puppet
+$impacted_nodes = search_impacted_nodes(517)
+```
+
+#### `cd4pe_deployments::search_impacted_nodes(Integer $environment_result_id)`
+
+The cd4pe_deployments::search_impacted_nodes function.
+
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [Hash]:
+  * `rows [Array] array of hashes, one for each impacted node`
+* error [Hash] contains error information if any
+
+##### Examples
+
+###### Get information about a specific environment in a specific IA
+
+```puppet
+$impacted_nodes = search_impacted_nodes(517)
+```
+
+##### `environment_result_id`
+
+Data type: `Integer`
+
+The internal environment_result_id of an analysed code environment in the IA
+
+### cd4pe_deployments::search_pipeline
+
+Type: Ruby 4.x API
+
+Search which recent pipeline(s) match for a given commit SHA for a repository
+
+#### Examples
+
+##### List recent trigger events for a repository named 'control-repo'
+
+```puppet
+$pipeline = search_pipeline('control-repo', '47b552dc15448b4e306fcf8df320e5124b2cbd63')
+```
+
+#### `cd4pe_deployments::search_pipeline(String $repo_name, String $commit_sha)`
+
+The cd4pe_deployments::search_pipeline function.
+
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [String]: the pipelineId of the found pipeline for the provided commit SHA
+* error [Hash] contains error information if any
+
+##### Examples
+
+###### List recent trigger events for a repository named 'control-repo'
+
+```puppet
+$pipeline = search_pipeline('control-repo', '47b552dc15448b4e306fcf8df320e5124b2cbd63')
+```
+
+##### `repo_name`
+
+Data type: `String`
+
+The name of the repository
+
+##### `commit_sha`
+
+Data type: `String`
+
+The commit SHA to get the pipeline result for
+
 ### cd4pe_deployments::update_git_branch_ref
 
 Type: Ruby 4.x API
@@ -672,20 +967,14 @@ any of the code deployments failed.
 
 The cd4pe_deployments::validate_code_deploy_status function.
 
-Returns: `Any`
-
-##### `$deploy_code_result`
-
-Data type: `Hash`
-
-The results of the code deployment from calling the `deploy_code` function.
-See the `deploy_code` docs for more info on the value of this object
+Returns: `Hash` contains the results of the code deployment
 
 ##### `deploy_code_result`
 
 Data type: `Hash`
 
-
+The results of the code deployment from calling the `deploy_code` function.
+See the `deploy_code` docs for more info on the value of this object
 
 ### cd4pe_deployments::wait_for_approval
 
@@ -837,7 +1126,7 @@ Default value: `false`
 
 Data type: `Boolean`
 
-
+Toggles between failing or silently succeeding when the target environment group has no nodes.
 
 Default value: `true`
 
@@ -875,13 +1164,13 @@ The following parameters are available in the `cd4pe_deployments::rolling` plan.
 
 Data type: `Optional[Integer]`
 
-
+The number of allowed failed Puppet runs that can occur before the Deployment will fail
 
 ##### `batch_size`
 
 Data type: `Integer`
 
-
+The number of nodes in each batch to run Puppet on.
 
 Default value: 10
 
@@ -889,7 +1178,7 @@ Default value: 10
 
 Data type: `Boolean`
 
-
+Indicates if the Puppet run should be a noop.
 
 Default value: `false`
 
@@ -897,7 +1186,7 @@ Default value: `false`
 
 Data type: `Integer`
 
-
+The delay in seconds between each batch.
 
 Default value: 60
 
@@ -905,7 +1194,7 @@ Default value: 60
 
 Data type: `Boolean`
 
-
+Toggles between failing or silently succeeding when the target environment group has no nodes.
 
 Default value: `true`
 
