@@ -10,7 +10,16 @@
 #
 # @summary This deployment policy will deploy the target control repository commit to
 #          target nodes in batches.
-#
+# @param max_node_failure
+#     The number of allowed failed Puppet runs that can occur before the Deployment will fail
+# @param batch_size
+#     The number of nodes in each batch to run Puppet on.
+# @param noop
+#     Indicates if the Puppet run should be a noop.
+# @param batch_delay
+#     The delay in seconds between each batch.
+# @param fail_if_no_nodes
+#     Toggles between failing or silently succeeding when the target environment group has no nodes.
 plan cd4pe_deployments::rolling (
   Optional[Integer] $max_node_failure,
   Integer $batch_size = 10,
