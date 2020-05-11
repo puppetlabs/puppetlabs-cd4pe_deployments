@@ -12,9 +12,9 @@
 # @param fail_if_no_nodes
 #     Toggles between failing or silently succeeding when the target environment group has no nodes.
 plan cd4pe_deployments::direct (
-  Integer $max_node_failure = 0,
-  Boolean $noop = false,
-  Boolean $fail_if_no_nodes = true,
+  Integer[0] $max_node_failure = 0,
+  Boolean    $noop = false,
+  Boolean    $fail_if_no_nodes = true,
 ) {
   $repo_target_branch = system::env('REPO_TARGET_BRANCH')
   $source_commit = system::env('COMMIT')
