@@ -31,27 +31,25 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_impact_analysis_repor
 
     pipeline_triggers = pipeline_triggers_response['result']
 
-    ##Iterate through each of the pipeline triggers and look for 
-    # Impact Analysis events in each of the stages.
-    # Return the resulting array of reports
-    pipeline_triggers.map do |pipeline|
-      ia_events = pipeline['eventsByStage'].map do |stage, events|
-        #Filter out only the Impact Analysis events
-        events.select do |event| 
-          event['eventType'] == 'PEIMPACTANALYSIS'
-        end
-      end.flatten #flatten into one dimensional array
+    ## Iterate through each of the pipeline triggers and look for
+    #  Impact Analysis events in each of the stages.
+    #  Return the resulting array of reports
+    pipeline_triggers.map { |pipeline|
+      ia_events = pipeline['eventsByStage'].map { |_, events|
+        # Filter out only the Impact Analysis events
+        events.select { |event| event['eventType'] == 'PEIMPACTANALYSIS' }
+      }.flatten # flatten into one dimensional array
 
-      ia_events.map do |event|
+      ia_events.map { |event|
         event['impactAnalysisId']
-      end
+      }
 
-      ia_events.map do |ia|
+      ia_events.map { |ia|
         ia_report_result = call_function('cd4pe_deployments::get_impact_analysis', ia['impactAnalysisId'])
         raise Puppet::Error ia_report_result['error'] if ia_report_result['error']
 
         ia_report_result['result']
-      end
-    end.flatten
+      }
+    }.flatten
   end
 end
