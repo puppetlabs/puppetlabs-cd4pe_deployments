@@ -24,18 +24,16 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_pipeline_trigger_even
   end
 
   def get_pipeline_trigger_event(repo_name, pipeline_id, commit_sha)
-    client = PuppetX::Puppetlabs::CD4PEClient.new
-
-    response = client.list_trigger_events(repo_name, pipeline_id, commit_sha)
-    case response
-    when Net::HTTPSuccess
-      response_body = JSON.parse(response.body, symbolize_names: false)
-      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body['rows'].first)
-    when Net::HTTPClientError
-      response_body = JSON.parse(response.body, symbolize_names: false)
-      PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
-    when Net::HTTPServerError
-      raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
+    results = call_function('cd4pe_deployments::get_pipeline_trigger_events', repo_name, pipeline_id, commit_sha)
+    if results['error']
+      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(results)
     end
+
+    return_hash = {}
+    unless results['result'].empty?
+      return_hash = results['result'].first
+    end
+
+    PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(return_hash)
   end
 end
