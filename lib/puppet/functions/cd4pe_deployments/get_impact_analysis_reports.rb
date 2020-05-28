@@ -19,7 +19,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_impact_analysis_repor
   end
 
   def get_impact_analysis_reports(commit_sha, repo_name)
-    raise "Unknown repo_name value" unless repo_name
+    raise 'Unknown repo_name value' unless repo_name
 
     pipeline_id_response = call_function('cd4pe_deployments::search_pipeline', repo_name, commit_sha)
     raise Puppet::Error pipeline_id_response['error'] if pipeline_id_response['error']
@@ -40,16 +40,16 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_impact_analysis_repor
         events.select { |event| event['eventType'] == 'PEIMPACTANALYSIS' }
       }.flatten # flatten into one dimensional array
 
-      ia_events.map { |event|
+      ia_events.map do |event|
         event['impactAnalysisId']
-      }
+      end
 
-      ia_events.map { |ia|
+      ia_events.map do |ia|
         ia_report_result = call_function('cd4pe_deployments::get_impact_analysis', ia['impactAnalysisId'])
         raise Puppet::Error ia_report_result['error'] if ia_report_result['error']
 
         ia_report_result['result']
-      }
+      end
     }.flatten
   end
 end
