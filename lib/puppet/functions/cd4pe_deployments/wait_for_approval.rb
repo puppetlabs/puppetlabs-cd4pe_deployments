@@ -38,12 +38,10 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
     #   approval step. If not, create the deployment approval in the backend
     #   and set it to pending
     state = approval_decision(approval_response)
-    if ['APPROVED', 'DECLINED'].include?(state)
-      return approval_response
-    else
-      approval_response = attempt_set_deployment_pending(environment_name)
-      return response unless response['result']['isPending']
-    end
+    return approval_response if ['APPROVED', 'DECLINED'].include?(state)
+
+    approval_response = attempt_set_deployment_pending(environment_name)
+    return response unless response['result']['isPending']
 
     if approval_response['result'].empty? # rubocop:disable Style/GuardClause
       url = approval_url
