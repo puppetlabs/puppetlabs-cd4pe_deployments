@@ -29,7 +29,7 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
           'isPending' => false,
           'approvalDecision' => 'APPROVED',
         },
-        'error' => nil
+        'error' => nil,
       }
     end
 
