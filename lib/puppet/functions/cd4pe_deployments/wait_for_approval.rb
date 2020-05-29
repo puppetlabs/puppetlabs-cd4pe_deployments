@@ -42,7 +42,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
     # However, any other state should be returned immediately so the deployment
     # can continue
     unless state['result'].empty? && state['result']['isPending']
-      return state unless state['result'].empty?
+      return state
     end
 
     # Set the approval to pending and return if the result is anything other
