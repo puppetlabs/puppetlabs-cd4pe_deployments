@@ -21,10 +21,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_impact_analysis_repor
   def get_impact_analysis_reports(commit_sha, repo_name)
     raise 'Unknown repo_name value' unless repo_name
 
-    pipeline_id_response = call_function('cd4pe_deployments::search_pipeline', repo_name, commit_sha)
-    raise Puppet::Error pipeline_id_response['error'] if pipeline_id_response['error']
-
-    pipeline_id = pipeline_id_response['result']
+    pipeline_id = call_function('cd4pe_deployments::search_pipeline', repo_name, commit_sha)[0]['pipelineId']
 
     pipeline_triggers_response = call_function('cd4pe_deployments::get_pipeline_trigger_events', repo_name, pipeline_id, commit_sha)
     raise Puppet::Error pipeline_triggers_response['error'] if pipeline_triggers_response['error']
