@@ -27,7 +27,7 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
       {
         'result' => {
           'isPending' => false,
-          'approvalDecision' => 'APPROVED'
+          'approvalDecision' => 'APPROVED',
         },
         'error' => nil
       }
@@ -37,18 +37,18 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
       {
         'result' => {
           'isPending' => false,
-          'approvalDecision' => 'DECLINED'
+          'approvalDecision' => 'DECLINED',
         },
-        'error' => nil
+        'error' => nil,
       }
     end
 
     let(:approval_pending_response) do
       {
         'result' => {
-          'isPending' => true
+          'isPending' => true,
         },
-        'error' => nil
+        'error' => nil,
       }
     end
 
@@ -116,7 +116,7 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
         .times(1)
 
       stub_request(:get, ajax_url)
-        .with(query: { op: 'GetDeploymentApprovalState', deploymentId: deployment_id},  headers: { 'authorization'=>"Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
+        .with(query: { op: 'GetDeploymentApprovalState', deploymentId: deployment_id }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
         .to_return(body: JSON.generate(approval_pending_response['result']))
 
       stub_request(:post, ajax_url)
