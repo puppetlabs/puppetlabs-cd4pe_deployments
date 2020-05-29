@@ -31,31 +31,38 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
   def wait_for_approval(environment_name, &block)
     init_client
 
-    response = attempt_set_deployment_pending(environment_name)
+    state = approval_state
+    return state unless state['error'].nil?
+    return state unless state['result'].empty?
 
-    unless response['result']['isPending']
-      return response
+    # Set the approval to pending and return if the result is anything other
+    # than a pending state
+    approval_response = attempt_set_deployment_pending(environment_name)
+    return approval_response unless approval_response['result']['isPending']
+
+    # Call the block. It's possible for The block to change the approval state
+    # so the state needs to rechecked after the block is done
+    url = approval_url
+    block.call(url) if block_given? && !url.nil? # rubocop:disable Performance/RedundantBlockCall
+
+    # Make sure we have the latest state before entering the loop
+    approval_response = approval_state
+    return approval_response unless state['result'].empty?
+
+    # At this point the only valid state is pending.
+    # Loop until the approval state is something other than pending
+    while approval_response['result']['isPending']
+      sleep(5)
+      approval_response = approval_state
     end
 
-    approval_response = approval_pending?
-    return approval_response unless approval_response['error'].nil?
+    raise Bolt::PlanFailure.new("Approval timed out for deployment #{ENV['DEPLOYMENT_ID']}", 'bolt/plan-failure') if approval_response['result'].empty?
+    raise Bolt::PlanFailure.new("Deployment #{ENV['DEPLOYMENT_ID']} declined", 'bolt/plan-failure') if approval_decision(approval_response) == 'DECLINED'
 
-    if approval_response['result'].empty? # rubocop:disable Style/GuardClause
-      url = approval_url
-      block.call(url) if block_given? && !url.nil? # rubocop:disable Performance/RedundantBlockCall
-
-      while approval_response['result'].empty?
-        approval_response = approval_pending?
-        sleep(5)
-      end
-
-      raise Bolt::PlanFailure.new("Approval timed out for deployment #{ENV['DEPLOYMENT_ID']}", 'bolt/plan-failure') if approval_response['result'].empty?
-      raise Bolt::PlanFailure.new("Deployment #{ENV['DEPLOYMENT_ID']} declined", 'bolt/plan-failure') if approval_decision(approval_response) == 'DECLINED'
-      approval_response
-    end
+    approval_response
   end
 
-  def approval_pending?
+  def approval_state
     response = @client.get_approval_state
     case response
     when Net::HTTPSuccess

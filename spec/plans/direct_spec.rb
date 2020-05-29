@@ -23,6 +23,35 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
       }
     end
 
+    let(:deployment_approved_response) do
+      {
+        'result' => {
+          'isPending' => false,
+          'approvalDecision' => 'APPROVED',
+        },
+        'error' => nil,
+      }
+    end
+
+    let(:deployment_declined_response) do
+      {
+        'result' => {
+          'isPending' => false,
+          'approvalDecision' => 'DECLINED',
+        },
+        'error' => nil,
+      }
+    end
+
+    let(:approval_pending_response) do
+      {
+        'result' => {
+          'isPending' => true,
+        },
+        'error' => nil,
+      }
+    end
+
     let(:run_puppet_response) do
       {
         'job' => {
@@ -85,6 +114,10 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
         .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
         .to_return(body: JSON.generate(node_group_response['result']))
         .times(1)
+
+      stub_request(:get, ajax_url)
+        .with(query: { op: 'GetDeploymentApprovalState', deploymentId: deployment_id }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
+        .to_return(body: JSON.generate(approval_pending_response['result']))
 
       stub_request(:post, ajax_url)
         .with(
