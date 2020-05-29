@@ -33,7 +33,17 @@ Puppet::Functions.create_function(:'cd4pe_deployments::wait_for_approval') do
 
     state = approval_state
     return state unless state['error'].nil?
-    return state unless state['result'].empty?
+
+    # When the wait_for_approval function is run, the expected state
+    # of the deployment's approval is nothing. However, it could also
+    # be in a pending, approved, or declined state from a previous call
+    # to wait_for_approval(). If the deployment is already in a pending
+    # state, then we should enter the rest of the wait_for_approval function.
+    # However, any other state should be returned immediately so the deployment
+    # can continue
+    unless state['result'].empty? and state['result']['isPending']
+      return state unless state['result'].empty?
+    end
 
     # Set the approval to pending and return if the result is anything other
     # than a pending state
