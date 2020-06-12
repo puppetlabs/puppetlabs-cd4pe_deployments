@@ -21,6 +21,7 @@ This module provides a set of tools, via CD4PE, for creating your own custom CD4
 2. You'll have access to all of the functions listed in our [REFERENCE.md] to perform deployment operations (e.g. pinning nodes to an environment group or getting information about an environment group)
 3. Deployment policies will run inside a CD4PE context with certain environment variables available.
 
+   - `CD4PE_PIPELINE_ID`: NOT AVAILABLE IN MANUAL DEPLOYMENTS, a unique identifier for the current pipeline.
    - `MODULE_NAME`: the name of the module being deployed
    - `CONTROL_REPO_NAME`: the name of the control repo being deployed. In the case of a module feature branch deployment, this is the name of the control repo the deployment is based off of.
    - `BRANCH`: the name of the branch you are deploying _from_; your pipeline branch
