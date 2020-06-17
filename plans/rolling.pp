@@ -78,7 +78,8 @@ plan cd4pe_deployments::rolling (
     }
   }
 
-  $branch = "ROLLING_DEPLOYMENT_${system::env('DEPLOYMENT_ID')}"
+  # Ensure our prefix is always lowercase to match to puppets suggested env regex pattern
+  $branch = "rolling_deployment_${system::env('DEPLOYMENT_ID')}"
   $tmp_git_branch_result = cd4pe_deployments::create_git_branch('CONTROL_REPO', $branch,  $sha, true)
   if ($tmp_git_branch_result[error]) {
     fail_plan("Could not create temporary git branch ${branch}: ${tmp_git_branch_result[error]}")
