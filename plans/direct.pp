@@ -11,10 +11,14 @@
 #     Indicates if the Puppet run should be a noop.
 # @param fail_if_no_nodes
 #     Toggles between failing or silently succeeding when the target environment group has no nodes.
+# @param enable_approval
+#     Allows custom deployment policies to disable approval if it was already taken care of outside
+#     the built-in deployment policy
 plan cd4pe_deployments::direct (
   Integer $max_node_failure = 0,
   Boolean $noop = false,
   Boolean $fail_if_no_nodes = true,
+  Boolean $enable_approval  = true,
 ) {
   $repo_target_branch = system::env('REPO_TARGET_BRANCH')
   $source_commit = system::env('COMMIT')
@@ -27,7 +31,9 @@ plan cd4pe_deployments::direct (
 
   $target_environment = $get_node_group_result['result']['environment']
   # Wait for approval if the environment is protected
-  cd4pe_deployments::wait_for_approval($target_environment) |String $url| { }
+  if $enable_approval {
+    cd4pe_deployments::wait_for_approval($target_environment) |String $url| { }
+  }
 
   # Update the branch associated with the target environment to the source commit.
   $update_git_ref_result = cd4pe_deployments::update_git_branch_ref(
