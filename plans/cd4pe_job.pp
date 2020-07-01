@@ -7,10 +7,10 @@ plan cd4pe_deployments::cd4pe_job (
   Optional[String[1]]             $docker_image = undef,
   Optional[Array[String[1]]]      $docker_run_args = undef,
   Optional[String[1]]             $base_64_ca_cert = undef,
+  Optional[Integer[1]]            $http_read_timeout_seconds = 600,
 ) {
 
   $cd4pe_token = system::env('CD4PE_TOKEN')
-
   return run_task(
     'cd4pe_jobs::run_cd4pe_job',
     $targets,
@@ -22,4 +22,5 @@ plan cd4pe_deployments::cd4pe_job (
     'docker_image' => $docker_image,
     'docker_run_args' => $docker_run_args,
     'base_64_ca_cert' => $base_64_ca_cert,
+    'http_read_timeout_seconds' => $http_read_timeout_seconds,
 )}
