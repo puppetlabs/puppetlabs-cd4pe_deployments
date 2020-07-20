@@ -6,7 +6,6 @@ plan cd4pe_deployments::cd4pe_job (
   Optional[Array[String[1]]]      $env_vars = undef,
   Optional[String[1]]             $docker_image = undef,
   Optional[Array[String[1]]]      $docker_run_args = undef,
-  Optional[String[1]]             $docker_pull_creds = undef,
   Optional[String[1]]             $base_64_ca_cert = undef,
 ) {
 
@@ -22,6 +21,5 @@ plan cd4pe_deployments::cd4pe_job (
     'env_vars' => $env_vars,
     'docker_image' => $docker_image,
     'docker_run_args' => $docker_run_args,
-    'docker_pull_creds' => $docker_pull_creds,
     'base_64_ca_cert' => $base_64_ca_cert,
 )}
