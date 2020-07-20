@@ -1088,6 +1088,14 @@ Data type: `Optional[Array[String[1]]]`
 
 Default value: `undef`
 
+##### `docker_pull_creds`
+
+Data type: `Optional[String[1]]`
+
+
+
+Default value: `undef`
+
 ##### `base_64_ca_cert`
 
 Data type: `Optional[String[1]]`
