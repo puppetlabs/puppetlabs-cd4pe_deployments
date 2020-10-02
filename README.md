@@ -27,6 +27,7 @@ This module provides a set of tools, via CD4PE, for creating your own custom CD4
    - `BRANCH`: the name of the branch you are deploying _from_; your pipeline branch
    - `COMMIT`: HEAD commit SHA of the branch you are deploying from
    - `NODE_GROUP_ID`: alpha-numberic ID of the node group you are deploying _to_
+   - `NODE_GROUP_ENVIRONMENT`:the environment of the node group you are deploying _to_
    - `REPO_TARGET_BRANCH`: name of the source control branch that represents the target environment
    - `ENVIRONMENT_PREFIX`: if you are deploying to a prefixed environment, this is that prefix
    - `REPO_TYPE`: will either be "CONTROL_REPO" or "MODULE"
