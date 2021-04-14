@@ -19,8 +19,9 @@ module PuppetX::Puppetlabs
         deployment_id: deployment_id,
         deployment_owner: deployment_owner,
       }
-
-      @owner_ajax_path = "/#{deployment_owner}/ajax"
+      route_prefix = uri.path || ''
+      @owner_ajax_path = "#{route_prefix}/#{deployment_owner}/ajax"
+      @login_path = "#{route_prefix}/login"
     end
 
     def pin_nodes_to_env(nodes, node_group_id)
@@ -217,7 +218,7 @@ module PuppetX::Puppetlabs
           passwd: login_pwd,
         },
       }
-      make_request(:post, '/login', payload.to_json, 'anonymous')
+      make_request(:post, @login_path, payload.to_json, 'anonymous')
     end
 
     private
