@@ -207,7 +207,18 @@ module PuppetX::Puppetlabs
     def search_impacted_nodes(environment_result_id)
       query = "?op=SearchImpactedNodes&environmentResultId=#{environment_result_id}"
       complete_path = @owner_ajax_path + query
-      make_request(:get, complete_path)
+      res = make_request(:get, complete_path)
+      result = JSON.parse(res.body)
+      rows = result['rows']
+      while res.code.to_i == 200 && !result['nextMarker'].nil?
+        query         = "?op=SearchImpactedNodes&environmentResultId=#{environment_result_id}&nextMarker=#{result['nextMarker']}"
+        complete_path = @owner_ajax_path + query
+        res           = make_request(:get, complete_path)
+        result        = JSON.parse(res.body)
+        rows += result['rows']
+      end
+      res.body = { 'rows': rows }.to_json
+      res
     end
 
     def get_cookie(login_user, login_pwd)
