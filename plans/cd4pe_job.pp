@@ -8,9 +8,13 @@ plan cd4pe_deployments::cd4pe_job (
   Optional[Array[String[1]]]      $docker_run_args = undef,
   Optional[String[1]]             $docker_pull_creds = undef,
   Optional[String[1]]             $base_64_ca_cert = undef,
+  Optional[Array[String[1]]]      $secret_env_vars = [],
 ) {
 
   $cd4pe_token = system::env('CD4PE_TOKEN')
+  $secrets_hash = $secret_env_vars.reduce({}) |$memo, $value| {
+    $memo + { $value => system::env($value) }
+  }
 
   return run_task(
     'cd4pe_jobs::run_cd4pe_job',
@@ -24,4 +28,5 @@ plan cd4pe_deployments::cd4pe_job (
     'docker_run_args' => $docker_run_args,
     'docker_pull_creds' => $docker_pull_creds,
     'base_64_ca_cert' => $base_64_ca_cert,
+    'secrets' => $secrets_hash,
 )}
