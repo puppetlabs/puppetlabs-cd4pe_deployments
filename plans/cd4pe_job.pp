@@ -28,5 +28,4 @@ plan cd4pe_deployments::cd4pe_job (
     'docker_run_args' => $docker_run_args,
     'docker_pull_creds' => $docker_pull_creds,
     'base_64_ca_cert' => $base_64_ca_cert,
-    'secrets' => $secrets_hash,
 )}
