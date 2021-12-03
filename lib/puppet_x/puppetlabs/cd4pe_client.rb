@@ -262,16 +262,29 @@ module PuppetX::Puppetlabs
       endpoint
     end
 
+    def connection_read_timeout
+      # Set timeout to 10min or customer override for our code deployment
+      # api as it is a long lived connection instead of polling for updates.
+      # If env var is specified and valid, override.
+      timeout = 600
+      env_var_val = ENV['CD4PE_MODULE_DEPLOY_READ_TIMEOUT']
+      unless env_var_val.nil?
+        if env_var_val.is_a?(Integer)
+          timeout = env_var_val
+        elsif env_var_val.is_a?(String) && !env_var_val.empty?
+          timeout = Integer(env_var_val)
+        end
+      end
+      timeout
+    end
+
     def make_request(type, api_url, payload = '', auth_type = '', cookie = nil)
       connection = Net::HTTP.new(@config[:server], @config[:port])
       if @config[:scheme] == 'https'
         connection.use_ssl = true
       end
 
-      # Increase timeout to 10min or customer override for our code deployment
-      # api as it is a long lived connection instead of polling for updates
-      timeout = ENV['CD4PE_MODULE_DEPLOY_READ_TIMEOUT'] || 600
-      connection.read_timeout = timeout
+      connection.read_timeout = connection_read_timeout
 
       if auth_type == 'cookie'
         raise Puppet::Error, 'Invalid credentials provided' unless cookie
