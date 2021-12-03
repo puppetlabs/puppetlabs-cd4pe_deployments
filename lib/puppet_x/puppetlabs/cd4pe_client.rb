@@ -267,12 +267,12 @@ module PuppetX::Puppetlabs
       # api as it is a long lived connection instead of polling for updates.
       # If env var is specified and valid, override.
       timeout = 600
-      env_var = ENV['CD4PE_MODULE_DEPLOY_READ_TIMEOUT']
-      unless env_var.nil?
-        if env_var.is_a?(Integer)
-          timeout = env_var
-        elsif env_var.is_a?(String) && !env_var.empty?
-          timeout = Integer(env_var)
+      env_var_val = ENV['CD4PE_MODULE_DEPLOY_READ_TIMEOUT']
+      unless env_var_val.nil?
+        if env_var_val.is_a?(Integer)
+          timeout = env_var_val
+        elsif env_var_val.is_a?(String) && !env_var_val.empty?
+          timeout = Integer(env_var_val)
         end
       end
       timeout
