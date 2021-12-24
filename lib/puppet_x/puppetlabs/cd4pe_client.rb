@@ -211,6 +211,11 @@ module PuppetX::Puppetlabs
       payload = { message: message}
       make_request(:post, path, payload.to_json)
     end
+    
+    def get_impact_analysis_csv(id)
+      path = "#{@api_v1_path}/impact-analysis/#{id}/csv?workspaceId=#{@config[:deployment_domain]}"
+      make_request(:get, path)
+    end
 
     def search_impacted_nodes(environment_result_id)
       query = "?op=SearchImpactedNodes&environmentResultId=#{environment_result_id}"
