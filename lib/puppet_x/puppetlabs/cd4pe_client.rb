@@ -206,6 +206,12 @@ module PuppetX::Puppetlabs
       make_request(:get, complete_path)
     end
 
+    def log_message(message)
+      path = "#{@api_v1_path}/deployment/#{@config[:deployment_id]}/log?workspaceId=#{@config[:deployment_domain]}"
+      payload = { logMessage: message}
+      make_request(:post, path, payload.to_json)
+    end
+
     def search_impacted_nodes(environment_result_id)
       query = "?op=SearchImpactedNodes&environmentResultId=#{environment_result_id}"
       complete_path = @owner_ajax_path + query
