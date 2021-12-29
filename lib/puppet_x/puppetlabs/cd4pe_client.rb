@@ -18,9 +18,11 @@ module PuppetX::Puppetlabs
         token: deployment_token,
         deployment_id: deployment_id,
         deployment_owner: deployment_owner,
+        deployment_domain: deployment_domain,
       }
       route_prefix = uri.path || ''
       @owner_ajax_path = "#{route_prefix}/#{deployment_owner}/ajax"
+      @api_v1_path = "#{route_prefix}/api/v1"
       @login_path = "#{route_prefix}/login"
     end
 
@@ -246,6 +248,13 @@ module PuppetX::Puppetlabs
       raise Puppet::Error, 'Could not get owner for deployment' unless owner
 
       owner
+    end
+
+    def deployment_domain
+      domain = ENV['DEPLOYMENT_DOMAIN']
+      raise Puppet::Error, 'Could not get domain for deployment' unless domain
+
+      domain
     end
 
     def deployment_id
