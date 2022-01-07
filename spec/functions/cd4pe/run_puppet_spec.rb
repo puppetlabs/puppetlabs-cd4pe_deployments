@@ -41,7 +41,7 @@ describe 'cd4pe_deployments::run_puppet' do
     it 'succeeds with parameters' do
       stub_request(:post, ajax_url)
         .with(
-          headers: { 'content-type' => 'application/json', 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" },
+          headers: { 'content-type' => 'application/json', 'authorization' => ENV['DEPLOYMENT_TOKEN'] },
           body: {
             op: 'RunPuppet',
             content: puppet_run_request,
@@ -52,7 +52,7 @@ describe 'cd4pe_deployments::run_puppet' do
 
       stub_request(:post, ajax_url)
         .with(
-          headers: { 'content-type' => 'application/json', 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" },
+          headers: { 'content-type' => 'application/json', 'authorization' => ENV['DEPLOYMENT_TOKEN'] },
           body: {
             op: 'GetPuppetRunStatus',
             content: { deploymentId: deployment_id, jobId: run_puppet_response['job'] },

@@ -37,7 +37,7 @@ describe 'cd4pe_deployments::deploy_code' do
     it 'succeeds with parameters' do
       stub_request(:post, ajax_url)
         .with(
-          headers: { 'content-type' => 'application/json', 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" },
+          headers: { 'content-type' => 'application/json', 'authorization' => ENV['DEPLOYMENT_TOKEN'] },
           body: {
             op: 'DeployCode',
             content: { deploymentId: deployment_id, environmentName: environment_name },

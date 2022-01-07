@@ -34,7 +34,7 @@ describe 'cd4pe_deployments::log_message' do
           .with(
             body: { logMessage: message},
             headers: {
-              'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}",
+              'authorization' => ENV['DEPLOYMENT_TOKEN'],
             },
           )
           .to_return(body: JSON.generate(response['result']))
@@ -50,7 +50,7 @@ describe 'cd4pe_deployments::log_message' do
         .with(
           body: { logMessage: message},
           headers: {
-            'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}",
+            'authorization' => ENV['DEPLOYMENT_TOKEN'],
           },
         
           )

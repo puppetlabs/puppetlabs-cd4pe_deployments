@@ -82,7 +82,7 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
 
     before(:each) do
       stub_request(:get, ajax_url)
-        .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
+        .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => ENV['DEPLOYMENT_TOKEN'] })
         .to_return(body: JSON.generate(node_group_response['result']))
         .times(1)
 
@@ -98,7 +98,7 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
             },
           },
           headers: {
-            'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}",
+            'authorization' => ENV['DEPLOYMENT_TOKEN'],
           },
         )
         .to_return(body: JSON.generate(update_git_branch_response['result']))
@@ -106,7 +106,7 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
 
       stub_request(:post, ajax_url)
         .with(
-          headers: { 'content-type' => 'application/json', 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" },
+          headers: { 'content-type' => 'application/json', 'authorization' => ENV['DEPLOYMENT_TOKEN'] },
           body: {
             op: 'SetDeploymentPendingApproval',
             content: {
@@ -120,7 +120,7 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
 
       stub_request(:post, ajax_url)
         .with(
-          headers: { 'content-type' => 'application/json', 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" },
+          headers: { 'content-type' => 'application/json', 'authorization' => ENV['DEPLOYMENT_TOKEN'] },
           body: {
             op: 'DeployCode',
             content: { deploymentId: deployment_id, environmentName: environment_name },
@@ -131,7 +131,7 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
 
       stub_request(:post, ajax_url)
         .with(
-          headers: { 'content-type' => 'application/json', 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" },
+          headers: { 'content-type' => 'application/json', 'authorization' => ENV['DEPLOYMENT_TOKEN'] },
           body: {
             op: 'RunPuppet',
             content: puppet_run_request,
@@ -142,7 +142,7 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
 
       stub_request(:post, ajax_url)
         .with(
-          headers: { 'content-type' => 'application/json', 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" },
+          headers: { 'content-type' => 'application/json', 'authorization' => ENV['DEPLOYMENT_TOKEN'] },
           body: {
             op: 'GetPuppetRunStatus',
             content: { deploymentId: deployment_id, jobId: run_puppet_response['job'] },
@@ -158,7 +158,7 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
 
     it 'runs the plan with fail_if_no_nodes disabled' do
       stub_request(:get, ajax_url)
-        .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
+        .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => ENV['DEPLOYMENT_TOKEN'] })
         .to_return(body: JSON.generate(no_nodes_node_group_response['result']))
         .times(1)
       expect(run_plan('cd4pe_deployments::direct', 'fail_if_no_nodes' => false)).to be_ok

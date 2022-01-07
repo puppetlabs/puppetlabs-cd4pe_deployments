@@ -57,7 +57,7 @@ describe 'cd4pe_deployments::partition_nodes' do
 
     it 'succeeds with an empty node list' do
       stub_request(:get, ajax_url)
-        .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
+        .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => ENV['DEPLOYMENT_TOKEN'] })
         .to_return(body: JSON.generate('nodes' => []))
         .times(1)
       is_expected.to run.with_params({ 'nodes' => [] }, batch_size).and_return('result' => [], 'error' => nil)
