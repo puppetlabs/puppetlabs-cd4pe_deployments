@@ -206,9 +206,9 @@ module PuppetX::Puppetlabs
       make_request(:get, complete_path)
     end
 
-    def log_message(message)
-      path = "#{@api_v1_path}/deployment/#{@config[:deployment_id]}/log?workspaceId=#{@config[:deployment_domain]}"
-      payload = { logMessage: message}
+    def create_custom_deployment_event(message)
+      path = "#{@api_v1_path}/deployments/#{@config[:deployment_id]}/events?workspaceId=#{@config[:deployment_domain]}"
+      payload = { message: message}
       make_request(:post, path, payload.to_json)
     end
 

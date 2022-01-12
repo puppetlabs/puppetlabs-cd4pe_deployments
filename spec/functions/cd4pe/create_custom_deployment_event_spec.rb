@@ -1,8 +1,8 @@
 require 'spec_helper'
-require_relative '../../../lib/puppet/functions/cd4pe_deployments/log_message'
+require_relative '../../../lib/puppet/functions/cd4pe_deployments/create_custom_deployment_event'
 require 'webmock/rspec'
 
-describe 'cd4pe_deployments::log_message' do
+describe 'cd4pe_deployments::create_custom_deployment_event' do
   context 'table steaks' do
     include_context 'deployment'
 
@@ -29,10 +29,10 @@ describe 'cd4pe_deployments::log_message' do
 
       it 'succeeds with message parameter' do
         message = "I am a cool message"
-        full_path =  "#{api_v1_path}/deployment/#{deployment_id}/log?workspaceId=#{deployment_domain}"
+        full_path =  "#{api_v1_path}/deployments/#{deployment_id}/events?workspaceId=#{deployment_domain}"
         stub_request(:post, full_path)
           .with(
-            body: { logMessage: message},
+            body: { message: message},
             headers: {
               'authorization' => ENV['DEPLOYMENT_TOKEN'],
             },
@@ -45,10 +45,10 @@ describe 'cd4pe_deployments::log_message' do
 
       it 'fails with non-200 response code' do
         message = "I am a cool message"
-        full_path =  "#{api_v1_path}/deployment/#{deployment_id}/log?workspaceId=#{deployment_domain}"
+        full_path =  "#{api_v1_path}/deployments/#{deployment_id}/events?workspaceId=#{deployment_domain}"
         stub_request(:post, full_path)
         .with(
-          body: { logMessage: message},
+          body: { message: message},
           headers: {
             'authorization' => ENV['DEPLOYMENT_TOKEN'],
           },
