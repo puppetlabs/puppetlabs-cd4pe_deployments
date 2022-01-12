@@ -43,7 +43,7 @@ describe 'cd4pe_deployments::decline_deployment' do
               },
             },
             headers: {
-              'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}",
+              'authorization' => ENV['DEPLOYMENT_TOKEN'],
             },
           )
           .to_return(body: JSON.generate(response['result']))
@@ -65,7 +65,7 @@ describe 'cd4pe_deployments::decline_deployment' do
               },
             },
             headers: {
-              'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}",
+              'authorization' => ENV['DEPLOYMENT_TOKEN'],
             },
           )
           .to_return(body: JSON.generate(error_response), status: 404)

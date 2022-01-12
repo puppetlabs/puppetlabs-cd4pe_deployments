@@ -206,6 +206,12 @@ module PuppetX::Puppetlabs
       make_request(:get, complete_path)
     end
 
+    def create_custom_deployment_event(message)
+      path = "#{@api_v1_path}/deployments/#{@config[:deployment_id]}/events?workspaceId=#{@config[:deployment_domain]}"
+      payload = { message: message}
+      make_request(:post, path, payload.to_json)
+    end
+
     def search_impacted_nodes(environment_result_id)
       query = "?op=SearchImpactedNodes&environmentResultId=#{environment_result_id}"
       complete_path = @owner_ajax_path + query
@@ -231,7 +237,8 @@ module PuppetX::Puppetlabs
           passwd: login_pwd,
         },
       }
-      make_request(:post, @login_path, payload.to_json, 'anonymous')
+      anonymous_request = true
+      make_request(:post, @login_path, payload.to_json, anonymous_request)
     end
 
     private
@@ -287,7 +294,7 @@ module PuppetX::Puppetlabs
       timeout
     end
 
-    def make_request(type, api_url, payload = '', auth_type = '', cookie = nil)
+    def make_request(type, api_url, payload = '', anonymous_request = false)
       connection = Net::HTTP.new(@config[:server], @config[:port])
       if @config[:scheme] == 'https'
         connection.use_ssl = true
@@ -295,21 +302,14 @@ module PuppetX::Puppetlabs
 
       connection.read_timeout = connection_read_timeout
 
-      if auth_type == 'cookie'
-        raise Puppet::Error, 'Invalid credentials provided' unless cookie
-
-        headers = {
-          'Content-Type' => 'application/json',
-          'Cookie' => cookie,
-        }
-      elsif auth_type == 'anonymous'
+      if anonymous_request
         headers = {
           'Content-Type' => 'application/json',
         }
       else
         headers = {
           'Content-Type' => 'application/json',
-          'Authorization' => "Bearer token #{@config[:token]}",
+          'Authorization' => @config[:token],
         }
       end
 

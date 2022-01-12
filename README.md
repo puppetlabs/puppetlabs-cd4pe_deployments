@@ -123,7 +123,12 @@ See our [REFERENCE.md] for reference documentation.
 
 ### Testing
 
-TBD
+To get tests to run, do the following from the root of this repository
+
+1. `bundle install`
+2. `bundle exec rake spec`
+
+Other documentation around testing:
 
 [puppet plan]: https://puppet.com/docs/bolt/latest/writing_plans.html
 [cd4pefunctionresult]: lib/puppet_x/puppetlabs/cd4pe_function_result.rb

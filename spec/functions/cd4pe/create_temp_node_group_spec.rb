@@ -20,7 +20,7 @@ describe 'cd4pe_deployments::create_temp_node_group' do
     it 'succeeds with parameters' do
       stub_request(:post, ajax_url)
         .with(
-          headers: { 'content-type' => 'application/json', 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" },
+          headers: { 'content-type' => 'application/json', 'authorization' => ENV['DEPLOYMENT_TOKEN'] },
           body: {
             op: 'CreateTempNodeGroup',
             content: {

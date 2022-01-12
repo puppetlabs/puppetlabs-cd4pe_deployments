@@ -16,7 +16,7 @@ describe 'cd4pe_deployments::get_node_group' do
 
     it 'succeeds with parameters' do
       stub_request(:get, ajax_url)
-        .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
+        .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => ENV['DEPLOYMENT_TOKEN'] })
         .to_return(body: JSON.generate(response['result']))
         .times(1)
 
@@ -25,7 +25,7 @@ describe 'cd4pe_deployments::get_node_group' do
 
     it 'fails with non-200 response code' do
       stub_request(:get, ajax_url)
-        .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" })
+        .with(query: { op: 'GetNodeGroupInfo', deploymentId: deployment_id, nodeGroupId: node_group_id }, headers: { 'authorization' => ENV['DEPLOYMENT_TOKEN'] })
         .to_return(body: JSON.generate(error_response), status: 404)
         .times(1)
 

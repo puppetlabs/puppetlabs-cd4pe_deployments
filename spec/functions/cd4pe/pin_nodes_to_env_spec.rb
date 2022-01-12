@@ -22,7 +22,7 @@ describe 'cd4pe_deployments::pin_nodes_to_env' do
     it 'succeeds with parameters' do
       stub_request(:post, ajax_url)
         .with(
-          headers: { 'content-type' => 'application/json', 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" },
+          headers: { 'content-type' => 'application/json', 'authorization' => ENV['DEPLOYMENT_TOKEN'] },
           body: {
             op: 'PinNodesToGroup',
             content: { deploymentId: deployment_id, nodeGroupId: node_group_id, nodes: nodes },
@@ -37,7 +37,7 @@ describe 'cd4pe_deployments::pin_nodes_to_env' do
     it 'fails with non-200 response code' do
       stub_request(:post, ajax_url)
         .with(
-          headers: { 'content-type' => 'application/json', 'authorization' => "Bearer token #{ENV['DEPLOYMENT_TOKEN']}" },
+          headers: { 'content-type' => 'application/json', 'authorization' => ENV['DEPLOYMENT_TOKEN'] },
           body: {
             op: 'PinNodesToGroup',
             content: { deploymentId: deployment_id, nodeGroupId: node_group_id, nodes: nodes },
