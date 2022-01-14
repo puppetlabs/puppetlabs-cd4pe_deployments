@@ -1,6 +1,15 @@
 on:
   - pull_request
 jobs:
+  validate-ref-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - run: ./.github/workflows/validate_reference_docs.sh
   test:
     runs-on: ubuntu-latest
     steps:
