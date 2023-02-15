@@ -21,7 +21,7 @@ module PuppetX::Puppetlabs
         deployment_domain: deployment_domain,
       }
       route_prefix = uri.path || ''
-      @owner_ajax_path = "#{route_prefix}/#{deployment_owner}/ajax"
+      @owner_ajax_path = "/#{deployment_owner}/ajax"
       @api_v1_path = "#{route_prefix}/api/v1"
       @login_path = "#{route_prefix}/login"
     end
