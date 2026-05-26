@@ -6,50 +6,50 @@
 
 ### Functions
 
-* [`cd4pe_deployments::approve_deployment`](#cd4pe_deploymentsapprove_deployment): Approve a "pending approval" active deployment to a protected environment.
-* [`cd4pe_deployments::create_custom_deployment_event`](#cd4pe_deploymentscreate_custom_deployment_event): Add a log message as a task event when running a deployment
-* [`cd4pe_deployments::create_git_branch`](#cd4pe_deploymentscreate_git_branch): Creates a git branch with the given branch name and commit SHA
-* [`cd4pe_deployments::create_temp_node_group`](#cd4pe_deploymentscreate_temp_node_group): Create a temporary Puppet Enterprise node group
-* [`cd4pe_deployments::decline_deployment`](#cd4pe_deploymentsdecline_deployment): Decline a "pending approval" active deployment to a protected environment.
-* [`cd4pe_deployments::delete_git_branch`](#cd4pe_deploymentsdelete_git_branch): Delete a git branch on your VCS
-* [`cd4pe_deployments::delete_node_group`](#cd4pe_deploymentsdelete_node_group): Delete a Puppet Enterprise node group
-* [`cd4pe_deployments::deploy_code`](#cd4pe_deploymentsdeploy_code): Performs a Puppet Enterprise Code Manager deployment for the given environment
-* [`cd4pe_deployments::evaluate_result`](#cd4pe_deploymentsevaluate_result): This is a generic helper function to be used with the result from cd4pe_deployments function calls.
+* [`cd4pe_deployments::approve_deployment`](#cd4pe_deployments--approve_deployment): Approve a "pending approval" active deployment to a protected environment.
+* [`cd4pe_deployments::create_custom_deployment_event`](#cd4pe_deployments--create_custom_deployment_event): Add a log message as a task event when running a deployment
+* [`cd4pe_deployments::create_git_branch`](#cd4pe_deployments--create_git_branch): Creates a git branch with the given branch name and commit SHA
+* [`cd4pe_deployments::create_temp_node_group`](#cd4pe_deployments--create_temp_node_group): Create a temporary Puppet Enterprise node group
+* [`cd4pe_deployments::decline_deployment`](#cd4pe_deployments--decline_deployment): Decline a "pending approval" active deployment to a protected environment.
+* [`cd4pe_deployments::delete_git_branch`](#cd4pe_deployments--delete_git_branch): Delete a git branch on your VCS
+* [`cd4pe_deployments::delete_node_group`](#cd4pe_deployments--delete_node_group): Delete a Puppet Enterprise node group
+* [`cd4pe_deployments::deploy_code`](#cd4pe_deployments--deploy_code): Performs a Puppet Enterprise Code Manager deployment for the given environment
+* [`cd4pe_deployments::evaluate_result`](#cd4pe_deployments--evaluate_result): This is a generic helper function to be used with the result from cd4pe_deployments function calls.
 It will take the result from the function call and return an error hash if an error occurred. If no
 error occurred, the result is returned, saving the user from having to process the hash.
-* [`cd4pe_deployments::get_cookie`](#cd4pe_deploymentsget_cookie): Get a CD4PE cookie to use APIs that don't support token auth
-* [`cd4pe_deployments::get_git_branches`](#cd4pe_deploymentsget_git_branches): Lists git branches for a repository associated with the current deployment
-* [`cd4pe_deployments::get_impact_analysis`](#cd4pe_deploymentsget_impact_analysis): Get information about a CD4PE Impact Analysis
-* [`cd4pe_deployments::get_impact_analysis_csv`](#cd4pe_deploymentsget_impact_analysis_csv): Download the CSV report of an impact analysis run
-* [`cd4pe_deployments::get_node_group`](#cd4pe_deploymentsget_node_group): Get information about a Puppet Enterprise node group
-* [`cd4pe_deployments::get_pipeline`](#cd4pe_deploymentsget_pipeline): Get information about a CD4PE pipeline
-* [`cd4pe_deployments::get_pipeline_trigger_event`](#cd4pe_deploymentsget_pipeline_trigger_event): Search which recent pipeline(s) match for a given commit SHA for a repository
-* [`cd4pe_deployments::partition_nodes`](#cd4pe_deploymentspartition_nodes): Partition nodes in a node group
-* [`cd4pe_deployments::pin_nodes_to_env`](#cd4pe_deploymentspin_nodes_to_env): Pin a list of nodes to Puppet Enterprise environment group
-* [`cd4pe_deployments::run_puppet`](#cd4pe_deploymentsrun_puppet): Run Puppet using the Puppet Orchestrator for a set of nodes in a given environment
-* [`cd4pe_deployments::search_impacted_nodes`](#cd4pe_deploymentssearch_impacted_nodes): Get information about the impacted nodes of a CD4PE Impact Analysis
-* [`cd4pe_deployments::search_pipeline`](#cd4pe_deploymentssearch_pipeline): Search which recent pipeline(s) match for a given commit SHA for a repository
-* [`cd4pe_deployments::update_git_branch_ref`](#cd4pe_deploymentsupdate_git_branch_ref): Update a given git branch's HEAD ref to a new commit SHA
-* [`cd4pe_deployments::validate_code_deploy_status`](#cd4pe_deploymentsvalidate_code_deploy_status): This is a helper function to be used with the result from the `deploy_code` function.
+* [`cd4pe_deployments::get_cookie`](#cd4pe_deployments--get_cookie): Get a CD4PE cookie to use APIs that don't support token auth
+* [`cd4pe_deployments::get_git_branches`](#cd4pe_deployments--get_git_branches): Lists git branches for a repository associated with the current deployment
+* [`cd4pe_deployments::get_impact_analysis`](#cd4pe_deployments--get_impact_analysis): Get information about a CD4PE Impact Analysis
+* [`cd4pe_deployments::get_impact_analysis_csv`](#cd4pe_deployments--get_impact_analysis_csv): Download the CSV report of an impact analysis run
+* [`cd4pe_deployments::get_node_group`](#cd4pe_deployments--get_node_group): Get information about a Puppet Enterprise node group
+* [`cd4pe_deployments::get_pipeline`](#cd4pe_deployments--get_pipeline): Get information about a CD4PE pipeline
+* [`cd4pe_deployments::get_pipeline_trigger_event`](#cd4pe_deployments--get_pipeline_trigger_event): Search which recent pipeline(s) match for a given commit SHA for a repository
+* [`cd4pe_deployments::partition_nodes`](#cd4pe_deployments--partition_nodes): Partition nodes in a node group
+* [`cd4pe_deployments::pin_nodes_to_env`](#cd4pe_deployments--pin_nodes_to_env): Pin a list of nodes to Puppet Enterprise environment group
+* [`cd4pe_deployments::run_puppet`](#cd4pe_deployments--run_puppet): Run Puppet using the Puppet Orchestrator for a set of nodes in a given environment
+* [`cd4pe_deployments::search_impacted_nodes`](#cd4pe_deployments--search_impacted_nodes): Get information about the impacted nodes of a CD4PE Impact Analysis
+* [`cd4pe_deployments::search_pipeline`](#cd4pe_deployments--search_pipeline): Search which recent pipeline(s) match for a given commit SHA for a repository
+* [`cd4pe_deployments::update_git_branch_ref`](#cd4pe_deployments--update_git_branch_ref): Update a given git branch's HEAD ref to a new commit SHA
+* [`cd4pe_deployments::validate_code_deploy_status`](#cd4pe_deployments--validate_code_deploy_status): This is a helper function to be used with the result from the `deploy_code` function.
 It will take the result from a code deploy and return an error hash if an error occurred or if
 any of the code deployments failed.
-* [`cd4pe_deployments::wait_for_approval`](#cd4pe_deploymentswait_for_approval): Blocks further plan execution until the deployment is approved in CD4PE
+* [`cd4pe_deployments::wait_for_approval`](#cd4pe_deployments--wait_for_approval): Blocks further plan execution until the deployment is approved in CD4PE
 
 ### Plans
 
-* [`cd4pe_deployments::cd4pe_job`](#cd4pe_deploymentscd4pe_job)
-* [`cd4pe_deployments::direct`](#cd4pe_deploymentsdirect): This deployment policy will deploy a source commit to the Puppet environment
+* [`cd4pe_deployments::cd4pe_job`](#cd4pe_deployments--cd4pe_job)
+* [`cd4pe_deployments::direct`](#cd4pe_deployments--direct): This deployment policy will deploy a source commit to the Puppet environment
 associated with the Deployment's configured node group and then run Puppet.
-* [`cd4pe_deployments::eventual_consistency`](#cd4pe_deploymentseventual_consistency): This deployment policy will perform a Puppet code deploy of the commit
+* [`cd4pe_deployments::eventual_consistency`](#cd4pe_deployments--eventual_consistency): This deployment policy will perform a Puppet code deploy of the commit
 associated with a Pipeline run.
-* [`cd4pe_deployments::feature_branch`](#cd4pe_deploymentsfeature_branch): This deployment policy plan will perform a code deployment of an environment that
+* [`cd4pe_deployments::feature_branch`](#cd4pe_deployments--feature_branch): This deployment policy plan will perform a code deployment of an environment that
 matches the source branch for a commit.
-* [`cd4pe_deployments::rolling`](#cd4pe_deploymentsrolling): This deployment policy will deploy the target control repository commit to
+* [`cd4pe_deployments::rolling`](#cd4pe_deployments--rolling): This deployment policy will deploy the target control repository commit to
 target nodes in batches.
 
 ## Functions
 
-### <a name="cd4pe_deploymentsapprove_deployment"></a>`cd4pe_deployments::approve_deployment`
+### <a name="cd4pe_deployments--approve_deployment"></a>`cd4pe_deployments::approve_deployment`
 
 Type: Ruby 4.x API
 
@@ -96,7 +96,7 @@ Data type: `String`
 The name of the user approving the deployment. The username does not have to be a CD4PE user.
 Care should taken as the username is *not* validated as having special approval permissions.
 
-### <a name="cd4pe_deploymentscreate_custom_deployment_event"></a>`cd4pe_deployments::create_custom_deployment_event`
+### <a name="cd4pe_deployments--create_custom_deployment_event"></a>`cd4pe_deployments::create_custom_deployment_event`
 
 Type: Ruby 4.x API
 
@@ -134,7 +134,7 @@ Data type: `String`
 
 The message you'd like to display on the custom deployment event
 
-### <a name="cd4pe_deploymentscreate_git_branch"></a>`cd4pe_deployments::create_git_branch`
+### <a name="cd4pe_deployments--create_git_branch"></a>`cd4pe_deployments::create_git_branch`
 
 Type: Ruby 4.x API
 
@@ -190,7 +190,7 @@ Data type: `Optional[Boolean]`
 
 Whether or not CD4PE should clean up the branch at the end of the deployment. Defaults to true
 
-### <a name="cd4pe_deploymentscreate_temp_node_group"></a>`cd4pe_deployments::create_temp_node_group`
+### <a name="cd4pe_deployments--create_temp_node_group"></a>`cd4pe_deployments::create_temp_node_group`
 
 Type: Ruby 4.x API
 
@@ -244,7 +244,7 @@ Data type: `Optional[Boolean]`
 
 A Boolean to indicate if the node group should be an environment node group. Defaults to 'true'.
 
-### <a name="cd4pe_deploymentsdecline_deployment"></a>`cd4pe_deployments::decline_deployment`
+### <a name="cd4pe_deployments--decline_deployment"></a>`cd4pe_deployments::decline_deployment`
 
 Type: Ruby 4.x API
 
@@ -291,7 +291,7 @@ Data type: `String`
 The name of the user declining the deployment. The username does not have to be a CD4PE user.
 Care should taken as the username is *not* validated as having special approval permissions.
 
-### <a name="cd4pe_deploymentsdelete_git_branch"></a>`cd4pe_deployments::delete_git_branch`
+### <a name="cd4pe_deployments--delete_git_branch"></a>`cd4pe_deployments::delete_git_branch`
 
 Type: Ruby 4.x API
 
@@ -332,7 +332,7 @@ Data type: `String`
 
 The name of the branch you want to delete
 
-### <a name="cd4pe_deploymentsdelete_node_group"></a>`cd4pe_deployments::delete_node_group`
+### <a name="cd4pe_deployments--delete_node_group"></a>`cd4pe_deployments::delete_node_group`
 
 Type: Ruby 4.x API
 
@@ -370,7 +370,7 @@ Data type: `String`
 
 The ID string of the node group
 
-### <a name="cd4pe_deploymentsdeploy_code"></a>`cd4pe_deployments::deploy_code`
+### <a name="cd4pe_deployments--deploy_code"></a>`cd4pe_deployments::deploy_code`
 
 Type: Ruby 4.x API
 
@@ -416,7 +416,7 @@ Data type: `Optional[String]`
 
 Specifies a default branch to set when performing a code deploy
 
-### <a name="cd4pe_deploymentsevaluate_result"></a>`cd4pe_deployments::evaluate_result`
+### <a name="cd4pe_deployments--evaluate_result"></a>`cd4pe_deployments::evaluate_result`
 
 Type: Puppet Language
 
@@ -436,7 +436,7 @@ Data type: `Hash`
 
 The result hash of any cd4pe_deployments function call.
 
-### <a name="cd4pe_deploymentsget_cookie"></a>`cd4pe_deployments::get_cookie`
+### <a name="cd4pe_deployments--get_cookie"></a>`cd4pe_deployments::get_cookie`
 
 Type: Ruby 4.x API
 
@@ -479,7 +479,7 @@ Data type: `String`
 
 The CD4PE user password
 
-### <a name="cd4pe_deploymentsget_git_branches"></a>`cd4pe_deployments::get_git_branches`
+### <a name="cd4pe_deployments--get_git_branches"></a>`cd4pe_deployments::get_git_branches`
 
 Type: Ruby 4.x API
 
@@ -521,7 +521,7 @@ Data type: `Enum["CONTROL_REPO", "MODULE"]`
 
 The type of repo to perform the operation on. Must be one of "CONTROL_REPO" or "MODULE".
 
-### <a name="cd4pe_deploymentsget_impact_analysis"></a>`cd4pe_deployments::get_impact_analysis`
+### <a name="cd4pe_deployments--get_impact_analysis"></a>`cd4pe_deployments::get_impact_analysis`
 
 Type: Ruby 4.x API
 
@@ -558,7 +558,7 @@ Data type: `Integer`
 
 The internal ID of the Impact Analysis
 
-### <a name="cd4pe_deploymentsget_impact_analysis_csv"></a>`cd4pe_deployments::get_impact_analysis_csv`
+### <a name="cd4pe_deployments--get_impact_analysis_csv"></a>`cd4pe_deployments::get_impact_analysis_csv`
 
 Type: Ruby 4.x API
 
@@ -595,7 +595,7 @@ Data type: `Integer`
 
 The internal ID of the Impact Analysis
 
-### <a name="cd4pe_deploymentsget_node_group"></a>`cd4pe_deployments::get_node_group`
+### <a name="cd4pe_deployments--get_node_group"></a>`cd4pe_deployments::get_node_group`
 
 Type: Ruby 4.x API
 
@@ -642,7 +642,7 @@ Data type: `String`
 
 The ID string of the node group
 
-### <a name="cd4pe_deploymentsget_pipeline"></a>`cd4pe_deployments::get_pipeline`
+### <a name="cd4pe_deployments--get_pipeline"></a>`cd4pe_deployments::get_pipeline`
 
 Type: Ruby 4.x API
 
@@ -697,7 +697,7 @@ Data type: `String`
 
 The internal ID of the pipeline for this repository
 
-### <a name="cd4pe_deploymentsget_pipeline_trigger_event"></a>`cd4pe_deployments::get_pipeline_trigger_event`
+### <a name="cd4pe_deployments--get_pipeline_trigger_event"></a>`cd4pe_deployments::get_pipeline_trigger_event`
 
 Type: Ruby 4.x API
 
@@ -747,7 +747,7 @@ Data type: `String`
 
 The commit SHA to get the pipeline result for
 
-### <a name="cd4pe_deploymentspartition_nodes"></a>`cd4pe_deployments::partition_nodes`
+### <a name="cd4pe_deployments--partition_nodes"></a>`cd4pe_deployments::partition_nodes`
 
 Type: Ruby 4.x API
 
@@ -796,7 +796,7 @@ Data type: `Integer`
 
 Determines the size of each partition
 
-### <a name="cd4pe_deploymentspin_nodes_to_env"></a>`cd4pe_deployments::pin_nodes_to_env`
+### <a name="cd4pe_deployments--pin_nodes_to_env"></a>`cd4pe_deployments::pin_nodes_to_env`
 
 Type: Ruby 4.x API
 
@@ -842,7 +842,7 @@ Data type: `String`
 
 The ID string of the node group
 
-### <a name="cd4pe_deploymentsrun_puppet"></a>`cd4pe_deployments::run_puppet`
+### <a name="cd4pe_deployments--run_puppet"></a>`cd4pe_deployments::run_puppet`
 
 Type: Ruby 4.x API
 
@@ -902,7 +902,7 @@ Data type: `Optional[Integer]`
 
 The number of nodes to concurrently run Puppet on. Defaults to the Puppet Orchestrator default.
 
-### <a name="cd4pe_deploymentssearch_impacted_nodes"></a>`cd4pe_deployments::search_impacted_nodes`
+### <a name="cd4pe_deployments--search_impacted_nodes"></a>`cd4pe_deployments::search_impacted_nodes`
 
 Type: Ruby 4.x API
 
@@ -940,7 +940,7 @@ Data type: `Integer`
 
 The internal environment_result_id of an analysed code environment in the IA
 
-### <a name="cd4pe_deploymentssearch_pipeline"></a>`cd4pe_deployments::search_pipeline`
+### <a name="cd4pe_deployments--search_pipeline"></a>`cd4pe_deployments::search_pipeline`
 
 Type: Ruby 4.x API
 
@@ -983,7 +983,7 @@ Data type: `String`
 
 The commit SHA to get the pipeline result for
 
-### <a name="cd4pe_deploymentsupdate_git_branch_ref"></a>`cd4pe_deployments::update_git_branch_ref`
+### <a name="cd4pe_deployments--update_git_branch_ref"></a>`cd4pe_deployments::update_git_branch_ref`
 
 Type: Ruby 4.x API
 
@@ -1033,7 +1033,7 @@ Data type: `String`
 
 The commit SHA that will become the branch's new HEAD
 
-### <a name="cd4pe_deploymentsvalidate_code_deploy_status"></a>`cd4pe_deployments::validate_code_deploy_status`
+### <a name="cd4pe_deployments--validate_code_deploy_status"></a>`cd4pe_deployments::validate_code_deploy_status`
 
 Type: Puppet Language
 
@@ -1054,7 +1054,7 @@ Data type: `Hash`
 The results of the code deployment from calling the `deploy_code` function.
 See the `deploy_code` docs for more info on the value of this object
 
-### <a name="cd4pe_deploymentswait_for_approval"></a>`cd4pe_deployments::wait_for_approval`
+### <a name="cd4pe_deployments--wait_for_approval"></a>`cd4pe_deployments::wait_for_approval`
 
 Type: Ruby 4.x API
 
@@ -1110,7 +1110,7 @@ Takes a block that provides the URL to the deployment's approval page
 
 ## Plans
 
-### <a name="cd4pe_deploymentscd4pe_job"></a>`cd4pe_deployments::cd4pe_job`
+### <a name="cd4pe_deployments--cd4pe_job"></a>`cd4pe_deployments::cd4pe_job`
 
 The cd4pe_deployments::cd4pe_job class.
 
@@ -1118,82 +1118,82 @@ The cd4pe_deployments::cd4pe_job class.
 
 The following parameters are available in the `cd4pe_deployments::cd4pe_job` plan:
 
-* [`targets`](#targets)
-* [`job_instance_id`](#job_instance_id)
-* [`cd4pe_web_ui_endpoint`](#cd4pe_web_ui_endpoint)
-* [`cd4pe_job_owner`](#cd4pe_job_owner)
-* [`env_vars`](#env_vars)
-* [`docker_image`](#docker_image)
-* [`docker_run_args`](#docker_run_args)
-* [`docker_pull_creds`](#docker_pull_creds)
-* [`base_64_ca_cert`](#base_64_ca_cert)
-* [`secret_env_vars`](#secret_env_vars)
+* [`targets`](#-cd4pe_deployments--cd4pe_job--targets)
+* [`job_instance_id`](#-cd4pe_deployments--cd4pe_job--job_instance_id)
+* [`cd4pe_web_ui_endpoint`](#-cd4pe_deployments--cd4pe_job--cd4pe_web_ui_endpoint)
+* [`cd4pe_job_owner`](#-cd4pe_deployments--cd4pe_job--cd4pe_job_owner)
+* [`env_vars`](#-cd4pe_deployments--cd4pe_job--env_vars)
+* [`docker_image`](#-cd4pe_deployments--cd4pe_job--docker_image)
+* [`docker_run_args`](#-cd4pe_deployments--cd4pe_job--docker_run_args)
+* [`docker_pull_creds`](#-cd4pe_deployments--cd4pe_job--docker_pull_creds)
+* [`base_64_ca_cert`](#-cd4pe_deployments--cd4pe_job--base_64_ca_cert)
+* [`secret_env_vars`](#-cd4pe_deployments--cd4pe_job--secret_env_vars)
 
-##### <a name="targets"></a>`targets`
+##### <a name="-cd4pe_deployments--cd4pe_job--targets"></a>`targets`
 
 Data type: `TargetSpec`
 
 
 
-##### <a name="job_instance_id"></a>`job_instance_id`
+##### <a name="-cd4pe_deployments--cd4pe_job--job_instance_id"></a>`job_instance_id`
 
 Data type: `String[1]`
 
 
 
-##### <a name="cd4pe_web_ui_endpoint"></a>`cd4pe_web_ui_endpoint`
+##### <a name="-cd4pe_deployments--cd4pe_job--cd4pe_web_ui_endpoint"></a>`cd4pe_web_ui_endpoint`
 
 Data type: `String[1]`
 
 
 
-##### <a name="cd4pe_job_owner"></a>`cd4pe_job_owner`
+##### <a name="-cd4pe_deployments--cd4pe_job--cd4pe_job_owner"></a>`cd4pe_job_owner`
 
 Data type: `String[1]`
 
 
 
-##### <a name="env_vars"></a>`env_vars`
+##### <a name="-cd4pe_deployments--cd4pe_job--env_vars"></a>`env_vars`
 
 Data type: `Optional[Array[String[1]]]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="docker_image"></a>`docker_image`
+##### <a name="-cd4pe_deployments--cd4pe_job--docker_image"></a>`docker_image`
 
 Data type: `Optional[String[1]]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="docker_run_args"></a>`docker_run_args`
+##### <a name="-cd4pe_deployments--cd4pe_job--docker_run_args"></a>`docker_run_args`
 
 Data type: `Optional[Array[String[1]]]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="docker_pull_creds"></a>`docker_pull_creds`
-
-Data type: `Optional[String[1]]`
-
-
-
-Default value: ``undef``
-
-##### <a name="base_64_ca_cert"></a>`base_64_ca_cert`
+##### <a name="-cd4pe_deployments--cd4pe_job--docker_pull_creds"></a>`docker_pull_creds`
 
 Data type: `Optional[String[1]]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="secret_env_vars"></a>`secret_env_vars`
+##### <a name="-cd4pe_deployments--cd4pe_job--base_64_ca_cert"></a>`base_64_ca_cert`
+
+Data type: `Optional[String[1]]`
+
+
+
+Default value: `undef`
+
+##### <a name="-cd4pe_deployments--cd4pe_job--secret_env_vars"></a>`secret_env_vars`
 
 Data type: `Optional[Array[String[1]]]`
 
@@ -1201,7 +1201,7 @@ Data type: `Optional[Array[String[1]]]`
 
 Default value: `[]`
 
-### <a name="cd4pe_deploymentsdirect"></a>`cd4pe_deployments::direct`
+### <a name="cd4pe_deployments--direct"></a>`cd4pe_deployments::direct`
 
 This deployment policy will deploy a source commit to the Puppet environment
 associated with the Deployment's configured Node Group. It will then run Puppet
@@ -1211,11 +1211,11 @@ on all nodes in the environemnt.
 
 The following parameters are available in the `cd4pe_deployments::direct` plan:
 
-* [`max_node_failure`](#max_node_failure)
-* [`noop`](#noop)
-* [`fail_if_no_nodes`](#fail_if_no_nodes)
+* [`max_node_failure`](#-cd4pe_deployments--direct--max_node_failure)
+* [`noop`](#-cd4pe_deployments--direct--noop)
+* [`fail_if_no_nodes`](#-cd4pe_deployments--direct--fail_if_no_nodes)
 
-##### <a name="max_node_failure"></a>`max_node_failure`
+##### <a name="-cd4pe_deployments--direct--max_node_failure"></a>`max_node_failure`
 
 Data type: `Integer[0]`
 
@@ -1223,37 +1223,37 @@ The number of allowed failed Puppet runs that can occur before the Deployment wi
 
 Default value: `0`
 
-##### <a name="noop"></a>`noop`
+##### <a name="-cd4pe_deployments--direct--noop"></a>`noop`
 
 Data type: `Boolean`
 
 Indicates if the Puppet run should be a noop.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="fail_if_no_nodes"></a>`fail_if_no_nodes`
+##### <a name="-cd4pe_deployments--direct--fail_if_no_nodes"></a>`fail_if_no_nodes`
 
 Data type: `Boolean`
 
 Toggles between failing or silently succeeding when the target environment group has no nodes.
 
-Default value: ``true``
+Default value: `true`
 
-### <a name="cd4pe_deploymentseventual_consistency"></a>`cd4pe_deployments::eventual_consistency`
+### <a name="cd4pe_deployments--eventual_consistency"></a>`cd4pe_deployments::eventual_consistency`
 
 This deployment policy will perform a Puppet code deploy of the commit
 associated with a Pipeline run. Puppet nodes that are scheduled to run regularly will then pick up the
 change until all nodes in the target environment are running against the new
 code.
 
-### <a name="cd4pe_deploymentsfeature_branch"></a>`cd4pe_deployments::feature_branch`
+### <a name="cd4pe_deployments--feature_branch"></a>`cd4pe_deployments::feature_branch`
 
 This deployment policy plan will perform a code deployment of an environment that
 matches the source branch for a commit. For Module deployments the plan will create
 a feature branch on the control repo that matches the source branch on the Module.
 The plan will then deploy the target environment that matches the source branch.
 
-### <a name="cd4pe_deploymentsrolling"></a>`cd4pe_deployments::rolling`
+### <a name="cd4pe_deployments--rolling"></a>`cd4pe_deployments::rolling`
 
 This deployment policy will deploy the target control repository commit to
 target nodes in batches. It will create a temporary Puppet environment and
@@ -1269,19 +1269,19 @@ Puppet environment are deleted, even if the deployment fails.
 
 The following parameters are available in the `cd4pe_deployments::rolling` plan:
 
-* [`max_node_failure`](#max_node_failure)
-* [`batch_size`](#batch_size)
-* [`noop`](#noop)
-* [`batch_delay`](#batch_delay)
-* [`fail_if_no_nodes`](#fail_if_no_nodes)
+* [`max_node_failure`](#-cd4pe_deployments--rolling--max_node_failure)
+* [`batch_size`](#-cd4pe_deployments--rolling--batch_size)
+* [`noop`](#-cd4pe_deployments--rolling--noop)
+* [`batch_delay`](#-cd4pe_deployments--rolling--batch_delay)
+* [`fail_if_no_nodes`](#-cd4pe_deployments--rolling--fail_if_no_nodes)
 
-##### <a name="max_node_failure"></a>`max_node_failure`
+##### <a name="-cd4pe_deployments--rolling--max_node_failure"></a>`max_node_failure`
 
 Data type: `Optional[Integer]`
 
 The number of allowed failed Puppet runs that can occur before the Deployment will fail
 
-##### <a name="batch_size"></a>`batch_size`
+##### <a name="-cd4pe_deployments--rolling--batch_size"></a>`batch_size`
 
 Data type: `Integer`
 
@@ -1289,15 +1289,15 @@ The number of nodes in each batch to run Puppet on.
 
 Default value: `10`
 
-##### <a name="noop"></a>`noop`
+##### <a name="-cd4pe_deployments--rolling--noop"></a>`noop`
 
 Data type: `Boolean`
 
 Indicates if the Puppet run should be a noop.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="batch_delay"></a>`batch_delay`
+##### <a name="-cd4pe_deployments--rolling--batch_delay"></a>`batch_delay`
 
 Data type: `Integer`
 
@@ -1305,11 +1305,11 @@ The delay in seconds between each batch.
 
 Default value: `60`
 
-##### <a name="fail_if_no_nodes"></a>`fail_if_no_nodes`
+##### <a name="-cd4pe_deployments--rolling--fail_if_no_nodes"></a>`fail_if_no_nodes`
 
 Data type: `Boolean`
 
 Toggles between failing or silently succeeding when the target environment group has no nodes.
 
-Default value: ``true``
+Default value: `true`
 

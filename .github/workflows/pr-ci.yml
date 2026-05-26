@@ -1,21 +1,34 @@
+name: PR CI
+
 on:
   - pull_request
 jobs:
   validate-ref-docs:
+    name: Validate reference docs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 2.7
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - run: ./.github/workflows/validate_reference_docs.sh
+      - run: |
+          bundle exec puppet strings generate --format markdown
+          if ! git diff --exit-code; then
+              echo
+              echo ERROR: Reference docs are outdated.
+              echo
+              echo Use "bundle exec puppet strings generate --format markdown" from repo root to update reference docs.
+              echo
+              exit 1
+          fi
   test:
+    name: Unit Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 2.7
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - run: bundle exec rake spec
