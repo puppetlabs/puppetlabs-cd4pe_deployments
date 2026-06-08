@@ -164,17 +164,15 @@ module PuppetX::Puppetlabs
     end
 
     def create_git_branch(repo_type, branch_name, commit_sha, cleanup)
+      path = "#{@api_v1_path}/deployments/#{@config[:deployment_id]}" \
+             ":create-git-branch?workspaceId=#{@config[:deployment_domain]}"
       payload = {
-        op: 'CreateGitBranch',
-        content: {
-          deploymentId: @config[:deployment_id],
-          repoType: repo_type,
-          branchName: branch_name,
-          commitSha: commit_sha,
-          cleanup: cleanup,
-        },
+        repoType: repo_type,
+        branchName: branch_name,
+        commitSha: commit_sha,
+        cleanup: cleanup,
       }
-      make_request(:post, @owner_ajax_path, payload.to_json)
+      make_request(:post, path, payload.to_json)
     end
 
     def get_git_branches(repo_type)
