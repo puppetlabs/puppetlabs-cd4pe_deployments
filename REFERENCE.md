@@ -1125,6 +1125,7 @@ The following parameters are available in the `cd4pe_deployments::cd4pe_job` pla
 * [`docker_image`](#-cd4pe_deployments--cd4pe_job--docker_image)
 * [`docker_run_args`](#-cd4pe_deployments--cd4pe_job--docker_run_args)
 * [`docker_pull_creds`](#-cd4pe_deployments--cd4pe_job--docker_pull_creds)
+* [`image_pull_policy`](#-cd4pe_deployments--cd4pe_job--image_pull_policy)
 * [`base_64_ca_cert`](#-cd4pe_deployments--cd4pe_job--base_64_ca_cert)
 * [`secret_env_vars`](#-cd4pe_deployments--cd4pe_job--secret_env_vars)
 
@@ -1179,6 +1180,14 @@ Default value: `undef`
 ##### <a name="-cd4pe_deployments--cd4pe_job--docker_pull_creds"></a>`docker_pull_creds`
 
 Data type: `Optional[String[1]]`
+
+
+
+Default value: `undef`
+
+##### <a name="-cd4pe_deployments--cd4pe_job--image_pull_policy"></a>`image_pull_policy`
+
+Data type: `Optional[Enum['Always', 'IfNotPresent', 'Never']]`
 
 
 
