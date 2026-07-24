@@ -1,14 +1,15 @@
 plan cd4pe_deployments::cd4pe_job (
-  TargetSpec                      $targets,
-  String[1]                       $job_instance_id,
-  String[1]                       $cd4pe_web_ui_endpoint,
-  String[1]                       $cd4pe_job_owner,
-  Optional[Array[String[1]]]      $env_vars = undef,
-  Optional[String[1]]             $docker_image = undef,
-  Optional[Array[String[1]]]      $docker_run_args = undef,
-  Optional[String[1]]             $docker_pull_creds = undef,
-  Optional[String[1]]             $base_64_ca_cert = undef,
-  Optional[Array[String[1]]]      $secret_env_vars = [],
+  TargetSpec                                        $targets,
+  String[1]                                         $job_instance_id,
+  String[1]                                         $cd4pe_web_ui_endpoint,
+  String[1]                                         $cd4pe_job_owner,
+  Optional[Array[String[1]]]                        $env_vars = undef,
+  Optional[String[1]]                               $docker_image = undef,
+  Optional[Array[String[1]]]                        $docker_run_args = undef,
+  Optional[String[1]]                               $docker_pull_creds = undef,
+  Optional[Enum['Always', 'IfNotPresent', 'Never']] $image_pull_policy = undef,
+  Optional[String[1]]                               $base_64_ca_cert = undef,
+  Optional[Array[String[1]]]                        $secret_env_vars = [],
 ) {
   $cd4pe_token = system::env('CD4PE_TOKEN')
 
@@ -24,13 +25,18 @@ plan cd4pe_deployments::cd4pe_job (
     'base_64_ca_cert' => $base_64_ca_cert,
   }
 
+  $params_with_policy = $image_pull_policy ? {
+    undef   => $base_task_params,
+    default => $base_task_params + { 'image_pull_policy' => $image_pull_policy },
+  }
+
   $task_params = if $secret_env_vars.empty {
-    $base_task_params
+    $params_with_policy
   } else {
     $secrets_hash = $secret_env_vars.reduce({}) |$memo, $value| {
       $memo + { $value => system::env($value) }
     }
-    $base_task_params + { 'secrets' => $secrets_hash }
+    $params_with_policy + { 'secrets' => $secrets_hash }
   }
 
   $result_or_error = catch_errors() || {
