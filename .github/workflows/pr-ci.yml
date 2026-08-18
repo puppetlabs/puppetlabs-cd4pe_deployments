@@ -23,9 +23,48 @@ jobs:
               exit 1
           fi
   test:
-    name: Unit Tests
+    name: Unit Tests (Puppet ${{ matrix.puppet_label }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - puppet_label: '7.x'
+            puppet_gem_version: '~> 7.0'
+          - puppet_label: '8.x'
+            puppet_gem_version: '~> 8.0'
+    env:
+      PUPPET_GEM_VERSION: ${{ matrix.puppet_gem_version }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - run: bundle exec rake spec
+
+  # rubygems-puppetcore.puppet.com is public (CloudFront-backed, resolves and
+  # serves without any VPN — confirmed via `dig`/`curl` against public
+  # resolvers) and just needs a forge token, unlike the internal
+  # artifactory.delivery.puppetlabs.net host Puppet 9 prereleases publish to
+  # (which does need Twingate). No Twingate here: it wouldn't do anything for
+  # this specific host. Degrades gracefully to public rubygems.org if the
+  # token isn't scoped to this repo.
+  test-puppetcore:
+    name: Unit Tests (Puppet via puppetcore)
     runs-on: ubuntu-latest
     steps:
+      - name: Configure forge authentication
+        run: |
+          # A missing secret resolves to "", and Ruby's `if ENV['PUPPET_FORGE_TOKEN']`
+          # treats "" as truthy, so this is gated with a real shell conditional
+          # instead of a bare `env:` assignment (see Gemfile's gemsource_puppetcore).
+          if [ -n "$FORGE_TOKEN" ]; then
+            echo "PUPPET_FORGE_TOKEN=$FORGE_TOKEN" >> "$GITHUB_ENV"
+            echo "BUNDLE_RUBYGEMS___PUPPETCORE__PUPPET__COM=forge-key:$FORGE_TOKEN" >> "$GITHUB_ENV"
+          fi
+        env:
+          FORGE_TOKEN: ${{ secrets.PUPPET_FORGE_TOKEN || secrets.PUPPET_FORGE_TOKEN_PUBLIC }}
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
