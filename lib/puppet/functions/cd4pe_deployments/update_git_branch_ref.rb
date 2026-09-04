@@ -30,10 +30,10 @@ Puppet::Functions.create_function(:'cd4pe_deployments::update_git_branch_ref') d
     case response
     when Net::HTTPSuccess
       response_body = JSON.parse(response.body, symbolize_names: false)
-      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body)
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body)
     when Net::HTTPClientError
       response_body = JSON.parse(response.body, symbolize_names: false)
-      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
     when Net::HTTPServerError
       raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end

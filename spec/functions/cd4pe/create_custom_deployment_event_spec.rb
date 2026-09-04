@@ -12,7 +12,7 @@ describe 'cd4pe_deployments::create_custom_deployment_event' do
 
     it 'requires 1 parameter' do
       is_expected.to run.with_params.and_raise_error(ArgumentError)
-      is_expected.to run.with_params("more than", "one param").and_raise_error(ArgumentError)
+      is_expected.to run.with_params('more than', 'one param').and_raise_error(ArgumentError)
     end
 
     context 'happy' do
@@ -28,11 +28,11 @@ describe 'cd4pe_deployments::create_custom_deployment_event' do
       end
 
       it 'succeeds with message parameter' do
-        message = "I am a cool message"
+        message = 'I am a cool message'
         full_path =  "#{api_v1_path}/deployments/#{deployment_id}/events?workspaceId=#{deployment_domain}"
         stub_request(:post, full_path)
           .with(
-            body: { message: message},
+            body: { message: message },
             headers: {
               'authorization' => ENV['DEPLOYMENT_TOKEN'],
             },
@@ -44,15 +44,14 @@ describe 'cd4pe_deployments::create_custom_deployment_event' do
       end
 
       it 'fails with non-200 response code' do
-        message = "I am a cool message"
+        message = 'I am a cool message'
         full_path =  "#{api_v1_path}/deployments/#{deployment_id}/events?workspaceId=#{deployment_domain}"
         stub_request(:post, full_path)
-        .with(
-          body: { message: message},
-          headers: {
-            'authorization' => ENV['DEPLOYMENT_TOKEN'],
-          },
-        
+          .with(
+            body: { message: message },
+            headers: {
+              'authorization' => ENV['DEPLOYMENT_TOKEN'],
+            },
           )
           .to_return(body: JSON.generate(error_response), status: 404)
           .times(1)

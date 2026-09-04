@@ -31,11 +31,11 @@ Puppet::Functions.create_function(:'cd4pe_deployments::create_git_branch') do
     response = client.create_git_branch(repo_type, branch_name, commit_sha, cleanup)
     case response
     when Net::HTTPNoContent
-      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_result('success')
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result('success')
     when Net::HTTPClientError
       body = JSON.parse(response.body, symbolize_names: false)
-      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(
-        nil, body['message'], response.code,
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(
+        nil, body['message'], response.code
       )
     when Net::HTTPServerError
       raise Puppet::Error, "Unknown HTTP Error with code: #{response.code} and body #{response.body}"

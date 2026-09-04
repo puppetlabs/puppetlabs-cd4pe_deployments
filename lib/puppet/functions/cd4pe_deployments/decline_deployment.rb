@@ -33,7 +33,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::decline_deployment') do
       raise Bolt::PlanFailure.new("Deployment #{ENV['DEPLOYMENT_ID']} declined", 'bolt/plan-failure')
     when Net::HTTPClientError
       response_body = JSON.parse(response.body, symbolize_names: false)
-      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
     when Net::HTTPServerError
       raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end

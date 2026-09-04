@@ -27,10 +27,10 @@ Puppet::Functions.create_function(:'cd4pe_deployments::deploy_code') do
     response = client.deploy_code(environment_name, default_branch_override)
     if response.code == '200'
       response_body = JSON.parse(response.body, symbolize_names: false)
-      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body)
-    elsif response.code =~ %r{4[0-9]+}
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body)
+    elsif %r{4[0-9]+}.match?(response.code)
       response_body = JSON.parse(response.body, symbolize_names: false)
-      return PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
     else
       raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end

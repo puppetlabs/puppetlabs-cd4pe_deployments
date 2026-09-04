@@ -44,7 +44,7 @@ describe 'cd4pe_deployments::create_git_branch' do
       is_expected
         .to run
         .with_params(repo_type, branch_name, commit_sha)
-        .and_return({'result' => 'success', 'error' => nil})
+        .and_return({ 'result' => 'success', 'error' => nil })
     end
 
     it 'returns error result on 4xx with a V1 error body' do
@@ -72,7 +72,7 @@ describe 'cd4pe_deployments::create_git_branch' do
         .to run
         .with_params(repo_type, branch_name, commit_sha)
         .and_return(
-          {'result' => nil, 'error' => {'message' => 'Some error message', 'code' => '400'}},
+          { 'result' => nil, 'error' => { 'message' => 'Some error message', 'code' => '400' } },
         )
     end
 

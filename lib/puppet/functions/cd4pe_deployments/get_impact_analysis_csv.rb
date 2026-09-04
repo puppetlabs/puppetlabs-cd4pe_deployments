@@ -18,7 +18,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_impact_analysis_csv')
 
   def get_impact_analysis_csv(id)
     client = PuppetX::Puppetlabs::CD4PEClient.new
-    
+
     response = client.get_impact_analysis_csv(id)
 
     case response

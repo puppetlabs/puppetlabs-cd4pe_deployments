@@ -13,11 +13,20 @@
 
 This module provides a set of tools, via CD4PE, for creating your own custom CD4PE deployment policies as well as our 4 built-in policies: [Feature branch](plans/feature_branch.pp), [Temporary branch](plans/rolling.pp), [Direct](plans/direct.pp), and [Eventual consistency](plans/eventual_consistency.pp).
 
+This repo is mostly designed to be a reference for Continuous Delivery users who are writing their own custom
+deployment policies. The `puppetlabs/puppetlabs-cd4pe_deployments` repo is a mirror of an internal repo where
+the maintainers do development. Bug reports and feature requests for this module can be reported via Issues,
+but all pull requests will be applied upstream first by the maintainers and then mirrored here.
+
 ## Usage
 
 ### Build your own policy
 
-1. Get started with a custom deployment policy by creating a [Puppet Plan] in the `plans/` directory.
+Before you begin, set up your control repo for custom deployment policies as described in our [docs](https://help.puppet.com/cdpe/current/Content/UserGuide/CDPE/Test/custom_deployment_policy.htm).
+
+Full docs about writing Puppet Bolt plans are [here](https://help.puppet.com/bolt/current/topics/writing_plans.htm).
+
+1. Add a new plan to the `plans/` directory of the `deployments` module referenced by your control repo that you set up following the docs above.
 2. You'll have access to all of the functions listed in our [REFERENCE.md] to perform deployment operations (e.g. pinning nodes to an environment group or getting information about an environment group)
 3. Deployment policies will run inside a CD4PE context with certain environment variables available.
 
@@ -107,30 +116,11 @@ See our [REFERENCE.md] for reference documentation.
 
 ## Development
 
-### Getting Started
+This repo is a mirror of a private internal repo. All changes must be merged to the internal repo first,
+then they will be published here for reference. Do not open pull requests against or merge code directly to
+`puppetlabs/puppetlabs-cd4pe_deployments`.
 
-1. Fork the module repository on GitHub and clone to your workspace
+External consumers can open issues on this repo and they will be addressed upstream by the maintainers.
 
-1. Make your changes!
-
-1. Commit your changes and push them to your fork
-
-1. Open a PR against puppetlabs/master
-
-1. Update the docs by running `bundle exec puppet strings generate --format markdown` and commit the changes.
-
-1. Merge to master after receiving a +1 on your PR.
-
-### Testing
-
-To get tests to run, do the following from the root of this repository
-
-1. `bundle install`
-2. `bundle exec rake spec`
-
-Other documentation around testing:
-
-[puppet plan]: https://puppet.com/docs/bolt/latest/writing_plans.html
 [cd4pefunctionresult]: lib/puppet_x/puppetlabs/cd4pe_function_result.rb
 [reference.md]: REFERENCE.md
-[contributing.md]: CONTRIBUTING.md

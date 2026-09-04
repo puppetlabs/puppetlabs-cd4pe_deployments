@@ -12,7 +12,7 @@ describe 'cd4pe_deployments::get_impact_analysis_csv' do
 
     it 'requires 1 parameter' do
       is_expected.to run.with_params.and_raise_error(ArgumentError)
-      is_expected.to run.with_params("more than", "one param").and_raise_error(ArgumentError)
+      is_expected.to run.with_params('more than', 'one param').and_raise_error(ArgumentError)
     end
 
     context 'happy' do
@@ -29,7 +29,7 @@ describe 'cd4pe_deployments::get_impact_analysis_csv' do
 
       it 'succeeds with message parameter' do
         id = 1234
-        full_path =  "#{api_v1_path}/impact-analysis/#{id}/csv?workspaceId=#{deployment_domain}"
+        full_path = "#{api_v1_path}/impact-analysis/#{id}/csv?workspaceId=#{deployment_domain}"
         stub_request(:get, full_path)
           .with(
             headers: {
@@ -44,7 +44,7 @@ describe 'cd4pe_deployments::get_impact_analysis_csv' do
 
       it 'fails with non-200 response code' do
         id = 1234
-        full_path =  "#{api_v1_path}/impact-analysis/#{id}/csv?workspaceId=#{deployment_domain}"
+        full_path = "#{api_v1_path}/impact-analysis/#{id}/csv?workspaceId=#{deployment_domain}"
         stub_request(:get, full_path)
           .with(
             headers: {
