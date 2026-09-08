@@ -501,9 +501,10 @@ Returns: `Hash` contains the results of the function
 See [README.md]() for information on the CD4PEFunctionResult hash format
 * result [Array] a list of git branches:
   * [Hash] a hash containing branch information
-    * name [String] the name of the branch
+    * name [String] the name of the branch, exactly as the upstream VCS reports it
     * sha  [String] the head SHA of the branch
-* error [Hash] contains error information if any
+    * commitUrl [String] web URL of the branch's head commit
+* error [Hash] contains error information if any (message + HTTP status code)
 
 ##### Examples
 

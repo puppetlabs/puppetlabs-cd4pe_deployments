@@ -175,9 +175,10 @@ class PuppetX::Puppetlabs::CD4PEClient < Object
   end
 
   def get_git_branches(repo_type)
-    query = "?op=GetGitBranches&deploymentId=#{@config[:deployment_id]}&repoType=#{repo_type}"
-    complete_path = @owner_ajax_path + query
-    make_request(:get, complete_path)
+    path = "#{@api_v1_path}/deployments/#{@config[:deployment_id]}" \
+           ":list-git-branches?workspaceId=#{@config[:deployment_domain]}" \
+           "&repoType=#{repo_type}"
+    make_request(:get, path)
   end
 
   def list_trigger_events(repo_name, pipeline_id = nil, commit_sha = nil)

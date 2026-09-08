@@ -12,9 +12,10 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_git_branches') do
   #   See [README.md]() for information on the CD4PEFunctionResult hash format
   #   * result [Array] a list of git branches:
   #     * [Hash] a hash containing branch information
-  #       * name [String] the name of the branch
+  #       * name [String] the name of the branch, exactly as the upstream VCS reports it
   #       * sha  [String] the head SHA of the branch
-  #   * error [Hash] contains error information if any
+  #       * commitUrl [String] web URL of the branch's head commit
+  #   * error [Hash] contains error information if any (message + HTTP status code)
   dispatch :get_git_branches do
     required_param 'Enum["CONTROL_REPO", "MODULE"]', :repo_type
   end
@@ -25,13 +26,24 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_git_branches') do
     response = client.get_git_branches(repo_type)
     case response
     when Net::HTTPSuccess
-      response_body = JSON.parse(response.body, symbolize_names: false)
-      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body)
+      body = JSON.parse(response.body, symbolize_names: false)
+      # The V1 schema calls this field headSha; the documented return value of this
+      # function has always called it sha, so remap rather than break existing plans.
+      branches = (body['vcsBranches'] || []).map do |branch|
+        {
+          'name' => branch['name'],
+          'sha' => branch['headSha'],
+          'commitUrl' => branch['commitUrl'],
+        }
+      end
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(branches)
     when Net::HTTPClientError
-      response_body = JSON.parse(response.body, symbolize_names: false)
-      PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
+      body = JSON.parse(response.body, symbolize_names: false)
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(
+        nil, body['message'], response.code
+      )
     when Net::HTTPServerError
-      raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
+      raise Puppet::Error, "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
   end
 end
