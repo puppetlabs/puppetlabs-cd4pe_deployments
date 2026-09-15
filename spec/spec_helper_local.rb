@@ -47,6 +47,18 @@ RSpec.shared_context 'deployment' do
     }
   end
 
+  # The flat error shape the V1 API returns. Distinct from error_response, which is the
+  # AJAX envelope ({'error' => {...}}). Use this one for any function that has been migrated
+  # to a V1 endpoint -- stubbing the AJAX shape against a V1 endpoint makes a broken function
+  # look correct, which is how the create_error_result crash in CDPE-7764 shipped.
+  let(:v1_error_response) do
+    {
+      'message' => 'Some error message',
+      'traceId' => 'abc',
+      'uriPath' => '/api/v1/some/path',
+    }
+  end
+
   before(:each) do
     ENV['DEPLOYMENT_OWNER'] = deployment_owner
     ENV['DEPLOYMENT_ID'] = deployment_id

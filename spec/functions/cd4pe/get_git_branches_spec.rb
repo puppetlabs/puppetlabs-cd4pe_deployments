@@ -71,11 +71,12 @@ describe 'cd4pe_deployments::get_git_branches' do
       is_expected.to run.with_params('MODULE').and_return({ 'result' => [], 'error' => nil })
     end
 
-    it 'returns an error result on 4xx with a V1 error body' do
+    it 'returns the legacy error code on 4xx when the body carries one' do
       v1_error_body = {
-        'message' => 'Could not find Deployment with id=123',
+        'message' => 'Deployment id=123 has no MODULE repo',
         'traceId' => 'abc',
         'uriPath' => full_path,
+        'legacyCode' => 'RepoNotFound',
       }
       stub_request(:get, full_path)
         .with(headers: { 'authorization' => ENV['DEPLOYMENT_TOKEN'] })
@@ -88,8 +89,25 @@ describe 'cd4pe_deployments::get_git_branches' do
         .and_return(
           {
             'result' => nil,
-            'error' => { 'message' => 'Could not find Deployment with id=123', 'code' => '404' },
+            'error' => {
+              'message' => 'Deployment id=123 has no MODULE repo',
+              'code' => 'RepoNotFound',
+            },
           },
+        )
+    end
+
+    it 'falls back to the HTTP status on 4xx when the body carries no legacy code' do
+      stub_request(:get, full_path)
+        .with(headers: { 'authorization' => ENV['DEPLOYMENT_TOKEN'] })
+        .to_return(status: 404, body: JSON.generate(v1_error_response))
+        .times(1)
+
+      is_expected
+        .to run
+        .with_params(repo_type)
+        .and_return(
+          { 'result' => nil, 'error' => { 'message' => 'Some error message', 'code' => '404' } },
         )
     end
 

@@ -155,7 +155,7 @@ The cd4pe_deployments::create_git_branch function.
 Returns: `Hash` contains the results of the function
 See [README.md]() for information on the CD4PEFunctionResult hash format
 * result [String] "success" on success
-* error [Hash] contains error information if any (message + HTTP status code)
+* error [Hash] contains error information if any (message + error code)
 
 ##### Examples
 
@@ -312,7 +312,7 @@ Returns: `Hash` contains the results of the function
 See [README.md]() for information on the CD4PEFunctionResult hash format
 * result [Hash] present on success:
   * success [Boolean] always true
-* error [Hash] contains error information if any (message + HTTP status code)
+* error [Hash] contains error information if any (message + error code)
 
 ##### Examples
 
@@ -507,7 +507,7 @@ See [README.md]() for information on the CD4PEFunctionResult hash format
     * name [String] the name of the branch, exactly as the upstream VCS reports it
     * sha  [String] the head SHA of the branch
     * commitUrl [String] web URL of the branch's head commit
-* error [Hash] contains error information if any (message + HTTP status code)
+* error [Hash] contains error information if any (message + error code)
 
 ##### Examples
 

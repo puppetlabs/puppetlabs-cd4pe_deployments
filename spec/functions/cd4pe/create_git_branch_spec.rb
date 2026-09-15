@@ -47,11 +47,12 @@ describe 'cd4pe_deployments::create_git_branch' do
         .and_return({ 'result' => 'success', 'error' => nil })
     end
 
-    it 'returns error result on 4xx with a V1 error body' do
+    it 'returns the legacy error code on 4xx when the body carries one' do
       v1_error_body = {
-        'message' => 'Some error message',
+        'message' => 'Could not parse deploymentId as long',
         'traceId' => 'abc',
         'uriPath' => full_path,
+        'legacyCode' => 'ParameterParsing',
       }
       stub_request(:post, full_path)
         .with(
@@ -66,6 +67,36 @@ describe 'cd4pe_deployments::create_git_branch' do
           },
         )
         .to_return(status: 400, body: JSON.generate(v1_error_body))
+        .times(1)
+
+      is_expected
+        .to run
+        .with_params(repo_type, branch_name, commit_sha)
+        .and_return(
+          {
+            'result' => nil,
+            'error' => {
+              'message' => 'Could not parse deploymentId as long',
+              'code' => 'ParameterParsing',
+            },
+          },
+        )
+    end
+
+    it 'falls back to the HTTP status on 4xx when the body carries no legacy code' do
+      stub_request(:post, full_path)
+        .with(
+          body: {
+            repoType: repo_type,
+            branchName: branch_name,
+            commitSha: commit_sha,
+            cleanup: true,
+          },
+          headers: {
+            'authorization' => ENV['DEPLOYMENT_TOKEN'],
+          },
+        )
+        .to_return(status: 400, body: JSON.generate(v1_error_response))
         .times(1)
 
       is_expected

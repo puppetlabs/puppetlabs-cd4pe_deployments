@@ -1,4 +1,5 @@
 require 'puppet_x/puppetlabs'
+require 'json'
 
 # A static class to create a standard result format for custom deploy functions
 class PuppetX::Puppetlabs::CD4PEFunctionResult
@@ -28,6 +29,21 @@ class PuppetX::Puppetlabs::CD4PEFunctionResult
       nil,
       response['error']['message'],
       response['error']['code'],
+    )
+  end
+
+  # Builds an error result from a V1 API error response.
+  #
+  # V1 error bodies are flat -- message, traceId, uriPath, errors -- with no 'error' wrapper
+  # key, so create_error_result cannot read them. Prefers the body's legacyCode, the semantic
+  # code the AJAX endpoints used to set and customer deployment policies match on, and falls
+  # back to the HTTP status for the V1 error paths that do not carry one.
+  def self.create_v1_error_result(response)
+    body = JSON.parse(response.body, symbolize_names: false)
+    create_result(
+      nil,
+      body['message'],
+      body['legacyCode'] || response.code,
     )
   end
 

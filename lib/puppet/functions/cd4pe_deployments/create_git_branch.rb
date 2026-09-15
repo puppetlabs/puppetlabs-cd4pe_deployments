@@ -16,7 +16,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::create_git_branch') do
   # @return [Hash] contains the results of the function
   #   See [README.md]() for information on the CD4PEFunctionResult hash format
   #   * result [String] "success" on success
-  #   * error [Hash] contains error information if any (message + HTTP status code)
+  #   * error [Hash] contains error information if any (message + error code)
   #
   dispatch :create_git_branch do
     required_param 'Enum["CONTROL_REPO", "MODULE"]', :repo_type
@@ -33,10 +33,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::create_git_branch') do
     when Net::HTTPNoContent
       PuppetX::Puppetlabs::CD4PEFunctionResult.create_result('success')
     when Net::HTTPClientError
-      body = JSON.parse(response.body, symbolize_names: false)
-      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(
-        nil, body['message'], response.code
-      )
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_v1_error_result(response)
     when Net::HTTPServerError
       raise Puppet::Error, "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end

@@ -15,7 +15,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_git_branches') do
   #       * name [String] the name of the branch, exactly as the upstream VCS reports it
   #       * sha  [String] the head SHA of the branch
   #       * commitUrl [String] web URL of the branch's head commit
-  #   * error [Hash] contains error information if any (message + HTTP status code)
+  #   * error [Hash] contains error information if any (message + error code)
   dispatch :get_git_branches do
     required_param 'Enum["CONTROL_REPO", "MODULE"]', :repo_type
   end
@@ -38,10 +38,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_git_branches') do
       end
       PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(branches)
     when Net::HTTPClientError
-      body = JSON.parse(response.body, symbolize_names: false)
-      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(
-        nil, body['message'], response.code
-      )
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_v1_error_result(response)
     when Net::HTTPServerError
       raise Puppet::Error, "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end

@@ -43,7 +43,7 @@ describe 'cd4pe_deployments::create_custom_deployment_event' do
         is_expected.to run.with_params(message).and_return(response)
       end
 
-      it 'fails with non-200 response code' do
+      it 'returns a degraded error result on a 4xx with a flat V1 error body' do
         message = 'I am a cool message'
         full_path =  "#{api_v1_path}/deployments/#{deployment_id}/events?workspaceId=#{deployment_domain}"
         stub_request(:post, full_path)
@@ -53,10 +53,15 @@ describe 'cd4pe_deployments::create_custom_deployment_event' do
               'authorization' => ENV['DEPLOYMENT_TOKEN'],
             },
           )
-          .to_return(body: JSON.generate(error_response), status: 404)
+          .to_return(body: JSON.generate(v1_error_response), status: 404)
           .times(1)
 
-        is_expected.to run.with_params(message).and_return(error_response)
+        is_expected
+          .to run
+          .with_params(message)
+          .and_return(
+            { 'result' => nil, 'error' => { 'message' => 'Some error message', 'code' => '404' } },
+          )
       end
     end
   end

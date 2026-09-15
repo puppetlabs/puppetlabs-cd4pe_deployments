@@ -109,6 +109,18 @@ Most functions available in this module will always return a [CD4PEFunctionResul
   - The CD4PE API was unable to parse the provided parameter value.
 - `FunctionFailure`
   - CD4PE was unable to complete the function's primary purpose (e.g. run_puppet() failed to run Puppet)
+- `DeploymentNotFound`
+  - The deployment this function was called for no longer exists.
+- `DeploymentCanceled`
+  - The deployment this function was called for has been canceled, so the operation was refused.
+- `RepoNotFound`
+  - The deployment exists, but the control repo or module the function asked for is not attached to
+    it or has since been deleted.
+- `EncounteredException`
+  - The function raised an unexpected exception. The message carries the underlying error.
+
+Where a function returns an error that carries no code of its own, `code` is the HTTP status of the
+failed API call as a string, for example `"400"`.
 
 ## Reference
 
