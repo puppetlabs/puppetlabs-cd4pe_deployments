@@ -3,46 +3,73 @@ require_relative '../../../lib/puppet/functions/cd4pe_deployments/delete_git_bra
 require 'webmock/rspec'
 
 describe 'cd4pe_deployments::delete_git_branch' do
-  let(:ajax_op) { 'DeleteGitBranch' }
+  context 'table steaks' do
+    include_context 'deployment'
 
-  it 'exists' do
-    is_expected.not_to eq(nil)
-  end
+    it 'exists' do
+      is_expected.not_to eq(nil)
+    end
 
-  it 'requires 2 parameters' do
-    is_expected.to run.with_params.and_raise_error(ArgumentError)
+    it 'requires 2 parameters' do
+      is_expected.to run.with_params.and_raise_error(ArgumentError)
+    end
   end
 
   context 'happy' do
     include_context 'deployment'
 
     let(:repo_type) { 'MODULE' }
-    let(:git_branch) { 'development_b' }
-    let(:response) do
-      {
-        'result' => {
-          'success' => true,
-        },
-        'error' => nil,
+    let(:branch_name) { 'development_b' }
+    let(:full_path) do
+      "#{api_v1_path}/deployments/#{deployment_id}:delete-git-branch?workspaceId=#{deployment_domain}"
+    end
+
+    it 'returns the preserved success hash on 204' do
+      stub_request(:post, full_path)
+        .with(
+          body: { repoType: repo_type, branchName: branch_name },
+          headers: { 'authorization' => ENV['DEPLOYMENT_TOKEN'] },
+        )
+        .to_return(status: 204, body: '')
+        .times(1)
+
+      is_expected
+        .to run
+        .with_params(repo_type, branch_name)
+        .and_return({ 'result' => { 'success' => true }, 'error' => nil })
+    end
+
+    it 'returns error result on 4xx with a V1 error body' do
+      v1_error_body = {
+        'message' => 'Some error message',
+        'traceId' => 'abc',
+        'uriPath' => full_path,
       }
-    end
-
-    it 'succeeds with parameters' do
-      stub_request(:post, ajax_url)
-        .with(body: { op: ajax_op, content: { repoType: repo_type, deploymentId: deployment_id, branchName: git_branch } }, headers: { 'authorization' => ENV['DEPLOYMENT_TOKEN'] })
-        .to_return(body: JSON.generate(response['result']))
+      stub_request(:post, full_path)
+        .with(
+          body: { repoType: repo_type, branchName: branch_name },
+          headers: { 'authorization' => ENV['DEPLOYMENT_TOKEN'] },
+        )
+        .to_return(status: 404, body: JSON.generate(v1_error_body))
         .times(1)
 
-      is_expected.to run.with_params(repo_type, git_branch).and_return(response)
+      is_expected
+        .to run
+        .with_params(repo_type, branch_name)
+        .and_return(
+          { 'result' => nil, 'error' => { 'message' => 'Some error message', 'code' => '404' } },
+        )
     end
 
-    it 'fails with non-200 response code' do
-      stub_request(:post, ajax_url)
-        .with(body: { op: ajax_op, content: { repoType: repo_type, deploymentId: deployment_id, branchName: git_branch } }, headers: { 'authorization' => ENV['DEPLOYMENT_TOKEN'] })
-        .to_return(body: JSON.generate(error_response), status: 404)
+    it 'raises on 5xx' do
+      stub_request(:post, full_path)
+        .to_return(status: 500, body: 'boom')
         .times(1)
 
-      is_expected.to run.with_params(repo_type, git_branch).and_return(error_response)
+      is_expected
+        .to run
+        .with_params(repo_type, branch_name)
+        .and_raise_error(Puppet::Error)
     end
   end
 end

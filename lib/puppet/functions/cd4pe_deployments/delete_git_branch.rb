@@ -9,9 +9,11 @@ Puppet::Functions.create_function(:'cd4pe_deployments::delete_git_branch') do
   #   The name of the branch you want to delete
   # @example Delete git branch "development_b"
   #   delete_git_branch("CONTROL_REPO", "development_b")
-  # @return [Object] success object
-  #   * success [Boolean] whether or not the operation was successful
-  #
+  # @return [Hash] contains the results of the function
+  #   See [README.md]() for information on the CD4PEFunctionResult hash format
+  #   * result [Hash] present on success:
+  #     * success [Boolean] always true
+  #   * error [Hash] contains error information if any (message + HTTP status code)
   dispatch :delete_git_branch do
     required_param 'Enum["CONTROL_REPO", "MODULE"]', :repo_type
     required_param 'String', :branch_name
@@ -22,14 +24,19 @@ Puppet::Functions.create_function(:'cd4pe_deployments::delete_git_branch') do
 
     response = client.delete_git_branch(repo_type, branch_name)
     case response
-    when Net::HTTPSuccess
-      response_body = JSON.parse(response.body, symbolize_names: false)
-      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body)
+    when Net::HTTPNoContent
+      # The V1 endpoint returns no body. This hash is the contract the AJAX endpoint
+      # returned and customer deployment policies branch on, so it is reconstructed here.
+      # Do not "simplify" it to create_result('success') to match create_git_branch --
+      # that would silently break any policy reading $result['result']['success'].
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result({ 'success' => true })
     when Net::HTTPClientError
-      response_body = JSON.parse(response.body, symbolize_names: false)
-      PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
+      body = JSON.parse(response.body, symbolize_names: false)
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(
+        nil, body['message'], response.code
+      )
     when Net::HTTPServerError
-      raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
+      raise Puppet::Error, "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
   end
 end

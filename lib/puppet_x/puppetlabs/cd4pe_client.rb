@@ -138,15 +138,13 @@ class PuppetX::Puppetlabs::CD4PEClient < Object
   end
 
   def delete_git_branch(repo_type, branch_name)
+    path = "#{@api_v1_path}/deployments/#{@config[:deployment_id]}" \
+           ":delete-git-branch?workspaceId=#{@config[:deployment_domain]}"
     payload = {
-      op: 'DeleteGitBranch',
-      content: {
-        deploymentId: @config[:deployment_id],
-        repoType: repo_type,
-        branchName: branch_name,
-      },
+      repoType: repo_type,
+      branchName: branch_name,
     }
-    make_request(:post, @owner_ajax_path, payload.to_json)
+    make_request(:post, path, payload.to_json)
   end
 
   def update_git_branch_ref(repo_type, branch_name, commit_sha)

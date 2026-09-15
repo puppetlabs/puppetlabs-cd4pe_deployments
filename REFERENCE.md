@@ -308,8 +308,11 @@ delete_git_branch("CONTROL_REPO", "development_b")
 
 The cd4pe_deployments::delete_git_branch function.
 
-Returns: `Object` success object
-* success [Boolean] whether or not the operation was successful
+Returns: `Hash` contains the results of the function
+See [README.md]() for information on the CD4PEFunctionResult hash format
+* result [Hash] present on success:
+  * success [Boolean] always true
+* error [Hash] contains error information if any (message + HTTP status code)
 
 ##### Examples
 
