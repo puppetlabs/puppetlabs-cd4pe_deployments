@@ -38,7 +38,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::run_puppet') do
       response_body = JSON.parse(response.body, symbolize_names: false)
       PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
     else
-      raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
+      raise Puppet::Error, "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
   rescue => exception
     PuppetX::Puppetlabs::CD4PEFunctionResult.create_exception_result(exception)
@@ -56,7 +56,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::run_puppet') do
         error_body = JSON.parse(run_status_res.body, symbolize_names: false)
         return PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(error_body)
       else
-        raise Puppet::Error "Unknown HTTP Error with code: #{run_status_res.code} and body #{run_status_res.body} while polling Puppet run status"
+        raise Puppet::Error, "Unknown HTTP Error with code: #{run_status_res.code} and body #{run_status_res.body} while polling Puppet run status"
       end
       Kernel.sleep(3)
     end

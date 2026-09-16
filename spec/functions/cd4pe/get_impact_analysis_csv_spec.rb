@@ -61,6 +61,23 @@ describe 'cd4pe_deployments::get_impact_analysis_csv' do
             { 'result' => nil, 'error' => { 'message' => 'Some error message', 'code' => '404' } },
           )
       end
+
+      it 'raises Puppet::Error on a non-500 5xx response' do
+        # 500 is retried and raised on directly by CD4PEClient#make_request;
+        # a 503 instead exercises this function's own Net::HTTPServerError branch.
+        id = 1234
+        full_path = "#{api_v1_path}/impact-analysis/#{id}/csv?workspaceId=#{deployment_domain}"
+        stub_request(:get, full_path)
+          .with(
+            headers: {
+              'authorization' => ENV['DEPLOYMENT_TOKEN'],
+            },
+          )
+          .to_return(body: 'boom', status: 503)
+          .times(1)
+
+        is_expected.to run.with_params(id).and_raise_error(Puppet::Error, %r{Unknown HTTP Error with code: 503 and body boom})
+      end
     end
   end
 end

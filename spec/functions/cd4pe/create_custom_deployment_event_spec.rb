@@ -63,6 +63,24 @@ describe 'cd4pe_deployments::create_custom_deployment_event' do
             { 'result' => nil, 'error' => { 'message' => 'Some error message', 'code' => '404' } },
           )
       end
+
+      it 'raises Puppet::Error on a non-500 5xx response' do
+        # 500 is retried and raised on directly by CD4PEClient#make_request;
+        # a 503 instead exercises this function's own Net::HTTPServerError branch.
+        message = 'I am a cool message'
+        full_path = "#{api_v1_path}/deployments/#{deployment_id}/events?workspaceId=#{deployment_domain}"
+        stub_request(:post, full_path)
+          .with(
+            body: { message: message },
+            headers: {
+              'authorization' => ENV['DEPLOYMENT_TOKEN'],
+            },
+          )
+          .to_return(body: 'boom', status: 503)
+          .times(1)
+
+        is_expected.to run.with_params(message).and_raise_error(Puppet::Error, %r{Unknown HTTP Error with code: 503 and body boom})
+      end
     end
   end
 end

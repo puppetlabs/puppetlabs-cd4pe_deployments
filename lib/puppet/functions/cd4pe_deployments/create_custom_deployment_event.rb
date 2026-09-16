@@ -30,7 +30,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::create_custom_deployment_
     when Net::HTTPClientError
       PuppetX::Puppetlabs::CD4PEFunctionResult.create_v1_error_result(response)
     when Net::HTTPServerError
-      raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
+      raise Puppet::Error, "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
   end
 end

@@ -29,7 +29,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_pipeline') do
   end
 
   def get_pipeline(repo_type, repo_name, pipeline_id)
-    raise Puppet::Error "Invalid repo_type specified: #{repo_type}" unless ['CONTROL_REPO', 'MODULE'].include?(repo_type)
+    raise Puppet::Error, "Invalid repo_type specified: #{repo_type}" unless ['CONTROL_REPO', 'MODULE'].include?(repo_type)
 
     client = PuppetX::Puppetlabs::CD4PEClient.new
     response = client.get_pipeline(repo_type, repo_name, pipeline_id)
@@ -41,7 +41,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_pipeline') do
       response_body = JSON.parse(response.body, symbolize_names: false)
       PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
     when Net::HTTPServerError
-      raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
+      raise Puppet::Error, "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
   end
 end

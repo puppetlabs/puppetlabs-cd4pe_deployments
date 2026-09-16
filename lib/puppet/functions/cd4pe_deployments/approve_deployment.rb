@@ -36,7 +36,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::approve_deployment') do
       response_body = JSON.parse(response.body, symbolize_names: false)
       PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
     when Net::HTTPServerError
-      raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
+      raise Puppet::Error, "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
   end
 end

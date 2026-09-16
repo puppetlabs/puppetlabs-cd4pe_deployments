@@ -28,7 +28,7 @@ Puppet::Functions.create_function(:'cd4pe_deployments::get_impact_analysis_csv')
     when Net::HTTPClientError
       PuppetX::Puppetlabs::CD4PEFunctionResult.create_v1_error_result(response)
     when Net::HTTPServerError
-      raise Puppet::Error "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
+      raise Puppet::Error, "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
   end
 end
