@@ -116,6 +116,10 @@ Most functions available in this module will always return a [CD4PEFunctionResul
 - `RepoNotFound`
   - The deployment exists, but the control repo or module the function asked for is not attached to
     it or has since been deleted.
+- `BadContent`
+  - A required parameter was present but empty. Returned by `create_git_branch` and
+    `delete_git_branch`; `update_git_branch_ref` returns `ParameterMissing` for the same
+    condition, because the two sets of functions inherited different codes from the older API.
 - `EncounteredException`
   - The function raised an unexpected exception. The message carries the underlying error.
 

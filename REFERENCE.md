@@ -1006,9 +1006,9 @@ The cd4pe_deployments::update_git_branch_ref function.
 
 Returns: `Hash` contains the results of the function
 See [README.md]() for information on the CD4PEFunctionResult hash format
-* result [Hash]:
-  * success [Boolean] whether or not the operation was successful
-* error [Hash] contains error information if any
+* result [Hash] present on success:
+  * success [Boolean] always true
+* error [Hash] contains error information if any (message + error code)
 
 ##### Examples
 

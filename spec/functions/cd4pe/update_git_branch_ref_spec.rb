@@ -3,8 +3,6 @@ require_relative '../../../lib/puppet/functions/cd4pe_deployments/update_git_bra
 require 'webmock/rspec'
 
 describe 'cd4pe_deployments::update_git_branch_ref' do
-  let(:ajax_op) { 'UpdateGitRef' }
-
   context 'table steaks' do
     include_context 'deployment'
 
@@ -21,59 +19,84 @@ describe 'cd4pe_deployments::update_git_branch_ref' do
     include_context 'deployment'
 
     let(:repo_type) { 'CONTROL_REPO' }
-    let(:git_branch) { 'development_b' }
+    let(:branch_name) { 'development_b' }
     let(:commit_sha) { 'c090ea692e67405c5572af6b2a9dc5f11c9080c0' }
-    let(:response) do
-      {
-        'result' => {
-          'success' => true,
-        },
-        'error' => nil,
-      }
+    let(:full_path) do
+      "#{api_v1_path}/deployments/#{deployment_id}:update-git-branch-ref?workspaceId=#{deployment_domain}"
+    end
+    let(:request_body) do
+      { repoType: repo_type, branchName: branch_name, commitSha: commit_sha }
     end
 
-    it 'succeeds with parameters' do
-      stub_request(:post, ajax_url)
-        .with(
-          body: {
-            op: ajax_op,
-            content: {
-              repoType: repo_type,
-              deploymentId: deployment_id,
-              branchName: git_branch,
-              commitSha: commit_sha,
-            },
-          },
-          headers: {
-            'authorization' => ENV['DEPLOYMENT_TOKEN'],
-          },
-        )
-        .to_return(body: JSON.generate(response['result']))
+    it 'returns the preserved success hash on 204' do
+      stub_request(:post, full_path)
+        .with(body: request_body, headers: { 'authorization' => ENV['DEPLOYMENT_TOKEN'] })
+        .to_return(status: 204, body: '')
         .times(1)
 
-      is_expected.to run.with_params(repo_type, git_branch, commit_sha).and_return(response)
+      is_expected
+        .to run
+        .with_params(repo_type, branch_name, commit_sha)
+        .and_return({ 'result' => { 'success' => true }, 'error' => nil })
     end
 
-    it 'fails with non-200 response code' do
-      stub_request(:post, ajax_url)
-        .with(
-          body: {
-            op: ajax_op,
-            content: {
-              repoType: repo_type,
-              deploymentId: deployment_id,
-              branchName: git_branch,
-              commitSha: commit_sha,
+    # One example per legacy code, because nothing pinned these literals before CDPE-7764 and
+    # customer deployment policies branch on them.
+    {
+      'ParameterMissing' => 400,
+      'ParameterParsing' => 400,
+      'DeploymentCanceled' => 400,
+      'FunctionFailure' => 400,
+      'DeploymentNotFound' => 404,
+      'RepoNotFound' => 404,
+    }.each do |legacy_code, status|
+      it "surfaces the #{legacy_code} legacy code as error.code on a #{status}" do
+        v1_error_body = {
+          'message' => 'Some error message',
+          'traceId' => 'abc',
+          'uriPath' => full_path,
+          'legacyCode' => legacy_code,
+        }
+        stub_request(:post, full_path)
+          .with(body: request_body, headers: { 'authorization' => ENV['DEPLOYMENT_TOKEN'] })
+          .to_return(status: status, body: JSON.generate(v1_error_body))
+          .times(1)
+
+        is_expected
+          .to run
+          .with_params(repo_type, branch_name, commit_sha)
+          .and_return(
+            {
+              'result' => nil,
+              'error' => { 'message' => 'Some error message', 'code' => legacy_code },
             },
-          },
-          headers: {
-            'authorization' => ENV['DEPLOYMENT_TOKEN'],
-          },
-        )
-        .to_return(body: JSON.generate(error_response), status: 404)
+          )
+      end
+    end
+
+    it 'falls back to the HTTP status on 4xx when the body carries no legacy code' do
+      stub_request(:post, full_path)
+        .with(body: request_body, headers: { 'authorization' => ENV['DEPLOYMENT_TOKEN'] })
+        .to_return(status: 400, body: JSON.generate(v1_error_response))
         .times(1)
 
-      is_expected.to run.with_params(repo_type, git_branch, commit_sha).and_return(error_response)
+      is_expected
+        .to run
+        .with_params(repo_type, branch_name, commit_sha)
+        .and_return(
+          { 'result' => nil, 'error' => { 'message' => 'Some error message', 'code' => '400' } },
+        )
+    end
+
+    it 'raises on 5xx' do
+      stub_request(:post, full_path)
+        .to_return(status: 500, body: 'boom')
+        .times(1)
+
+      is_expected
+        .to run
+        .with_params(repo_type, branch_name, commit_sha)
+        .and_raise_error(Puppet::Error)
     end
   end
 end

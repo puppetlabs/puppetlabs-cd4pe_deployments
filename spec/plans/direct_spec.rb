@@ -32,13 +32,8 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
       }
     end
 
-    let(:update_git_branch_response) do
-      {
-        'result' => {
-          'success' => true,
-        },
-        'error' => nil,
-      }
+    let(:update_git_branch_ref_path) do
+      "#{api_v1_path}/deployments/#{deployment_id}:update-git-branch-ref?workspaceId=#{deployment_domain}"
     end
 
     let(:node_group_response) do
@@ -86,22 +81,18 @@ describe 'cd4pe_deployments::direct', if: Gem::Version.new(Puppet.version) >= Ge
         .to_return(body: JSON.generate(node_group_response['result']))
         .times(1)
 
-      stub_request(:post, ajax_url)
+      stub_request(:post, update_git_branch_ref_path)
         .with(
           body: {
-            op: 'UpdateGitRef',
-            content: {
-              repoType: repo_type,
-              deploymentId: deployment_id,
-              branchName: environment_name,
-              commitSha: commit,
-            },
+            repoType: repo_type,
+            branchName: environment_name,
+            commitSha: commit,
           },
           headers: {
             'authorization' => ENV['DEPLOYMENT_TOKEN'],
           },
         )
-        .to_return(body: JSON.generate(update_git_branch_response['result']))
+        .to_return(status: 204, body: '')
         .times(1)
 
       stub_request(:post, ajax_url)

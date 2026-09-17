@@ -148,16 +148,14 @@ class PuppetX::Puppetlabs::CD4PEClient < Object
   end
 
   def update_git_branch_ref(repo_type, branch_name, commit_sha)
+    path = "#{@api_v1_path}/deployments/#{@config[:deployment_id]}" \
+           ":update-git-branch-ref?workspaceId=#{@config[:deployment_domain]}"
     payload = {
-      op: 'UpdateGitRef',
-      content: {
-        deploymentId: @config[:deployment_id],
-        repoType: repo_type,
-        branchName: branch_name,
-        commitSha: commit_sha,
-      },
+      repoType: repo_type,
+      branchName: branch_name,
+      commitSha: commit_sha,
     }
-    make_request(:post, @owner_ajax_path, payload.to_json)
+    make_request(:post, path, payload.to_json)
   end
 
   def create_git_branch(repo_type, branch_name, commit_sha, cleanup)

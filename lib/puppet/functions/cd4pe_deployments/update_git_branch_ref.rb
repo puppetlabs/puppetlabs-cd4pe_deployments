@@ -13,10 +13,9 @@ Puppet::Functions.create_function(:'cd4pe_deployments::update_git_branch_ref') d
   #   update_git_branch_ref("CONTROL_REPO", "production", "c090ea692e67405c5572af6b2a9dc5f11c9080c0")
   # @return [Hash] contains the results of the function
   #   See [README.md]() for information on the CD4PEFunctionResult hash format
-  #   * result [Hash]:
-  #     * success [Boolean] whether or not the operation was successful
-  #   * error [Hash] contains error information if any
-  #
+  #   * result [Hash] present on success:
+  #     * success [Boolean] always true
+  #   * error [Hash] contains error information if any (message + error code)
   dispatch :update_git_branch_ref do
     required_param 'Enum["CONTROL_REPO", "MODULE"]', :repo_type
     required_param 'String', :branch_name
@@ -28,12 +27,15 @@ Puppet::Functions.create_function(:'cd4pe_deployments::update_git_branch_ref') d
 
     response = client.update_git_branch_ref(repo_type, branch_name, commit_sha)
     case response
-    when Net::HTTPSuccess
-      response_body = JSON.parse(response.body, symbolize_names: false)
-      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result(response_body)
+    when Net::HTTPNoContent
+      # The V1 endpoint returns no body. This hash is the contract the AJAX endpoint returned
+      # (its JsonSuccess serialized to {"success": true}) and customer deployment policies
+      # branch on, so it is reconstructed here. Do not "simplify" it to
+      # create_result('success') -- that would silently break any policy reading
+      # $result['result']['success'].
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_result({ 'success' => true })
     when Net::HTTPClientError
-      response_body = JSON.parse(response.body, symbolize_names: false)
-      PuppetX::Puppetlabs::CD4PEFunctionResult.create_error_result(response_body)
+      PuppetX::Puppetlabs::CD4PEFunctionResult.create_v1_error_result(response)
     when Net::HTTPServerError
       raise Puppet::Error, "Unknown HTTP Error with code: #{response.code} and body #{response.body}"
     end
